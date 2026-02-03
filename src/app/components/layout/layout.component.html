@@ -1,0 +1,62 @@
+<div class="bg-[#f9fef3] text-gray-800">
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-white border-r shadow-sm flex flex-col justify-between fixed left-0 top-0 h-full">
+    <div>
+      <!-- Logo + Nom -->
+      <div class="flex items-center gap-3 px-5 py-4 border-b">
+        <img src="../../../assets/images/logo.png" alt="Logo" class="w-10 h-10 rounded-full" />
+        <div>
+          <h1 class="font-bold text-gray-900 text-lg">NOURA - {{getUserTypeLabel()}}</h1>
+          <p class="text-xs text-green-800">"Rien ne change si on ne change rien"</p>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="mt-4">
+        <ul class="space-y-1">
+          <li *ngFor="let item of menuItems">
+            <a [routerLink]="item.route" routerLinkActive="bg-green-50 text-green-700 font-medium"
+              class="flex items-center px-5 py-2 hover:bg-gray-100 rounded-md transition relative">
+              <i [attr.data-lucide]="item.icon" class="w-4 h-4 mr-3"></i> {{item.label}}
+              <span *ngIf="item.badge"
+                class="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                {{item.badge}}
+              </span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Bouton déconnexion -->
+    <div class="border-t p-5">
+      <button (click)="onLogout()"
+        class="flex items-center text-red-600 hover:text-red-800 text-sm transition font-medium">
+        <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <!-- CONTENU PRINCIPAL -->
+  <div class="flex-1 ml-64 flex flex-col">
+    <!-- TOPBAR -->
+    <header class="flex justify-between items-center px-6 py-3 bg-white border-b shadow-sm sticky top-0 z-10">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-700">{{getCurrentPageTitle()}}</h2>
+        <p class="text-sm text-gray-500">École NOURA - {{getUserTypeLabel()}}</p>
+      </div>
+
+      <!-- User Info in Topbar (Optional but nice) -->
+      <div class="flex items-center gap-3" *ngIf="user">
+        <div class="text-right">
+          <p class="text-sm font-bold text-gray-900">{{user.prenom}} {{user.nom}}</p>
+          <p class="text-xs text-gray-500 capitalize">{{user.role}}</p>
+        </div>
+        <div
+          class="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold border border-green-200">
+          {{getUserInitials()}}
+        </div>
+      </div>
+    </header>
+  </div>
+</div>

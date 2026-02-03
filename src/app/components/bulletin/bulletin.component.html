@@ -1,0 +1,371 @@
+<app-layout></app-layout>
+
+<div class="space-y-6 ml-80 mt-6 mr-6">
+
+  <!-- En-tête avec informations contextuelles -->
+  <div class="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg shadow-lg p-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold mb-2">Bulletins Scolaires</h2>
+        <p class="text-green-100 mb-2">École NOURA - Année scolaire 2024-2025</p>
+        <div class="flex items-center text-green-200 text-sm">
+          <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          12 bulletin(s) disponible(s) pour Jean Dupont
+        </div>
+      </div>
+      <div class="hidden md:block">
+        <div class="h-16 w-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiques rapides -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-blue-100 mr-4">
+          <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-gray-900">12</p>
+          <p class="text-sm text-gray-600">Total Bulletins</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-green-100 mr-4">
+          <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-green-600">8</p>
+          <p class="text-sm text-gray-600">Complets</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-orange-100 mr-4">
+          <svg class="w-6 h-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-orange-600">3</p>
+          <p class="text-sm text-gray-600">En cours</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-purple-100 mr-4">
+          <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-purple-600">14.5</p>
+          <p class="text-sm text-gray-600">Moyenne Globale</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message d'information utilisateur -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
+    <div class="flex items-center">
+      <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p class="text-blue-800 text-sm">
+        Vous ne pouvez consulter que vos propres bulletins.
+      </p>
+    </div>
+  </div>
+
+  <!-- Tableau des bulletins -->
+  <div class="bg-white rounded-lg shadow-sm overflow-hidden mt-6">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Élève</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trimestre</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moyenne</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">Jean Dupont</td>
+            <td class="px-6 py-4 whitespace-nowrap">6ème A</td>
+            <td class="px-6 py-4 whitespace-nowrap">1er trimestre</td>
+            <td class="px-6 py-4 whitespace-nowrap">15.5</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-600">Complet</span>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">Pauline Martin</td>
+            <td class="px-6 py-4 whitespace-nowrap">5ème B</td>
+            <td class="px-6 py-4 whitespace-nowrap">1er trimestre</td>
+            <td class="px-6 py-4 whitespace-nowrap">13.8</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-600">En cours</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- ################################################################################## -->
+
+<!-- 
+<div class="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4">
+  <div class="bg-white rounded-lg shadow-2xl w-full max-w-7xl h-full max-h-[95vh] overflow-auto" style="aspect-ratio:4/3; min-height:80vh;"> -->
+
+<!-- Barre d'outils avec logo NOURA -->
+<!-- <div class="sticky top-0 bg-gray-100 border-b border-gray-200 px-6 py-3 flex justify-between items-center rounded-t-lg z-10">
+      <div class="flex items-center">
+        <img src="logo-noura.png" alt="Logo École NOURA" class="h-8 w-8 object-contain mr-3">
+        <h3 class="text-lg font-semibold text-gray-900">Bulletin - Jean Dupont</h3>
+      </div>
+      <div class="flex space-x-3">
+        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium flex items-center transition-colors duration-200">
+          <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+          </svg>
+          Imprimer
+        </button>
+        <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md font-medium flex items-center transition-colors duration-200">
+          <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          Fermer
+        </button>
+      </div>
+    </div> -->
+
+
+
+<!-- Modal  Contenu du bulletin -->
+<!-- <div class="p-8 bg-white"> -->
+
+<!-- En-tête avec logo et devises -->
+<!-- <div class="flex items-center justify-between mb-8 border-b-2 border-green-600 pb-6">
+        <div class="flex items-center">
+          <img src="logo-noura.png" alt="Logo École NOURA" class="h-24 w-24 object-contain mr-6">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">École NOURA</h1>
+            <p class="text-lg text-green-700 font-medium">"Apprendre pour réussir"</p>
+            <p class="text-sm text-gray-600 mt-1">Nouakchott, Mauritanie</p>
+            <p class="text-sm text-gray-600">Tél: +222 45 67 89 00</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-2xl font-bold text-gray-800 mb-2" style="font-family: Arial, sans-serif;">شرف إخاء عدالة</div>
+          <div class="text-lg font-semibold text-gray-700">Honneur, Fraternité, Justice</div>
+          <div class="text-sm text-gray-600 mt-2">République Islamique de Mauritanie</div>
+        </div>
+      </div> -->
+
+<!-- Informations générales -->
+<!-- <div class="grid grid-cols-2 gap-8 mb-8">
+        <div class="bg-gray-50 p-6 rounded-lg">
+          <h3 class="text-xl font-semibold text-gray-900 mb-4">Informations de l'élève</h3>
+          <div class="space-y-2">
+            <p><span class="font-medium">Nom complet:</span> Jean Dupont</p>
+            <p><span class="font-medium">Classe:</span> 6ème A</p>
+            <p><span class="font-medium">Année scolaire:</span> 2024-2025</p>
+            <p><span class="font-medium">Trimestre:</span> 1er Trimestre</p>
+            <p><span class="font-medium">Date de naissance:</span> 15/06/2010</p>
+            <p><span class="font-medium">Lieu de naissance:</span> Nouakchott</p>
+          </div>
+        </div>
+        <div class="bg-green-50 p-6 rounded-lg">
+          <h3 class="text-xl font-semibold text-gray-900 mb-4">Résultats généraux</h3>
+          <div class="space-y-2">
+            <p><span class="font-medium">Moyenne générale:</span> <span class="ml-2 text-lg font-bold text-green-600">15.25/20</span></p>
+            <p><span class="font-medium">Rang:</span> 2e sur 30 élèves</p>
+            <p><span class="font-medium">Date d'émission:</span> 19/10/2025</p>
+            <p><span class="font-medium">École:</span> École NOURA - Nouakchott</p>
+          </div>
+        </div>
+      </div> -->
+
+<!-- Tableau des notes détaillé -->
+<!-- <div class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">Détail des notes par matière</h3>
+        <div class="overflow-x-auto">
+          <table class="min-w-full border-collapse border border-gray-400">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="border border-gray-400 px-4 py-3 text-left font-semibold text-gray-900">Matière</th>
+                <th class="border border-gray-400 px-4 py-3 text-center font-semibold text-gray-900">Devoir 1</th>
+                <th class="border border-gray-400 px-4 py-3 text-center font-semibold text-gray-900">Devoir 2</th>
+                <th class="border border-gray-400 px-4 py-3 text-center font-semibold text-gray-900">Composition</th>
+                <th class="border border-gray-400 px-4 py-3 text-center font-semibold text-gray-900">Moyenne</th>
+                <th class="border border-gray-400 px-4 py-3 text-center font-semibold text-gray-900">Coefficient</th>
+                <th class="border border-gray-400 px-4 py-3 text-center font-semibold text-gray-900">Total</th>
+                <th class="border border-gray-400 px-4 py-3 text-left font-semibold text-gray-900">Personnel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="bg-white">
+                <td class="border border-gray-400 px-4 py-3 font-medium">Mathématiques</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">16/20</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">14/20</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">15/20</td>
+                <td class="border border-gray-400 px-4 py-3 text-center text-green-600 font-semibold">15/20</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">4</td>
+                <td class="border border-gray-400 px-4 py-3 text-center font-semibold">60.00</td>
+                <td class="border border-gray-400 px-4 py-3 text-sm">Mme. Fatou</td>
+              </tr>
+              <tr class="bg-gray-50">
+                <td class="border border-gray-400 px-4 py-3 font-medium">Français</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">14/20</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">13/20</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">15/20</td>
+                <td class="border border-gray-400 px-4 py-3 text-center text-green-600 font-semibold">14/20</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">3</td>
+                <td class="border border-gray-400 px-4 py-3 text-center font-semibold">42.00</td>
+                <td class="border border-gray-400 px-4 py-3 text-sm">M. Ahmed</td>
+              </tr>
+              <tr class="bg-gray-200 font-bold">
+                <td class="border border-gray-400 px-4 py-3">TOTAL GÉNÉRAL</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">-</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">-</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">-</td>
+                <td class="border border-gray-400 px-4 py-3 text-center text-lg text-green-600">15.25/20</td>
+                <td class="border border-gray-400 px-4 py-3 text-center">7</td>
+                <td class="border border-gray-400 px-4 py-3 text-center font-semibold">102.00</td>
+                <td class="border border-gray-400 px-4 py-3">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div> -->
+
+<!-- Appréciation et signatures -->
+<!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-blue-50 p-6 rounded-lg">
+          <h4 class="text-lg font-semibold text-gray-900 mb-3">Appréciation générale</h4>
+          <p class="text-gray-700 italic">"Excellent comportement et résultats satisfaisants."</p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="text-center">
+            <p class="font-medium text-gray-900">Le Directeur</p>
+            <p class="text-sm text-gray-600 mt-8 border-t border-gray-300 pt-2">M. Mohamed Saleh</p>
+          </div>
+          <div class="text-center">
+            <p class="font-medium text-gray-900">Signature des parents</p>
+            <div class="mt-8 border-t border-gray-300 pt-2 h-12"></div>
+          </div>
+        </div>
+      </div> -->
+
+<!-- Pied de page -->
+<!-- <div class="mt-8 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
+        <p>École NOURA - Nouakchott, Mauritanie - Tél: +222 45 67 89 00 - Email: contact#noura.mr</p>
+        <p class="mt-1">Bulletin édité le 19/10/2025 à 23:00 - République Islamique de Mauritanie</p>
+      </div>
+
+    </div>
+  </div>
+</div> -->
+<!-- Bulletins filter -->
+<!-- <div class="bg-white rounded-lg shadow-md p-6"> -->
+<!-- Titre et bouton réinitialiser -->
+<!-- <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-900">Filtres de recherche</h3>
+    <button class="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
+      Réinitialiser
+    </button>
+  </div> -->
+
+<!-- Grille des filtres -->
+<!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"> -->
+<!-- Trimestre -->
+<!-- <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Trimestre</label>
+      <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+        <option value="">Trimestre 1</option>
+        <option value="">Trimestre 2</option>
+        <option value="">Trimestre 3</option>
+      </select>
+    </div> -->
+
+<!-- Classe -->
+<!-- <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Classe</label>
+      <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+        <option value="">Toutes les classes</option>
+        <option value="1">6ème A</option>
+        <option value="2">5ème B</option>
+      </select>
+    </div> -->
+
+<!-- Élève -->
+<!-- <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Élève</label>
+      <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+        <option value="">Tous les élèves</option>
+        <option value="1">Jean Dupont</option>
+        <option value="2">Marie Martin</option>
+      </select>
+    </div> -->
+
+<!-- Année scolaire -->
+<!-- <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Année scolaire</label>
+      <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+        <option value="2024-2025">2024-2025</option>
+        <option value="2025-2026">2025-2026</option>
+      </select>
+    </div>
+  </div> -->
+
+<!-- Résumé des filtres actifs -->
+<!-- <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+    <div class="flex items-center text-sm text-blue-800">
+      <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+      </svg>
+      <span>Filtres actifs :</span>
+      <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">Trimestre 1</span>
+      <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">6ème A</span>
+      <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">Jean Dupont</span>
+    </div>
+  </div>
+</div> -->

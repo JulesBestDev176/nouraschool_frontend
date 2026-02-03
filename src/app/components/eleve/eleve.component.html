@@ -1,0 +1,331 @@
+<app-layout></app-layout>
+<div class="space-y-6 ml-80 mt-6 mr-6">
+
+  <!-- En-tête -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Gestion des Élèves</h1>
+      <p class="text-gray-600 mt-1">{{filteredEleves.length}} élève(s) inscrit(s)</p>
+    </div>
+    <button *ngIf="canAddEleve" (click)="openModal()"
+      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center shadow-sm">
+      <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      Ajouter un élève
+    </button>
+  </div>
+
+  <!-- Filtres et recherche -->
+  <div class="bg-white p-4 rounded-lg shadow-sm space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Rechercher</label>
+        <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applyFilters()"
+          placeholder="Nom, prénom ou email..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Cycle</label>
+        <select [(ngModel)]="filterCycle" (change)="applyFilters()"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Tous les cycles</option>
+          <option value="primaire">Primaire</option>
+          <option value="college">Collège</option>
+          <option value="lycee">Lycée</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Classe</label>
+        <select [(ngModel)]="filterClasseId" (change)="applyFilters()"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Toutes les classes</option>
+          <option *ngFor="let c of allClasses" [value]="c.id">{{c.nom}}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+        <select [(ngModel)]="filterStatut" (change)="applyFilters()"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Tous les statuts</option>
+          <option value="actif">Actif</option>
+          <option value="inactive">Inactif</option> <!-- Note: Eleve model has 'inactif' vs 'suspendu' -->
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des élèves -->
+  <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Élève</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Informations</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parents</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moyenne</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+
+          <tr *ngFor="let eleve of filteredEleves" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <span
+                    class="text-blue-600 font-semibold uppercase">{{eleve.prenom.charAt(0)}}{{eleve.nom.charAt(0)}}</span>
+                </div>
+                <div class="ml-4">
+                  <div class="font-medium text-gray-900">{{eleve.prenom}} {{eleve.nom}}</div>
+                  <div class="text-sm text-gray-500">{{eleve.email}}</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{eleve.sexe === 'M' ? 'Masculin' : 'Féminin'}}</div>
+              <div class="text-sm text-gray-500">{{eleve.dateNaissance | date:'shortDate'}} • {{eleve.lieuNaissance ||
+                'Non renseigné'}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded-full">
+                {{getClasseName(eleve.classeId)}}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{getParentNames(eleve.parentIds)}}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span [class.text-green-600]="(eleve.moyenneAnnuelle || 0) >= 10"
+                [class.text-red-600]="(eleve.moyenneAnnuelle || 0) < 10" class="font-medium">
+                {{eleve.moyenneAnnuelle !== undefined ? eleve.moyenneAnnuelle + '/20' : 'N/A'}}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span [class]="eleve.statut === 'actif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'"
+                class="px-2 py-1 text-xs font-medium rounded-full">
+                {{eleve.statut | titlecase}}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <div class="flex items-center justify-end space-x-4">
+                <button (click)="openModal(eleve)" class="text-blue-600 hover:text-blue-700" title="Modifier">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <label class="relative inline-flex items-center cursor-pointer" title="Activer/Désactiver">
+                  <input type="checkbox" [checked]="eleve.statut === 'actif'" (change)="toggleStatus(eleve)"
+                    class="sr-only peer">
+                  <div
+                    class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600">
+                  </div>
+                </label>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredEleves.length === 0">
+            <td colspan="7" class="px-6 py-4 text-center text-gray-500">Aucun élève trouvé</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal Ajout Élève -->
+<div *ngIf="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl h-[85vh] overflow-y-auto relative">
+    <div
+      class="sticky top-0 z-40 px-6 py-4 border-b flex justify-between items-center bg-gray-50 flex-none rounded-t-lg shadow-sm">
+      <h2 class="text-xl font-bold text-gray-800">{{isEditing ? 'Modifier l\'élève' : 'Ajouter un nouvel élève'}}</h2>
+      <button (click)="closeModal()" class="text-gray-500 hover:text-gray-700">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="p-6">
+      <form [formGroup]="eleveForm" class="space-y-6">
+        <!-- Identité -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+            <input type="text" formControlName="prenom"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+            <input type="text" formControlName="nom"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Date de naissance</label>
+            <input type="date" formControlName="dateNaissance"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Lieu de naissance</label>
+            <input type="text" formControlName="lieuNaissance"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Sexe</label>
+            <select formControlName="sexe"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+              <option value="">Sélectionner</option>
+              <option value="M">Masculin</option>
+              <option value="F">Féminin</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Cycle</label>
+            <select formControlName="cycle" (change)="onCycleChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+              <option value="">Sélectionner</option>
+              <option value="primaire">Primaire</option>
+              <option value="college">Collège</option>
+              <option value="lycee">Lycée</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input type="email" formControlName="email"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+            <input type="tel" formControlName="telephone"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
+          <textarea formControlName="adresse" rows="2"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+        </div>
+
+        <!-- Relations -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
+
+          <!-- Classe Custom Select -->
+          <div class="relative custom-select-container">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Classe</label>
+            <div (click)="showClasseDropdown = true; $event.stopPropagation()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white cursor-text flex items-center hover:border-green-500 focus-within:ring-2 focus-within:ring-green-500 transition-all">
+
+              <input type="text" [(ngModel)]="classeSearch" [ngModelOptions]="{standalone: true}"
+                placeholder="Sélectionner une classe..."
+                class="flex-1 bg-transparent border-none outline-none text-sm p-0 focus:ring-0">
+
+              <button *ngIf="classeSearch" (click)="$event.stopPropagation(); clearClasseSearch()"
+                class="text-gray-400 hover:text-gray-600 mr-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                [class.rotate-180]="showClasseDropdown" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+
+            <div *ngIf="showClasseDropdown"
+              class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-xl max-h-48 overflow-y-auto">
+              <div *ngFor="let c of filteredClassesDisplay" (click)="$event.stopPropagation(); selectClasse(c)"
+                class="px-4 py-2 hover:bg-green-50 cursor-pointer flex items-center justify-between group">
+                <span [class.text-green-600]="selectedClasse?.id === c.id" class="text-sm">
+                  {{c.nom}} <span class="text-gray-500 text-xs">({{getPlacesRestantes(c)}} places)</span>
+                </span>
+                <svg *ngIf="selectedClasse?.id === c.id" class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div *ngIf="filteredClassesDisplay.length === 0" class="px-4 py-3 text-sm text-gray-500 text-center">
+                Aucune classe trouvée
+              </div>
+            </div>
+          </div>
+
+          <!-- Tuteur Custom Select -->
+          <div class="relative custom-select-container">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Tuteur</label>
+            <div (click)="showTuteurDropdown = true; $event.stopPropagation()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white cursor-text flex items-center hover:border-green-500 focus-within:ring-2 focus-within:ring-green-500 transition-all">
+
+              <input type="text" [(ngModel)]="tuteurSearch" [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="onTuteurSearchChange($event)" placeholder="Rechercher ou ajouter un tuteur..."
+                class="flex-1 bg-transparent border-none outline-none text-sm p-0 focus:ring-0">
+
+              <button *ngIf="tuteurSearch" (click)="$event.stopPropagation(); clearTuteurSearch()"
+                class="text-gray-400 hover:text-gray-600 mr-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                [class.rotate-180]="showTuteurDropdown" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+
+            <div *ngIf="showTuteurDropdown"
+              class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-xl max-h-48 overflow-y-auto">
+              <div *ngFor="let p of filteredTuteursDisplay" (click)="$event.stopPropagation(); selectTuteur(p)"
+                class="px-4 py-2 hover:bg-green-50 cursor-pointer flex items-center justify-between group">
+                <div class="flex flex-col">
+                  <span [class.text-green-600]="selectedTuteur?.id === p.id" class="text-sm font-medium">
+                    {{p.prenom}} {{p.nom}}
+                  </span>
+                  <span class="text-xs text-gray-500">{{p.email}} • {{p.telephone}}</span>
+                </div>
+                <svg *ngIf="selectedTuteur?.id === p.id" class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div *ngIf="filteredTuteursDisplay.length === 0" class="px-4 py-3 text-sm text-gray-500 text-center">
+                Recherchez ou saisissez un nouveau tuteur
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+    <div
+      class="sticky bottom-0 z-40 px-6 py-4 border-t bg-gray-50 flex justify-end space-x-3 flex-none rounded-b-lg shadow-inner">
+      <button (click)="closeModal()"
+        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+        Annuler
+      </button>
+      <button (click)="onSubmit()" [disabled]="eleveForm.invalid"
+        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+        {{isEditing ? 'Modifier' : 'Enregistrer'}}
+      </button>
+    </div>
+  </div>
+</div>

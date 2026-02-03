@@ -1,0 +1,76 @@
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-yellow-100 flex items-center justify-center px-4">
+  <div class="max-w-md w-full space-y-8">
+
+    <!-- Header -->
+    <div class="text-center">
+      <img src="../../../assets/images/logo.png" alt="Logo École NOURA" class="mx-auto h-24 w-24 object-contain mb-4" />
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">École NOURA</h2>
+      <p class="text-lg text-green-700 font-medium mb-6">"L’éducation, notre fierté"</p>
+      <p class="text-gray-600">Connectez-vous à votre espace</p>
+      <p class="text-sm text-gray-500 mt-1">Nouakchott, Mauritanie</p>
+    </div>
+
+    <!-- Formulaire -->
+    <form class="mt-8 space-y-6">
+      <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
+          <input #emailInput id="email" name="email" type="email" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            placeholder="votre@email.mr" />
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+          <input #passwordInput id="password" name="password" type="password" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            placeholder="Votre mot de passe" />
+        </div>
+
+        <div *ngIf="errorMsg" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded border border-red-100"
+          id="error-msg">
+          {{errorMsg}}
+        </div>
+
+        <button type="submit" (click)="$event.preventDefault(); onSubmit(emailInput.value, passwordInput.value)"
+          class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md font-medium transition-colors duration-200 flex items-center justify-center">
+          Se connecter
+        </button>
+      </div>
+    </form>
+    <!-- Section comptes de test -->
+    <div class="mt-8">
+      <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider text-center mb-4">
+        Comptes de démonstration
+      </h3>
+      <p class="text-xs text-gray-400 text-center mb-4 italic">Cliquez sur un compte pour remplir le formulaire</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div *ngFor="let user of exampleUsers" (click)="fillForm(user, emailInput, passwordInput)"
+          class="bg-white/60 border border-green-100 rounded-lg p-3 hover:bg-white transition-all duration-200 cursor-pointer hover:shadow-sm">
+          <div class="flex items-center space-x-3">
+            <div class="bg-green-100 p-2 rounded-full">
+              <i [attr.data-lucide]="user.icon" class="w-4 h-4 text-green-600"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold text-gray-800">{{user.role}}</p>
+              <p class="text-[10px] text-gray-500">{{user.email}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Bouton retour -->
+    <div class="text-center">
+      <a routerLink="/home"
+        class="text-green-600 hover:text-green-700 font-medium flex items-center justify-center mx-auto">
+        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Retour à l'accueil
+      </a>
+    </div>
+
+  </div>
+</div>

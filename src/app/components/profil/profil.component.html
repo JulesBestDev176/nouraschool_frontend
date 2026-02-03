@@ -1,0 +1,89 @@
+<app-layout></app-layout>
+<div class="p-6 space-y-6 ml-80 mt-6 mr-6">
+  <!-- Titre -->
+  <div class="flex items-center gap-2 mb-6">
+    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path>
+    </svg>
+    <h1 class="text-2xl font-semibold">Profil Utilisateur</h1>
+  </div>
+
+  <!-- Informations principales -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="border rounded-lg p-4 bg-white shadow flex flex-col items-center">
+      <img src="https://via.placeholder.com/80" alt="Avatar" class="rounded-full mb-2">
+      <p class="font-semibold">Jean Dupont</p>
+      <p class="text-sm text-gray-500">6ème A</p>
+    </div>
+    <div class="border rounded-lg p-4 bg-white shadow">
+      <p class="text-sm text-gray-600">Email</p>
+      <p class="text-lg font-semibold">jean#example.com</p>
+    </div>
+    <div class="border rounded-lg p-4 bg-white shadow">
+      <p class="text-sm text-gray-600">Téléphone</p>
+      <p class="text-lg font-semibold">+33 6 12 34 56 78</p>
+    </div>
+  </div>
+
+  <!-- Sécurité et mot de passe -->
+  <div class="border rounded-lg p-4 bg-white shadow mb-6">
+    <h2 class="flex items-center gap-2 font-semibold text-lg mb-4">
+      <svg class="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-1.657-1.343-3-3-3s-3 1.343-3 3c0 1.657 1.343 3 3 3s3-1.343 3-3zM19 11v2a2 2 0 01-2 2H7a2 2 0 01-2-2v-2"></path>
+      </svg>
+      Sécurité
+    </h2>
+    <div class="space-y-4">
+      <div class="flex justify-between items-center">
+        <p class="text-sm text-gray-600">Mot de passe</p>
+        <button class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Modifier</button>
+      </div>
+      <div class="flex justify-between items-center">
+        <p class="text-sm text-gray-600">Authentification à 2 facteurs</p>
+        <button class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Activer</button>
+      </div>
+      <div class="flex justify-between items-center">
+        <p class="text-sm text-gray-600">Connexion récente</p>
+        <span class="text-sm text-gray-500">19/10/2025 à 10:45</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historique des activités -->
+  <div class="border rounded-lg p-4 bg-white shadow">
+    <h2 class="flex items-center gap-2 font-semibold text-lg mb-4">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"></path>
+      </svg>
+      Historique des Activités
+    </h2>
+    <div class="overflow-x-auto border rounded-lg">
+      <table class="min-w-full border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="border border-gray-300 px-4 py-2 text-left">Action</th>
+            <th class="border border-gray-300 px-4 py-2 text-left">Date</th>
+            <th class="border border-gray-300 px-4 py-2 text-left">Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="bg-white">
+            <td class="border border-gray-300 px-4 py-2">Connexion</td>
+            <td class="border border-gray-300 px-4 py-2">19/10/2025 10:45</td>
+            <td class="border border-gray-300 px-4 py-2">
+              <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-sm">Succès</span>
+            </td>
+          </tr>
+          <tr class="bg-white">
+            <td class="border border-gray-300 px-4 py-2">Modification du mot de passe</td>
+            <td class="border border-gray-300 px-4 py-2">18/10/2025 16:30</td>
+            <td class="border border-gray-300 px-4 py-2">
+              <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-sm">Succès</span>
+            </td>
+          </tr>
+          <!-- Répéter pour chaque activité -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
