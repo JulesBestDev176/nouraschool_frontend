@@ -20,7 +20,7 @@ export class LoginComponent {
   constructor(
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) { }
 
   fillForm(user: any, emailInput: HTMLInputElement, passwordInput: HTMLInputElement) {
     emailInput.value = user.email;
@@ -30,7 +30,7 @@ export class LoginComponent {
 
   onSubmit(email: string, password: string) {
     const user = this.exampleUsers.find(u => u.email === email && u.password === password);
-    
+
     if (user) {
       this.authService.login(user);
       // Redirection selon le rôle

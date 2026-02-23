@@ -22,38 +22,38 @@ import { LayoutComponent } from './components/layout/layout.component';
 const routes: Routes = [
 
 
-   // Pages publiques
-  {path: '', component: HomeComponent},
-  {path: 'login', component: LoginComponent},
+  // Pages publiques
+  { path: '', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
 
   // Routes protégées - Dashboards
-    {path: 'dashboard/admin', component: DashboardAdminComponent},
-    {path: 'dashboard/enseignant', component: DashboardEnseignantComponent},
-    {path: 'dashboard/eleve', component: DashboardEleveComponent},
-    {path: 'dashboard/parent', component: DashboardParentComponent},
+  { path: 'dashboard/admin', component: DashboardAdminComponent },
+  { path: 'dashboard/enseignant', component: DashboardEnseignantComponent },
+  { path: 'dashboard/eleve', component: DashboardEleveComponent },
+  { path: 'dashboard/parent', component: DashboardParentComponent },
 
 
   // Routes administrateur
-    {path: 'admin/eleves', component: EleveComponent},
-    {path: 'admin/personnel', component: PersonnelComponent},
-    {path: 'admin/classes', component: ClasseComponent},
-    {path: 'admin/parents', component: ParentComponent},
-    {path: 'admin/matieres', component: MatiereComponent},
-    {path: 'admin/caisse', component: CaisseComponent},
-    
+  { path: 'admin/eleves', component: EleveComponent },
+  { path: 'admin/personnel', component: PersonnelComponent },
+  { path: 'admin/classes', component: ClasseComponent },
+  { path: 'admin/parents', component: ParentComponent },
+  { path: 'admin/matieres', component: MatiereComponent },
+  { path: 'admin/caisse', component: CaisseComponent },
+
 
 
   // Routes enseignant
   // Routes communes (selon les rôles)
-    {path: 'admin/bulletins', component: BulletinComponent},
-    {path: 'admin/profil', component: ProfilComponent},
-    {path: 'notes', component: NoteComponent},
-    {path: 'paiements', component: PaiementComponent},
-    {path: 'layout', component: LayoutComponent},
+  { path: 'admin/bulletins', component: BulletinComponent },
+  { path: 'admin/profil', component: ProfilComponent },
+  { path: 'notes', component: NoteComponent },
+  { path: 'paiements', component: PaiementComponent },
+  { path: 'layout', component: LayoutComponent },
 
 
-//Routes eleves
-  {path: 'reclamations', component: ReclamationComponent},
+  //Routes eleves
+  { path: 'reclamations', component: ReclamationComponent },
 
 
   // Redirections par défaut selon le rôle
@@ -63,7 +63,7 @@ const routes: Routes = [
   //   redirectTo: '' 
   // }
 
- 
+
 ];
 
 @NgModule({

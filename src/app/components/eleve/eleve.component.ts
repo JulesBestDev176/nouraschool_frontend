@@ -16,13 +16,13 @@ export class EleveComponent implements OnInit {
   isModalOpen = false;
   isEditing = false;
   currentEleveId: string | null = null;
-  
+
   allClasses: Classe[] = [];
   filteredClasses: Classe[] = [];
   parents: Parent[] = [];
   eleves: Eleve[] = [];
   filteredEleves: Eleve[] = [];
-  
+
   // Filters
   searchQuery = '';
   filterCycle = '';
@@ -42,7 +42,7 @@ export class EleveComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private mockDataService: MockDataService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initForm();
@@ -53,22 +53,22 @@ export class EleveComponent implements OnInit {
     this.allClasses = this.mockDataService.getClasses();
     this.parents = this.mockDataService.getParents();
     this.eleves = this.mockDataService.getEleves();
-    this.filteredClasses = [...this.allClasses]; 
+    this.filteredClasses = [...this.allClasses];
     this.applyFilters();
   }
 
   applyFilters() {
     this.filteredEleves = this.eleves.filter(e => {
-       const matchesSearch = !this.searchQuery || 
-          (e.nom.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
-           e.prenom.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-           e.email.toLowerCase().includes(this.searchQuery.toLowerCase()));
-           
-       const matchesCycle = !this.filterCycle || e.cycle === this.filterCycle;
-       const matchesClasse = !this.filterClasseId || e.classeId === this.filterClasseId;
-       const matchesStatut = !this.filterStatut || e.statut === this.filterStatut;
-       
-       return matchesSearch && matchesCycle && matchesClasse && matchesStatut;
+      const matchesSearch = !this.searchQuery ||
+        (e.nom.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          e.prenom.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          e.email.toLowerCase().includes(this.searchQuery.toLowerCase()));
+
+      const matchesCycle = !this.filterCycle || e.cycle === this.filterCycle;
+      const matchesClasse = !this.filterClasseId || e.classeId === this.filterClasseId;
+      const matchesStatut = !this.filterStatut || e.statut === this.filterStatut;
+
+      return matchesSearch && matchesCycle && matchesClasse && matchesStatut;
     });
   }
 
@@ -120,9 +120,9 @@ export class EleveComponent implements OnInit {
         const parentId = eleve.parentIds[0];
         const parent = this.parents.find(p => p.id === parentId);
         if (parent) {
-             this.selectedTuteur = parent;
-             this.tuteurSearch = `${parent.prenom} ${parent.nom}`;
-             this.eleveForm.patchValue({ parent: this.tuteurSearch });
+          this.selectedTuteur = parent;
+          this.tuteurSearch = `${parent.prenom} ${parent.nom}`;
+          this.eleveForm.patchValue({ parent: this.tuteurSearch });
         }
       }
     }
@@ -145,14 +145,14 @@ export class EleveComponent implements OnInit {
 
     const formValue = this.eleveForm.value;
     const parentIds = this.selectedTuteur ? [this.selectedTuteur.id] : [];
-    
+
     // Map form to Eleve model
     const eleveData: any = {
       ...formValue,
       parentIds: parentIds,
       statut: formValue.statut || 'actif'
     };
-    
+
     // Remove the 'parent' string field which is UI-only
     delete eleveData.parent;
 
@@ -186,12 +186,12 @@ export class EleveComponent implements OnInit {
     this.selectedClasse = null;
     this.eleveForm.get('classeId')?.setValue('');
     this.classeSearch = '';
-    
+
     if (!cycle) {
       this.filteredClasses = [...this.allClasses];
       return;
     }
-    
+
     // Filtrage par cycle
     this.filteredClasses = this.allClasses.filter(c => {
       const niv = c.niveau.toLowerCase();
@@ -238,8 +238,8 @@ export class EleveComponent implements OnInit {
     let list = this.parents;
     if (this.tuteurSearch) {
       const search = this.tuteurSearch.toLowerCase();
-      list = list.filter(p => 
-        p.nom.toLowerCase().includes(search) || 
+      list = list.filter(p =>
+        p.nom.toLowerCase().includes(search) ||
         p.prenom.toLowerCase().includes(search) ||
         p.email?.toLowerCase().includes(search)
       );
@@ -284,8 +284,8 @@ export class EleveComponent implements OnInit {
   getParentNames(ids: string[]): string {
     if (!ids || ids.length === 0) return 'Aucun parent';
     return ids.map(id => {
-       const p = this.parents.find(parent => parent.id === id);
-       return p ? `${p.prenom} ${p.nom}` : '';
+      const p = this.parents.find(parent => parent.id === id);
+      return p ? `${p.prenom} ${p.nom}` : '';
     }).filter(n => n).join(', ');
   }
 }

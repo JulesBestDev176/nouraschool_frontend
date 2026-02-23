@@ -1,9 +1,7 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
+import { filter } from 'rxjs';
 import { User } from '../../models/user';
-import { AuthService } from '../../services/auth.service';
-import { createIcons, icons } from 'lucide';
 
 interface MenuItem {
   label: string;
@@ -19,41 +17,21 @@ interface MenuItem {
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss'
 })
-export class LayoutComponent implements OnInit, OnDestroy {
+export class LayoutComponent implements OnInit {
 
   @Input() user: User | null = null;
   @Output() logout = new EventEmitter<void>();
 
   currentRoute = '';
   openSubmenus = new Set<string>();
-  
-  menuItems: MenuItem[] = [];
-  private authSubscription: Subscription | null = null;
 
-  constructor(
-    private router: Router,
-    private authService: AuthService
-  ) {}
+  menuItems: MenuItem[] = [];
+
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
-    // Si l'utilisateur n'est pas fourni en entrée, on le récupère du service
-    if (!this.user) {
-      this.authSubscription = this.authService.currentUser$.subscribe(user => {
-        this.user = user;
-        if (user) {
-          this.setupMenuItems();
-        }
-      });
-    } else {
-      this.setupMenuItems();
-    }
+    this.setupMenuItems();
     this.trackCurrentRoute();
-  }
-
-  ngOnDestroy(): void {
-    if (this.authSubscription) {
-      this.authSubscription.unsubscribe();
-    }
   }
 
   private setupMenuItems(): void {
@@ -62,59 +40,59 @@ export class LayoutComponent implements OnInit, OnDestroy {
     const allMenuItems: MenuItem[] = [
       {
         label: 'Tableau de Bord',
-        icon: 'layout-dashboard',
+        icon: 'M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z',
         route: this.getDashboardRoute(),
-        roles: ['administrateur', 'enseignant', 'parent', 'eleve', 'comptable', 'surveillant', 'assistant']
+        roles: ['administrateur', 'enseignant', 'parent', 'eleve']
       },
-      
+
       // Menu Administrateur
       {
-        label: 'Élèves',
-        icon: 'users',
+        label: 'Gestion des Élèves',
+        icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-6.5a6 6 0 11-12 0 6 6 0 0112 0z',
         route: '/admin/eleves',
-        roles: ['administrateur', 'surveillant', 'assistant', 'comptable']
+        roles: ['administrateur']
       },
       {
-        label: 'Personnels',
-        icon: 'user-check',
-        route: '/admin/personnel',
-        roles: ['administrateur', 'surveillant']
+        label: 'Gestion des Enseignants',
+        icon: 'M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z',
+        route: '/admin/enseignants',
+        roles: ['administrateur']
       },
       {
-        label: 'Classes',
-        icon: 'layers',
+        label: 'Gestion des Classes',
+        icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h4a1 1 0 011 1v5m-6 0V9a1 1 0 011-1h4a1 1 0 011 1v11',
         route: '/admin/classes',
-        roles: ['administrateur', 'surveillant', 'assistant']
+        roles: ['administrateur']
       },
       {
-        label: 'Matières',
-        icon: 'book',
+        label: 'Gestion des Matières',
+        icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
         route: '/admin/matieres',
         roles: ['administrateur']
       },
       {
-        label: 'Parents',
-        icon: 'heart',
+        label: 'Gestion des Parents',
+        icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
         route: '/admin/parents',
-        roles: ['administrateur', 'surveillant', 'comptable']
+        roles: ['administrateur']
       },
       {
         label: 'Gestion de la Caisse',
-        icon: 'wallet',
+        icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z',
         route: '/admin/caisse',
-        roles: ['comptable']
+        roles: ['administrateur']
       },
 
       // Menu Enseignant
       {
         label: 'Mes Classes',
-        icon: 'layers',
+        icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h4a1 1 0 011 1v5m-6 0V9a1 1 0 011-1h4a1 1 0 011 1v11',
         route: '/enseignant/mes-classes',
         roles: ['enseignant']
       },
       {
         label: 'Saisir des Notes',
-        icon: 'file-text',
+        icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z',
         route: '/enseignant/saisir-notes',
         roles: ['enseignant']
       },
@@ -122,37 +100,29 @@ export class LayoutComponent implements OnInit, OnDestroy {
       // Menu commun
       {
         label: 'Bulletins de Notes',
-        icon: 'file-text',
+        icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
         route: '/bulletins',
-        roles: ['enseignant', 'parent', 'eleve']
+        roles: ['administrateur', 'enseignant', 'parent', 'eleve']
       },
       {
         label: 'Consultation des Notes',
-        icon: 'clipboard-list',
+        icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
         route: '/notes',
-        roles: ['enseignant', 'parent', 'eleve']
+        roles: ['administrateur', 'enseignant', 'parent', 'eleve']
       },
       {
         label: 'Paiements',
-        icon: 'credit-card',
+        icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z',
         route: '/paiements',
-        roles: ['parent'],
+        roles: ['administrateur', 'parent'],
         badge: this.user?.type === 'parent' ? 2 : undefined
-      },
-      {
-        label: 'Profil',
-        icon: 'user',
-        route: '/admin/profil',
-        roles: ['administrateur', 'enseignant', 'parent', 'eleve', 'comptable', 'surveillant', 'assistant']
       }
     ];
 
     // Filtrer selon le rôle de l'utilisateur
-    this.menuItems = allMenuItems.filter(item => 
+    this.menuItems = allMenuItems.filter(item =>
       item.roles.includes(this.user!.type)
     );
-
-    setTimeout(() => createIcons({ icons }), 0);
   }
 
   private trackCurrentRoute(): void {
@@ -167,10 +137,6 @@ export class LayoutComponent implements OnInit, OnDestroy {
     switch (this.user?.type) {
       case 'administrateur': return '/dashboard/admin';
       case 'enseignant': return '/dashboard/enseignant';
-      case 'comptable':
-      case 'surveillant':
-      case 'assistant':
-        return '/dashboard/admin'; // On utilise le même pour la simulation
       case 'parent':
       case 'eleve': return '/dashboard/parent-eleve';
       default: return '/dashboard/admin';
@@ -204,9 +170,6 @@ export class LayoutComponent implements OnInit, OnDestroy {
   getUserTypeLabel(): string {
     switch (this.user?.type) {
       case 'administrateur': return 'Administrateur';
-      case 'comptable': return 'Comptable';
-      case 'surveillant': return 'Surveillant';
-      case 'assistant': return 'Assistant Surveillant';
       case 'enseignant': return 'Enseignant';
       case 'parent': return 'Parent';
       case 'eleve': return 'Élève';
@@ -216,13 +179,13 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   getCurrentPageTitle(): string {
     const route = this.currentRoute;
-    
+
     if (route.includes('dashboard')) {
       return 'Tableau de Bord';
     } else if (route.includes('eleves')) {
       return 'Gestion des Élèves';
-    } else if (route.includes('personnel')) {
-      return 'Gestion du Personnel';
+    } else if (route.includes('enseignants')) {
+      return 'Gestion des Enseignants';
     } else if (route.includes('classes')) {
       return 'Gestion des Classes';
     } else if (route.includes('matieres')) {
@@ -244,7 +207,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     } else if (route.includes('profil')) {
       return 'Mon Profil';
     }
-    
+
     return 'École NOURA';
   }
 
@@ -261,8 +224,6 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   onLogout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
     this.logout.emit();
   }
 

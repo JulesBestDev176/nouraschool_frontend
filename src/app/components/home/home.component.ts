@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent {
 
-    ecoleInfo: EcoleInfo;
+  ecoleInfo: EcoleInfo;
   developpeurInfo: DeveloppeurInfo;
 
   constructor(

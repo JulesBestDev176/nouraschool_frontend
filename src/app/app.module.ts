@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -24,6 +25,10 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MatIconModule } from '@angular/material/icon';
 import { LoginComponent } from './components/login/login.component';
 import { MatiereComponent } from './components/matiere/matiere.component';
+import { SurveillantComponent } from './components/surveillant/surveillant.component';
+import { AssistantComponent } from './components/assistant/assistant.component';
+import { DashboardAssistantComponent } from './components/dashboard-assistant/dashboard-assistant.component';
+import { DashboardSurveillantComponent } from './components/dashboard-surveillant/dashboard-surveillant.component';
 
 @NgModule({
   declarations: [
@@ -45,14 +50,18 @@ import { MatiereComponent } from './components/matiere/matiere.component';
     LayoutComponent,
     ReclamationComponent,
     LoginComponent,
-    MatiereComponent
+    MatiereComponent,
+    SurveillantComponent,
+    AssistantComponent,
+    DashboardAssistantComponent,
+    DashboardSurveillantComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    MatIconModule,
+    CommonModule
   ],
   providers: [
     provideAnimationsAsync()
