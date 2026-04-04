@@ -1,1 +1,459 @@
-<p>admin works!</p>
+<app-layout></app-layout>
+
+<div class="space-y-6 ml-80 mt-6 mr-6">
+  <!-- En-tête -->
+  <div class="bg-white shadow-sm rounded-lg p-6">
+    <h2 class="text-xl font-semibold text-gray-900">Paramètres</h2>
+    <p class="text-sm text-gray-600 mt-1">Configuration générale de l'établissement</p>
+  </div>
+
+  <!-- Alertes -->
+  <p *ngIf="successMessage" class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">{{ successMessage }}</p>
+  <p *ngIf="errorMessage" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{{ errorMessage }}</p>
+
+  <!-- Onglets -->
+  <div class="bg-white shadow-sm rounded-lg p-2">
+    <div class="flex flex-wrap gap-2">
+      <button type="button" (click)="setTab('annee-academique')"
+        [class]="activeTab === 'annee-academique' ? 'px-4 py-2 rounded-md bg-green-600 text-white text-sm font-medium' : 'px-4 py-2 rounded-md bg-gray-100 text-gray-700 text-sm hover:bg-gray-200'">
+        Années académiques
+      </button>
+      <button type="button" (click)="setTab('cycles')"
+        [class]="activeTab === 'cycles' ? 'px-4 py-2 rounded-md bg-green-600 text-white text-sm font-medium' : 'px-4 py-2 rounded-md bg-gray-100 text-gray-700 text-sm hover:bg-gray-200'">
+        Cycles
+      </button>
+      <button type="button" (click)="setTab('niveaux')"
+        [class]="activeTab === 'niveaux' ? 'px-4 py-2 rounded-md bg-green-600 text-white text-sm font-medium' : 'px-4 py-2 rounded-md bg-gray-100 text-gray-700 text-sm hover:bg-gray-200'">
+        Niveaux
+      </button>
+      <button type="button" (click)="setTab('matieres')"
+        [class]="activeTab === 'matieres' ? 'px-4 py-2 rounded-md bg-green-600 text-white text-sm font-medium' : 'px-4 py-2 rounded-md bg-gray-100 text-gray-700 text-sm hover:bg-gray-200'">
+        Matières
+      </button>
+      <button type="button" (click)="setTab('batiments')"
+        [class]="activeTab === 'batiments' ? 'px-4 py-2 rounded-md bg-green-600 text-white text-sm font-medium' : 'px-4 py-2 rounded-md bg-gray-100 text-gray-700 text-sm hover:bg-gray-200'">
+        Bâtiments
+      </button>
+      <button type="button" (click)="setTab('salles')"
+        [class]="activeTab === 'salles' ? 'px-4 py-2 rounded-md bg-green-600 text-white text-sm font-medium' : 'px-4 py-2 rounded-md bg-gray-100 text-gray-700 text-sm hover:bg-gray-200'">
+        Salles
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ ANNÉES ACADÉMIQUES ═══════════════ -->
+  <ng-container *ngIf="activeTab === 'annee-academique'">
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <h3 class="text-lg text-gray-900 mb-4">Créer une année académique</h3>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Libellé</label>
+          <input type="text" [(ngModel)]="newAnnee.libelle" placeholder="2026-2027"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Date début</label>
+          <input type="date" [(ngModel)]="newAnnee.dateDebut"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Date fin</label>
+          <input type="date" [(ngModel)]="newAnnee.dateFin"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+        </div>
+        <div class="flex items-end">
+          <button type="button" (click)="createAnnee()"
+            class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition">Créer</button>
+        </div>
+      </div>
+      <div class="mt-3">
+        <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+          <input type="checkbox" [(ngModel)]="newAnnee.setAsCurrent" />
+          Définir comme année courante
+        </label>
+      </div>
+    </div>
+
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <h3 class="text-lg text-gray-900 mb-4">Années académiques</h3>
+      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+      <div class="overflow-x-auto" *ngIf="!loading">
+        <table class="min-w-full border border-gray-200 rounded-md">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Libellé</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Période</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Courante</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let annee of annees" class="border-t">
+              <td class="px-4 py-2 text-sm text-gray-900">{{ annee.libelle }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ annee.dateDebut }} - {{ annee.dateFin }}</td>
+              <td class="px-4 py-2 text-sm">
+                <span [class]="annee.estCourante ? 'text-green-700 font-medium' : 'text-gray-500'">
+                  {{ annee.estCourante ? 'Oui' : 'Non' }}
+                </span>
+              </td>
+              <td class="px-4 py-2 text-sm">
+                <button *ngIf="!annee.estCourante" type="button" (click)="activerAnnee(annee.id)"
+                  class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Activer</button>
+                <span *ngIf="annee.estCourante" class="text-green-700">Active</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div *ngIf="!annees.length" class="text-sm text-gray-500 mt-4">Aucune année académique.</div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ═══════════════ CYCLES ═══════════════ -->
+  <ng-container *ngIf="activeTab === 'cycles'">
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg text-gray-900">Cycles d'enseignement</h3>
+        <button (click)="openCycleModal()"
+          class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-sm">
+          + Nouveau cycle
+        </button>
+      </div>
+      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+      <div class="overflow-x-auto" *ngIf="!loading">
+        <table class="min-w-full border border-gray-200 rounded-md">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Nom</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Description</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of cycles" class="border-t hover:bg-gray-50">
+              <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ c.nom }}</td>
+              <td class="px-4 py-2 text-sm text-gray-600">{{ c.description || '-' }}</td>
+              <td class="px-4 py-2 text-sm">
+                <div class="flex gap-2">
+                  <button (click)="openCycleModal(c)" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
+                  <button (click)="deleteCycle(c.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!cycles.length"><td colspan="3" class="px-4 py-6 text-center text-gray-500">Aucun cycle.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ═══════════════ NIVEAUX ═══════════════ -->
+  <ng-container *ngIf="activeTab === 'niveaux'">
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg text-gray-900">Niveaux scolaires</h3>
+        <button (click)="openNiveauModal()"
+          class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-sm">
+          + Nouveau niveau
+        </button>
+      </div>
+      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+      <div class="overflow-x-auto" *ngIf="!loading">
+        <table class="min-w-full border border-gray-200 rounded-md">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Nom</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Cycle</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Ordre</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let n of niveaux" class="border-t hover:bg-gray-50">
+              <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ n.nom }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ getCycleNom(n.cycleId) }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ n.ordre || '-' }}</td>
+              <td class="px-4 py-2 text-sm">
+                <div class="flex gap-2">
+                  <button (click)="openNiveauModal(n)" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
+                  <button (click)="deleteNiveau(n.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!niveaux.length"><td colspan="4" class="px-4 py-6 text-center text-gray-500">Aucun niveau.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ═══════════════ MATIÈRES ═══════════════ -->
+  <ng-container *ngIf="activeTab === 'matieres'">
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg text-gray-900">Matières enseignées</h3>
+        <button (click)="openMatiereModal()"
+          class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-sm">
+          + Nouvelle matière
+        </button>
+      </div>
+      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+      <div class="overflow-x-auto" *ngIf="!loading">
+        <table class="min-w-full border border-gray-200 rounded-md">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Nom</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Code</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Description</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of matieres" class="border-t hover:bg-gray-50">
+              <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ m.nom }}</td>
+              <td class="px-4 py-2 text-sm font-mono text-gray-700">{{ m.code }}</td>
+              <td class="px-4 py-2 text-sm text-gray-600">{{ m.description || '-' }}</td>
+              <td class="px-4 py-2 text-sm">
+                <div class="flex gap-2">
+                  <button (click)="openMatiereModal(m)" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
+                  <button (click)="deleteMatiere(m.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!matieres.length"><td colspan="4" class="px-4 py-6 text-center text-gray-500">Aucune matière.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ═══════════════ BÂTIMENTS ═══════════════ -->
+  <ng-container *ngIf="activeTab === 'batiments'">
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg text-gray-900">Bâtiments</h3>
+        <button (click)="openBatimentModal()"
+          class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-sm">
+          + Nouveau bâtiment
+        </button>
+      </div>
+      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+      <div class="overflow-x-auto" *ngIf="!loading">
+        <table class="min-w-full border border-gray-200 rounded-md">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Nom</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Adresse</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Description</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of batiments" class="border-t hover:bg-gray-50">
+              <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ b.nom }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ b.adresse || '-' }}</td>
+              <td class="px-4 py-2 text-sm text-gray-600">{{ b.description || '-' }}</td>
+              <td class="px-4 py-2 text-sm">
+                <div class="flex gap-2">
+                  <button (click)="openBatimentModal(b)" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
+                  <button (click)="deleteBatiment(b.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!batiments.length"><td colspan="4" class="px-4 py-6 text-center text-gray-500">Aucun bâtiment.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ═══════════════ SALLES ═══════════════ -->
+  <ng-container *ngIf="activeTab === 'salles'">
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg text-gray-900">Salles</h3>
+        <button (click)="openSalleModal()"
+          class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-sm">
+          + Nouvelle salle
+        </button>
+      </div>
+      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+      <div class="overflow-x-auto" *ngIf="!loading">
+        <table class="min-w-full border border-gray-200 rounded-md">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Nom</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Bâtiment</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Type</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Capacité</th>
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of salles" class="border-t hover:bg-gray-50">
+              <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ s.nom }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ getBatimentNom(s.batimentId) }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ s.type || '-' }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ s.capacite || '-' }}</td>
+              <td class="px-4 py-2 text-sm">
+                <div class="flex gap-2">
+                  <button (click)="openSalleModal(s)" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
+                  <button (click)="deleteSalle(s.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!salles.length"><td colspan="5" class="px-4 py-6 text-center text-gray-500">Aucune salle.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<!-- ═══════════ MODALS ═══════════ -->
+
+<!-- Modal Cycle -->
+<div *ngIf="showCycleModal" (click)="showCycleModal=false" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingCycleId ? 'Modifier le cycle' : 'Créer un cycle' }}</h3>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+        <input type="text" [(ngModel)]="cycleForm.nom" placeholder="Ex: Primaire"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+        <textarea [(ngModel)]="cycleForm.description" rows="2"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button (click)="showCycleModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
+      <button (click)="saveCycle()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ editingCycleId ? 'Modifier' : 'Créer' }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Niveau -->
+<div *ngIf="showNiveauModal" (click)="showNiveauModal=false" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingNiveauId ? 'Modifier le niveau' : 'Créer un niveau' }}</h3>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+        <input type="text" [(ngModel)]="niveauForm.nom" placeholder="Ex: 6ème"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Cycle *</label>
+        <select [(ngModel)]="niveauForm.cycleId" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Sélectionner un cycle...</option>
+          <option *ngFor="let c of cycles" [value]="c.id">{{ c.nom }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Ordre</label>
+        <input type="number" [(ngModel)]="niveauForm.ordre" placeholder="1"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button (click)="showNiveauModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
+      <button (click)="saveNiveau()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ editingNiveauId ? 'Modifier' : 'Créer' }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Matière -->
+<div *ngIf="showMatiereModal" (click)="showMatiereModal=false" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingMatiereId ? 'Modifier la matière' : 'Créer une matière' }}</h3>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+        <input type="text" [(ngModel)]="matiereForm.nom" placeholder="Ex: Mathématiques"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Code *</label>
+        <input type="text" [(ngModel)]="matiereForm.code" placeholder="Ex: MATH"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+        <textarea [(ngModel)]="matiereForm.description" rows="2"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button (click)="showMatiereModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
+      <button (click)="saveMatiere()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ editingMatiereId ? 'Modifier' : 'Créer' }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Bâtiment -->
+<div *ngIf="showBatimentModal" (click)="showBatimentModal=false" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingBatimentId ? 'Modifier le bâtiment' : 'Créer un bâtiment' }}</h3>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+        <input type="text" [(ngModel)]="batimentForm.nom" placeholder="Ex: Bâtiment A"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
+        <input type="text" [(ngModel)]="batimentForm.adresse"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+        <textarea [(ngModel)]="batimentForm.description" rows="2"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button (click)="showBatimentModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
+      <button (click)="saveBatiment()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ editingBatimentId ? 'Modifier' : 'Créer' }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Salle -->
+<div *ngIf="showSalleModal" (click)="showSalleModal=false" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingSalleId ? 'Modifier la salle' : 'Créer une salle' }}</h3>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+        <input type="text" [(ngModel)]="salleForm.nom" placeholder="Ex: Salle 101"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Bâtiment *</label>
+        <select [(ngModel)]="salleForm.batimentId" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Sélectionner un bâtiment...</option>
+          <option *ngFor="let b of batiments" [value]="b.id">{{ b.nom }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+        <select [(ngModel)]="salleForm.type" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Sélectionner...</option>
+          <option *ngFor="let t of salleTypes" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Capacité</label>
+        <input type="number" [(ngModel)]="salleForm.capacite" placeholder="30"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button (click)="showSalleModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
+      <button (click)="saveSalle()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ editingSalleId ? 'Modifier' : 'Créer' }}</button>
+    </div>
+  </div>
+</div>

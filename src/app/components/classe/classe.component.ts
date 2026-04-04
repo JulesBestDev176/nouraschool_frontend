@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ClasseService } from '../../services/classe.service';
+import { Classe } from '../../models/classe';
+import { AnneeAcademiqueService } from '../../services/annee-academique.service';
 
 @Component({
   selector: 'app-classe',
@@ -7,20 +10,36 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ClasseComponent implements OnInit {
 
-  currentYear = '2025-2026';
+  currentYear = 'N/A';
   showInactive = false;
   searchQuery = '';
   selectedNiveau = '';
 
-  classes = [
-    { id: 1, nom: '2nd A', niveau: 'Lycée', annee: '2025-2026', effectif: '15/30', responsable: 'Jean Martin', status: 'Active' },
-    { id: 2, nom: 'CM1 B', niveau: 'Primaire', annee: '2025-2026', effectif: '22/25', responsable: 'Aminata Sow', status: 'Active' },
-    { id: 3, nom: '2nd A', niveau: 'Lycée', annee: '2024-2025', effectif: '28/30', responsable: 'Moussa Diallo', status: 'Inactive' },
-    { id: 4, nom: '3ème C', niveau: 'Collège', annee: '2025-2026', effectif: '18/20', responsable: 'Sidi Ali', status: 'Active' },
-    { id: 5, nom: 'CM2 A', niveau: 'Primaire', annee: '2023-2024', effectif: '25/25', responsable: 'Fatma Ba', status: 'Inactive' },
-  ];
+  classes: Array<Classe & { annee: string; effectif: string; responsable: string; status: 'Active' | 'Inactive' }> = [];
 
-  ngOnInit() {}
+  constructor(
+    private readonly classeService: ClasseService,
+    private readonly anneeService: AnneeAcademiqueService
+  ) {}
+
+  ngOnInit() {
+    this.anneeService.getCourante().subscribe((annee) => {
+      this.currentYear = String(annee['libelle'] ?? annee['annee'] ?? 'N/A');
+    });
+    this.classeService.listClasses().subscribe((response) => {
+      this.classes = (response.content ?? []).map((classe) => {
+        const current = classe.elevesIds?.length ?? 0;
+        const max = classe.nombreMaxEleves ?? 0;
+        return {
+          ...classe,
+          annee: this.currentYear,
+          effectif: `${current}/${max}`,
+          responsable: classe.enseignantPrincipalId ?? 'N/A',
+          status: 'Active'
+        };
+      });
+    });
+  }
 
   get filteredClasses() {
     return this.classes.filter(c => {

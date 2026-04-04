@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MockDataService } from '../../services/mock-data.service';
 import { Parent } from '../../models/parent';
+import { ParentService } from '../../services/parent.service';
 
 @Component({
   selector: 'app-parent',
@@ -19,7 +19,7 @@ export class ParentComponent implements OnInit {
   currentParentId: string | null = null;
 
   constructor(
-    private mockDataService: MockDataService,
+    private parentService: ParentService,
     private fb: FormBuilder
   ) {}
 
@@ -29,8 +29,10 @@ export class ParentComponent implements OnInit {
   }
 
   loadParents() {
-    this.parents = this.mockDataService.getParents();
-    this.filterParents();
+    this.parentService.listParents().subscribe((response) => {
+      this.parents = response.content ?? [];
+      this.filterParents();
+    });
   }
 
   initForm() {
@@ -78,22 +80,19 @@ export class ParentComponent implements OnInit {
     const formData = this.parentForm.value;
     
     if (this.isEditing && this.currentParentId) {
-      // Update logic (Mock)
-      const index = this.parents.findIndex(p => p.id === this.currentParentId);
-      if (index !== -1) {
-        this.parents[index] = { ...this.parents[index], ...formData };
-      }
+      this.parentService.updateParent(this.currentParentId, formData).subscribe((updated) => {
+        const index = this.parents.findIndex(p => p.id === this.currentParentId);
+        if (index !== -1) {
+          this.parents[index] = updated;
+        }
+        this.filterParents();
+      });
     } else {
-      // Add logic (Mock)
-      const newParent: Parent = {
-        id: Math.random().toString(36).substr(2, 9),
-        ...formData,
-        enfantIds: []
-      };
-      this.parents.push(newParent);
+      this.parentService.createParent(formData).subscribe((created) => {
+        this.parents.push(created);
+        this.filterParents();
+      });
     }
-    
-    this.filterParents();
     this.closeModal();
   }
 

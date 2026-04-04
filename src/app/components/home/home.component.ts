@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { EcoleInfo } from '../../models/ecole-info';
-import { DeveloppeurInfo } from '../../models/developpeur-info';
-import { MockDataService } from '../../services/mock-data.service';
 import { Router } from '@angular/router';
+import { AnneeAcademiqueService } from '../../services/annee-academique.service';
 
 @Component({
   selector: 'app-home',
@@ -11,15 +9,19 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent {
 
-  ecoleInfo: EcoleInfo;
-  developpeurInfo: DeveloppeurInfo;
+  ecoleInfo: any = {};
+  developpeurInfo: any = {
+    nom: 'Noura School Team',
+    fonction: 'Plateforme de gestion scolaire'
+  };
 
   constructor(
     private router: Router,
-    private mockDataService: MockDataService
+    private anneeService: AnneeAcademiqueService
   ) {
-    this.ecoleInfo = this.mockDataService.getEcoleInfo();
-    this.developpeurInfo = this.mockDataService.getDeveloppeurInfo();
+    this.anneeService.getCourante().subscribe((annee) => {
+      this.ecoleInfo = annee;
+    });
   }
 
   goToLogin(): void {

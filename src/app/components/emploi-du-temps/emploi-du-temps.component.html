@@ -1,0 +1,12 @@
+<app-layout></app-layout>
+<div class="space-y-6 ml-80 mt-6 mr-6">
+  <h1 class="text-2xl font-bold text-gray-900">Emplois du temps</h1>
+  <div class="bg-white rounded-lg shadow-sm p-4">
+    <ul class="space-y-2">
+      <li *ngFor="let emploi of emplois" class="border-b pb-2">
+        {{ emploi['libelle'] || emploi['id'] }}
+      </li>
+      <li *ngIf="!emplois.length" class="text-gray-500">Aucun emploi du temps disponible.</li>
+    </ul>
+  </div>
+</div>

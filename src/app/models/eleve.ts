@@ -16,4 +16,6 @@ export interface Eleve {
   statut: 'actif' | 'inactif';
   moyenneAnnuelle?: number;
   notes?: Note[];
+  generatedUsername?: string;
+  generatedPassword?: string;
 }

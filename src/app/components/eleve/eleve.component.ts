@@ -1,10 +1,12 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { MockDataService } from '../../services/mock-data.service';
 import { Classe } from '../../models/classe';
 import { Parent } from '../../models/parent';
 import { Eleve } from '../../models/eleve';
+import { ClasseService } from '../../services/classe.service';
+import { ParentService } from '../../services/parent.service';
+import { EleveService } from '../../services/eleve.service';
 
 @Component({
   selector: 'app-eleve',
@@ -37,11 +39,14 @@ export class EleveComponent implements OnInit {
   showTuteurDropdown = false;
   tuteurSearch = '';
   selectedTuteur: Parent | null = null;
+  createdCredentials: { username: string; password: string; email: string } | null = null;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private mockDataService: MockDataService
+    private classeService: ClasseService,
+    private parentService: ParentService,
+    private eleveService: EleveService
   ) { }
 
   ngOnInit() {
@@ -50,11 +55,17 @@ export class EleveComponent implements OnInit {
   }
 
   loadData() {
-    this.allClasses = this.mockDataService.getClasses();
-    this.parents = this.mockDataService.getParents();
-    this.eleves = this.mockDataService.getEleves();
-    this.filteredClasses = [...this.allClasses];
-    this.applyFilters();
+    this.classeService.listClasses().subscribe((response) => {
+      this.allClasses = response.content ?? [];
+      this.filteredClasses = [...this.allClasses];
+    });
+    this.parentService.listParents().subscribe((response) => {
+      this.parents = response.content ?? [];
+    });
+    this.eleveService.listEleves().subscribe((response) => {
+      this.eleves = response.content ?? [];
+      this.applyFilters();
+    });
   }
 
   applyFilters() {
@@ -81,8 +92,8 @@ export class EleveComponent implements OnInit {
       dateNaissance: ['', Validators.required],
       lieuNaissance: [''],
       sexe: ['', Validators.required],
-      cycle: ['', Validators.required],
-      classeId: ['', Validators.required],
+      cycle: [''],
+      classeId: [''],
       parent: ['', Validators.required],
       adresse: [''],
       statut: ['actif']
@@ -140,6 +151,10 @@ export class EleveComponent implements OnInit {
     this.tuteurSearch = '';
   }
 
+  closeCredentialsBanner() {
+    this.createdCredentials = null;
+  }
+
   onSubmit() {
     if (this.eleveForm.invalid) return;
 
@@ -156,29 +171,40 @@ export class EleveComponent implements OnInit {
     // Remove the 'parent' string field which is UI-only
     delete eleveData.parent;
 
-    if (this.isEditing && this.currentEleveId) {
-      // Update
-      const index = this.eleves.findIndex(e => e.id === this.currentEleveId);
-      if (index !== -1) {
-        this.eleves[index] = { ...this.eleves[index], ...eleveData };
-      }
-    } else {
-      // Create
-      const newEleve: Eleve = {
-        id: Math.random().toString(36).substr(2, 9),
-        ...eleveData,
-        moyenneAnnuelle: 0 // Default
-      };
-      this.eleves.push(newEleve);
+    if (!this.isEditing) {
+      // Cycle/classe are assigned during inscription workflow, not student creation.
+      delete eleveData.cycle;
+      delete eleveData.classeId;
     }
 
-    this.applyFilters();
+    if (this.isEditing && this.currentEleveId) {
+      this.eleveService.updateEleve(this.currentEleveId, eleveData).subscribe((updated) => {
+        const index = this.eleves.findIndex(e => e.id === this.currentEleveId);
+        if (index !== -1) {
+          this.eleves[index] = updated;
+        }
+        this.applyFilters();
+      });
+    } else {
+      this.eleveService.createEleve(eleveData).subscribe((newEleve) => {
+        this.eleves.push(newEleve);
+        this.applyFilters();
+        if (newEleve.generatedUsername && newEleve.generatedPassword) {
+          this.createdCredentials = {
+            username: newEleve.generatedUsername,
+            password: newEleve.generatedPassword,
+            email: newEleve.email
+          };
+        }
+      });
+    }
+
     this.closeModal();
   }
 
   get canAddEleve(): boolean {
     const user = this.authService.currentUserValue;
-    return user ? ['administrateur', 'comptable'].includes(user.type) : false;
+    return user ? ['ADMIN', 'SUPER_ADMIN'].includes(user.role) : false;
   }
 
   onCycleChange() {

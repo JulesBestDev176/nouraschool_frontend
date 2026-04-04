@@ -1,4 +1,5 @@
-<div class="space-y-6">
+<app-layout></app-layout>
+<div class="space-y-6 ml-80 mt-6 mr-6">
 
   <!-- En-tête -->
   <div class="flex justify-between items-center">
@@ -75,40 +76,16 @@
     </div>
   </div>
 
-  <!-- Paiements (cartes statiques) -->
+  <!-- Paiements -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    
-    <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Paiement Inscription</h3>
-      <p class="text-sm text-gray-600 mb-2">Jean Martin - 6ème A</p>
-      <p class="text-sm text-gray-600">Montant: <span class="font-medium text-gray-900">30,000 MRU</span></p>
-      <p class="text-sm text-gray-600">Statut: <span class="text-green-600 font-semibold">Payé</span></p>
+    <div *ngFor="let paiement of paiements" class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ paiement.type }}</h3>
+      <p class="text-sm text-gray-600 mb-2">{{ paiement.eleveId }}</p>
+      <p class="text-sm text-gray-600">Montant: <span class="font-medium text-gray-900">{{ paiement.montant | number }} MRU</span></p>
+      <p class="text-sm text-gray-600">Statut: <span class="text-green-600 font-semibold">{{ paiement.statut }}</span></p>
       <div class="mt-4 flex space-x-2">
-        <button class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">Détails</button>
-        <button class="px-3 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">Payer</button>
+        <button class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">Details</button>
       </div>
     </div>
-
-    <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Paiement Mensualité</h3>
-      <p class="text-sm text-gray-600 mb-2">Pauline Dupont - 5ème B</p>
-      <p class="text-sm text-gray-600">Montant: <span class="font-medium text-gray-900">20,000 MRU</span></p>
-      <p class="text-sm text-gray-600">Statut: <span class="text-red-600 font-semibold">En attente</span></p>
-      <div class="mt-4 flex space-x-2">
-        <button class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">Détails</button>
-        <button class="px-3 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">Payer</button>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Paiement Examen</h3>
-      <p class="text-sm text-gray-600 mb-2">Jean Martin - 6ème A</p>
-      <p class="text-sm text-gray-600">Montant: <span class="font-medium text-gray-900">15,000 MRU</span></p>
-      <p class="text-sm text-gray-600">Statut: <span class="text-green-600 font-semibold">Payé</span></p>
-      <div class="mt-4 flex space-x-2">
-        <button class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">Détails</button>
-        <button class="px-3 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">Payer</button>
-      </div>
-    </div>
-
-</div>
+    <div *ngIf="!paiements.length" class="text-gray-500">Aucun paiement disponible.</div>
+  </div>

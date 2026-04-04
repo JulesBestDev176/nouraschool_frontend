@@ -12,16 +12,16 @@
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
     <div class="border rounded-lg p-4 bg-white shadow flex flex-col items-center">
       <img src="https://via.placeholder.com/80" alt="Avatar" class="rounded-full mb-2">
-      <p class="font-semibold">Jean Dupont</p>
-      <p class="text-sm text-gray-500">6ème A</p>
+      <p class="font-semibold">{{ me['prenom'] }} {{ me['nom'] }}</p>
+      <p class="text-sm text-gray-500">{{ me['role'] }}</p>
     </div>
     <div class="border rounded-lg p-4 bg-white shadow">
       <p class="text-sm text-gray-600">Email</p>
-      <p class="text-lg font-semibold">jean#example.com</p>
+      <p class="text-lg font-semibold">{{ me['email'] || '-' }}</p>
     </div>
     <div class="border rounded-lg p-4 bg-white shadow">
       <p class="text-sm text-gray-600">Téléphone</p>
-      <p class="text-lg font-semibold">+33 6 12 34 56 78</p>
+      <p class="text-lg font-semibold">{{ me['telephone'] || '-' }}</p>
     </div>
   </div>
 
@@ -34,10 +34,18 @@
       Sécurité
     </h2>
     <div class="space-y-4">
-      <div class="flex justify-between items-center">
-        <p class="text-sm text-gray-600">Mot de passe</p>
-        <button class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Modifier</button>
-      </div>
+      <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()" class="space-y-3 w-full">
+        <div class="flex flex-col gap-2">
+          <label class="text-sm text-gray-600">Ancien mot de passe</label>
+          <input type="password" formControlName="ancienMotDePasse" class="border rounded px-3 py-2" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm text-gray-600">Nouveau mot de passe</label>
+          <input type="password" formControlName="nouveauMotDePasse" class="border rounded px-3 py-2" />
+        </div>
+        <button class="bg-blue-500 text-white px-3 py-1 rounded text-sm w-fit" type="submit">Modifier</button>
+      </form>
+      <div *ngIf="message" class="text-sm text-green-700 mt-2">{{ message }}</div>
       <div class="flex justify-between items-center">
         <p class="text-sm text-gray-600">Authentification à 2 facteurs</p>
         <button class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Activer</button>

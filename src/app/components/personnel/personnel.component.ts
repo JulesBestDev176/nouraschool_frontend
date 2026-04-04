@@ -1,5 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PersonnelService } from '../../services/personnel.service';
+import { EnseignantService } from '../../services/enseignant.service';
 
 @Component({
   selector: 'app-personnel',
@@ -7,6 +9,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrl: './personnel.component.scss'
 })
 export class PersonnelComponent implements OnInit {
+  personnels: any[] = [];
+  enseignants: any[] = [];
   personnelForm!: FormGroup;
   isModalOpen = false;
   selectedType = '';
@@ -28,10 +32,20 @@ export class PersonnelComponent implements OnInit {
     { id: 'lycee', nom: 'Lycée' }
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private personnelService: PersonnelService,
+    private enseignantService: EnseignantService
+  ) {}
 
   ngOnInit() {
     this.initForm();
+    this.personnelService.listPersonnel().subscribe((response) => {
+      this.personnels = response.content ?? [];
+    });
+    this.enseignantService.listEnseignants().subscribe((response) => {
+      this.enseignants = response.content ?? [];
+    });
   }
 
   initForm() {

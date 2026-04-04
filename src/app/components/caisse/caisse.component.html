@@ -107,18 +107,26 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr class="hover:bg-gray-50">
+          <tr *ngFor="let paiement of paiements" class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="font-medium text-gray-900">Jean Martin</div>
-              <div class="text-sm text-gray-500">Inscription</div>
+              <div class="font-medium text-gray-900">{{ paiement.eleveId }}</div>
+              <div class="text-sm text-gray-500">{{ paiement.type }}</div>
             </td>
             <td class="px-6 py-4">
-              Paiement inscription année 2025-2026
+              {{ paiement.description }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">30,000 FCFA</td>
-            <td class="px-6 py-4 whitespace-nowrap">01/09/2025</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ paiement.montant | number }} FCFA</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ paiement.datePaiement || paiement.dateEcheance | date:'shortDate' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-600">Payé</span>
+              <span class="px-2 py-1 text-xs font-medium rounded-full"
+                [class.bg-green-100]="paiement.statut === 'paye'"
+                [class.text-green-600]="paiement.statut === 'paye'"
+                [class.bg-yellow-100]="paiement.statut === 'en_attente'"
+                [class.text-yellow-600]="paiement.statut === 'en_attente'"
+                [class.bg-red-100]="paiement.statut === 'en_retard'"
+                [class.text-red-600]="paiement.statut === 'en_retard'">
+                {{ paiement.statut }}
+              </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2">
               <button class="text-blue-600 hover:text-blue-700">Voir</button>
@@ -126,39 +134,8 @@
               <button class="text-red-600 hover:text-red-700">Supprimer</button>
             </td>
           </tr>
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="font-medium text-gray-900">Pauline Dupont</div>
-              <div class="text-sm text-gray-500">Mensualité</div>
-            </td>
-            <td class="px-6 py-4">Paiement mensualité septembre</td>
-            <td class="px-6 py-4 whitespace-nowrap">20,000 FCFA</td>
-            <td class="px-6 py-4 whitespace-nowrap">05/09/2025</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-600">En attente</span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2">
-              <button class="text-blue-600 hover:text-blue-700">Voir</button>
-              <button class="text-indigo-600 hover:text-indigo-700">Modifier</button>
-              <button class="text-red-600 hover:text-red-700">Supprimer</button>
-            </td>
-          </tr>
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="font-medium text-gray-900">Jean Martin</div>
-              <div class="text-sm text-gray-500">Examen</div>
-            </td>
-            <td class="px-6 py-4">Paiement examen fin d'année</td>
-            <td class="px-6 py-4 whitespace-nowrap">15,000 FCFA</td>
-            <td class="px-6 py-4 whitespace-nowrap">Non payé</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-600">En retard</span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2">
-              <button class="text-blue-600 hover:text-blue-700">Voir</button>
-              <button class="text-indigo-600 hover:text-indigo-700">Modifier</button>
-              <button class="text-red-600 hover:text-red-700">Supprimer</button>
-            </td>
+          <tr *ngIf="!paiements.length">
+            <td colspan="6" class="px-6 py-4 text-center text-gray-500">Aucun paiement disponible</td>
           </tr>
         </tbody>
       </table>

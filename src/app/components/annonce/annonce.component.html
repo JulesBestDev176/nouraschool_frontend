@@ -1,0 +1,12 @@
+<app-layout></app-layout>
+<div class="space-y-6 ml-80 mt-6 mr-6">
+  <h1 class="text-2xl font-bold text-gray-900">Annonces</h1>
+  <div class="bg-white rounded-lg shadow-sm p-4">
+    <ul class="space-y-2">
+      <li *ngFor="let annonce of annonces" class="border-b pb-2">
+        {{ annonce['titre'] || 'Annonce' }}
+      </li>
+      <li *ngIf="!annonces.length" class="text-gray-500">Aucune annonce disponible.</li>
+    </ul>
+  </div>
+</div>

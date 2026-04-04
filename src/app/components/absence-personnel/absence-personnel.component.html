@@ -1,0 +1,113 @@
+<app-layout></app-layout>
+
+<div class="space-y-6 ml-80 mt-6 mr-6">
+  <div class="flex justify-between items-center bg-white shadow-sm rounded-lg p-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Absences du Personnel</h1>
+      <p class="text-gray-600 mt-1">Gestion et validation des absences du personnel</p>
+    </div>
+    <button (click)="openModal()"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Nouvelle absence
+    </button>
+  </div>
+
+  <p *ngIf="successMessage" class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">{{ successMessage }}</p>
+  <p *ngIf="errorMessage" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{{ errorMessage }}</p>
+
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div *ngIf="loading" class="p-8 text-center text-gray-500">Chargement...</div>
+
+    <table *ngIf="!loading" class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Personnel</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Période</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Motif</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let a of absences" class="hover:bg-gray-50">
+          <td class="px-6 py-4 text-sm text-gray-900">{{ getPersonnelNom(a.personnelId) }}</td>
+          <td class="px-6 py-4 text-sm text-gray-700">{{ a.type || '-' }}</td>
+          <td class="px-6 py-4 text-sm text-gray-700">{{ a.dateDebut }} — {{ a.dateFin || '...' }}</td>
+          <td class="px-6 py-4 text-sm text-gray-700">{{ a.motif || '-' }}</td>
+          <td class="px-6 py-4">
+            <span [class]="'px-2 py-1 rounded-full text-xs font-medium ' + getStatutClass(a.statut)">
+              {{ a.statut || 'EN_ATTENTE' }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-sm">
+            <div class="flex items-center gap-2">
+              <button (click)="openEditModal(a)" class="text-indigo-600 hover:text-indigo-800" title="Modifier">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button *ngIf="a.statut !== 'VALIDEE'" (click)="valider(a.id)" class="text-green-600 hover:text-green-800 text-xs px-2 py-1 border border-green-300 rounded">
+                Valider
+              </button>
+              <button *ngIf="a.statut !== 'REJETEE'" (click)="rejeter(a.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">
+                Rejeter
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="!absences.length">
+          <td colspan="6" class="px-6 py-8 text-center text-gray-500">Aucune absence enregistrée.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div *ngIf="isModalOpen" (click)="closeModal()" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6" (click)="$event.stopPropagation()">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ isEditing ? 'Modifier' : 'Déclarer' }} une absence</h3>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Personnel *</label>
+        <select [(ngModel)]="form.personnelId" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Sélectionner...</option>
+          <option *ngFor="let p of personnel" [value]="p.id">{{ p.prenom }} {{ p.nom }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+        <select [(ngModel)]="form.type" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Sélectionner...</option>
+          <option *ngFor="let t of absenceTypes" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Date début *</label>
+          <input type="date" [(ngModel)]="form.dateDebut" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Date fin</label>
+          <input type="date" [(ngModel)]="form.dateFin" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Motif</label>
+        <textarea [(ngModel)]="form.motif" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+      </div>
+    </div>
+
+    <p *ngIf="errorMessage" class="mt-3 text-sm text-red-600">{{ errorMessage }}</p>
+
+    <div class="flex justify-end gap-3 mt-6">
+      <button (click)="closeModal()" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
+      <button (click)="save()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ isEditing ? 'Modifier' : 'Enregistrer' }}</button>
+    </div>
+  </div>
+</div>

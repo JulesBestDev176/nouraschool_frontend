@@ -116,23 +116,17 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap">Jean Dupont</td>
-            <td class="px-6 py-4 whitespace-nowrap">6ème A</td>
-            <td class="px-6 py-4 whitespace-nowrap">1er trimestre</td>
-            <td class="px-6 py-4 whitespace-nowrap">15.5</td>
+          <tr *ngFor="let bulletin of bulletins" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">{{ bulletin.eleveNom || bulletin.eleveId }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ bulletin.classeNom || '-' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ bulletin.trimestre || '-' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ bulletin.moyenneGenerale || '-' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-600">Complet</span>
+              <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-600">Disponible</span>
             </td>
           </tr>
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap">Pauline Martin</td>
-            <td class="px-6 py-4 whitespace-nowrap">5ème B</td>
-            <td class="px-6 py-4 whitespace-nowrap">1er trimestre</td>
-            <td class="px-6 py-4 whitespace-nowrap">13.8</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-600">En cours</span>
-            </td>
+          <tr *ngIf="!bulletins.length">
+            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Aucun bulletin disponible</td>
           </tr>
         </tbody>
       </table>
