@@ -2,8 +2,8 @@ import { Note } from "./note";
 
 export interface Eleve {
   id: string;
-  nom: string;
-  prenom: string;
+  firstName: string;
+  lastName: string;
   email: string;
   telephone?: string;
   dateNaissance: Date;

@@ -13,7 +13,7 @@ import { toHttpParams } from '../core/http.utils';
 export class EleveService {
   private readonly apiUrl = environment.apiUrl;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   listEleves(page = 0, size = 20, classeId?: string): Observable<PageResponse<Eleve>> {
     return this.http.get<PageResponse<Eleve> | Eleve[]>(`${this.apiUrl}${API.ELEVES}`, {
@@ -21,16 +21,16 @@ export class EleveService {
     }).pipe(
       map((response) => Array.isArray(response)
         ? {
-            content: response.map((e) => this.fromApi(e)),
-            page,
-            size,
-            totalElements: response.length,
-            totalPages: 1
-          }
+          content: response.map((e) => this.fromApi(e)),
+          page,
+          size,
+          totalElements: response.length,
+          totalPages: 1
+        }
         : {
-            ...response,
-            content: (response.content ?? []).map((e) => this.fromApi(e))
-          })
+          ...response,
+          content: (response.content ?? []).map((e) => this.fromApi(e))
+        })
     );
   }
 
@@ -59,19 +59,34 @@ export class EleveService {
   private fromApi(eleve: any): Eleve {
     return {
       id: String(eleve.id),
-      nom: eleve.lastName ?? eleve.nom ?? '',
-      prenom: eleve.firstName ?? eleve.prenom ?? '',
+
+      firstName: eleve.firstName ?? eleve.firstName ?? '',
+      lastName: eleve.lastName ?? eleve.lastName ?? '',
+
       email: eleve.email ?? '',
       telephone: eleve.telephone ?? '',
-      dateNaissance: eleve.dateNaissance ?? '',
+
+      dateNaissance: eleve.dateNaissance ?? null,
+
       adresse: eleve.adresse ?? '',
       lieuNaissance: eleve.lieuNaissance ?? '',
-      sexe: eleve.genre === 'MASCULIN' ? 'M' : eleve.genre === 'FEMININ' ? 'F' : eleve.sexe,
+
+      sexe: eleve.genre === 'MASCULIN'
+        ? 'M'
+        : eleve.genre === 'FEMININ'
+          ? 'F'
+          : eleve.sexe,
+
       cycle: eleve.cycle,
+
       classeId: eleve.classeId ?? '',
+
       parentIds: eleve.parentIds ?? [],
-      statut: eleve.active === false ? 'inactif' : (eleve.statut ?? 'actif'),
+
+      statut: eleve.active === false ? 'inactif' : 'actif',
+
       moyenneAnnuelle: eleve.moyenneAnnuelle,
+
       generatedUsername: eleve.generatedUsername,
       generatedPassword: eleve.generatedPassword
     } as Eleve;
@@ -79,14 +94,14 @@ export class EleveService {
 
   private toCreateApi(dto: Partial<Eleve>): Record<string, unknown> {
     const email = String(dto.email ?? '').trim();
-    const prenom = String(dto.prenom ?? '').trim();
-    const nom = String(dto.nom ?? '').trim();
+    const firstName = String(dto.firstName ?? '').trim();
+    const lastName = String(dto.lastName ?? '').trim();
     return {
-      username: email || `${prenom}.${nom}`.toLowerCase(),
+      username: email || `${firstName}.${lastName}`.toLowerCase(),
       email,
       password: 'Eleve123!',
-      firstName: prenom,
-      lastName: nom,
+      firstName: firstName,
+      lastName: lastName,
       telephone: dto.telephone ?? '',
       adresse: dto.adresse ?? '',
       dateNaissance: dto.dateNaissance,
@@ -99,8 +114,8 @@ export class EleveService {
 
   private toUpdateApi(dto: Partial<Eleve>): Record<string, unknown> {
     return {
-      firstName: dto.prenom,
-      lastName: dto.nom,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
       email: dto.email,
       telephone: dto.telephone,
       adresse: dto.adresse,

@@ -11,31 +11,31 @@ import { toHttpParams } from '../core/http.utils';
   providedIn: 'root'
 })
 export class MatiereService {
-  private readonly apiUrl = environment.apiUrl;
+  private readonly baseUrl = `${environment.apiUrl}/admin/${API.MATIERES}`;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   listMatieres(page = 0, size = 100): Observable<PageResponse<Matiere>> {
-    return this.http.get<PageResponse<Matiere>>(`${this.apiUrl}${API.MATIERES}`, {
+    return this.http.get<PageResponse<Matiere>>(`${this.baseUrl}`, {
       params: toHttpParams({ page, size })
     });
   }
 
   getMatieresByClasse(classeId: string): Observable<Matiere[]> {
-    return this.http.get<Matiere[]>(`${this.apiUrl}${API.MATIERES}`, {
+    return this.http.get<Matiere[]>(`${this.baseUrl}`, {
       params: toHttpParams({ classeId })
     });
   }
 
   createMatiere(dto: Partial<Matiere>): Observable<Matiere> {
-    return this.http.post<Matiere>(`${this.apiUrl}${API.MATIERES}`, dto);
+    return this.http.post<Matiere>(`${this.baseUrl}`, dto);
   }
 
   updateMatiere(id: string, dto: Partial<Matiere>): Observable<Matiere> {
-    return this.http.put<Matiere>(`${this.apiUrl}${API.MATIERES}/${id}`, dto);
+    return this.http.put<Matiere>(`${this.baseUrl}/${id}`, dto);
   }
 
   deleteMatiere(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}${API.MATIERES}/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

@@ -11,35 +11,35 @@ import { toHttpParams } from '../core/http.utils';
   providedIn: 'root'
 })
 export class EnseignantService {
-  private readonly apiUrl = environment.apiUrl;
+  private readonly baseUrl = `${environment.apiUrl}${API.ENSEIGNANTS}`;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   listEnseignants(page = 0, size = 20): Observable<PageResponse<Enseignant>> {
-    return this.http.get<PageResponse<Enseignant> | Enseignant[]>(`${this.apiUrl}${API.ENSEIGNANTS}`, {
+    return this.http.get<PageResponse<Enseignant> | Enseignant[]>(`${this.baseUrl}`, {
       params: toHttpParams({ page, size })
     }).pipe(
       map((response) => Array.isArray(response)
         ? {
-            content: response,
-            page,
-            size,
-            totalElements: response.length,
-            totalPages: 1
-          }
+          content: response,
+          page,
+          size,
+          totalElements: response.length,
+          totalPages: 1
+        }
         : response)
     );
   }
 
   getEnseignant(id: string): Observable<Enseignant> {
-    return this.http.get<Enseignant>(`${this.apiUrl}${API.ENSEIGNANTS}/${id}`);
+    return this.http.get<Enseignant>(`${this.baseUrl}/${id}`);
   }
 
   createEnseignant(dto: Partial<Enseignant>): Observable<Enseignant> {
-    return this.http.post<Enseignant>(`${this.apiUrl}${API.ENSEIGNANTS}`, dto);
+    return this.http.post<Enseignant>(`${this.baseUrl}`, dto);
   }
 
   updateEnseignant(id: string, dto: Partial<Enseignant>): Observable<Enseignant> {
-    return this.http.patch<Enseignant>(`${this.apiUrl}${API.ENSEIGNANTS}/${id}`, dto);
+    return this.http.patch<Enseignant>(`${this.baseUrl}/${id}`, dto);
   }
 }

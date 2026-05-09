@@ -1,401 +1,499 @@
 <app-layout></app-layout>
+
 <div class="space-y-6 ml-80 mt-6 mr-6">
-  <!-- En-tête -->
+
+  <!-- HEADER -->
   <div class="flex justify-between items-center">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900">Gestion du Personnel</h1>
-      <p class="text-gray-600 mt-1">3 membre(s) du personnel inscrit(s)</p>
+      <h1 class="text-2xl font-bold text-gray-900">
+        Gestion du Personnel
+      </h1>
+
+      <p class="text-gray-500 mt-1">
+        {{ personnels.length }} membre(s) du personnel
+      </p>
     </div>
+
     <button (click)="openModal()"
-      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200">
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
       <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
       </svg>
-      <span>Nouveau personnel</span>
+
+      Nouveau personnel
     </button>
   </div>
 
-  <!-- Filtres et recherche -->
-  <div class="bg-white p-4 rounded-lg shadow-sm space-y-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+  <!-- FILTRES -->
+  <div class="bg-white p-4 rounded-xl shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+      <!-- Recherche -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Rechercher</label>
-        <input type="text" placeholder="Nom, prénom ou email..."
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+        <label class="block text-sm text-gray-700 mb-1">
+          Recherche
+        </label>
+
+        <input type="text" [(ngModel)]="search" placeholder="Nom ou email..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
       </div>
+
+      <!-- Type -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Type de personnel</label>
+        <label class="block text-sm text-gray-700 mb-1">
+          Type
+        </label>
+
         <select [(ngModel)]="selectedType"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-          <option value="">Tout le personnel</option>
-          <option value="professeur">Professeur</option>
-          <option value="comptable">Comptable</option>
-          <option value="surveillant">Surveillant</option>
-          <option value="assistant">Assistant</option>
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+          <option value="">Tous</option>
+          <option value="PROFESSEUR">Professeur</option>
+          <option value="COMPTABLE">Comptable</option>
+          <option value="SURVEILLANT">Surveillant</option>
+          <option value="ASSISTANT">Assistant</option>
+
         </select>
       </div>
-      <div *ngIf="selectedType === 'professeur'">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Matière</label>
-        <select
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-          <option value="">Toutes les matières</option>
-          <option>Mathématiques</option>
-          <option>Français</option>
-          <option>Physique</option>
-        </select>
-      </div>
+
+      <!-- Statut -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
-        <select
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-          <option value="">Tous les statuts</option>
-          <option value="actif">Actif</option>
-          <option value="inactive">Inactif</option>
+        <label class="block text-sm text-gray-700 mb-1">
+          Statut
+        </label>
+
+        <select [(ngModel)]="selectedStatut"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+          <option value="">Tous</option>
+          <option value="ACTIF">Actif</option>
+          <option value="INACTIF">Inactif</option>
+
         </select>
       </div>
+
     </div>
   </div>
 
-  <!-- Liste du personnel -->
-  <div class="bg-white rounded-lg shadow-sm overflow-hidden ">
+  <!-- TABLE -->
+  <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+
     <div class="overflow-x-auto">
+
       <table class="min-w-full divide-y divide-gray-200">
+
+        <!-- HEAD -->
         <thead class="bg-gray-50">
+
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personnel</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle / Type</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Spécialité /
-              Cycle</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Personnel
+            </th>
+
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Type
+            </th>
+
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Spécialité / Cycle
+            </th>
+
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Contact
+            </th>
+
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Salaire
+            </th>
+
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+              Actions
+            </th>
+
           </tr>
+
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <!-- Exemple personnel 1 (Professeur) -->
-          <tr class="hover:bg-gray-50">
+
+        <!-- BODY -->
+        <tbody class="divide-y divide-gray-200 bg-white">
+
+          <tr *ngFor="let personnel of filteredPersonnels" class="hover:bg-gray-50 transition">
+
+            <!-- PERSONNEL -->
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <span class="text-green-600 font-semibold">AM</span>
+
+              <div class="flex items-center gap-3">
+
+                <div
+                  class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-semibold uppercase">
+                  {{ personnel.prenom?.charAt(0) }}{{ personnel.nom?.charAt(0) }}
                 </div>
-                <div class="ml-4">
-                  <div class="font-medium text-gray-900">Ahmed Mohamed</div>
-                  <div class="text-sm text-gray-500">ahmed&#64;example.com</div>
+
+                <div>
+
+                  <div class="font-medium text-gray-900">
+                    {{ personnel.prenom }} {{ personnel.nom }}
+                  </div>
+
+                  <div class="text-sm text-gray-500">
+                    {{ personnel.email }}
+                  </div>
+
                 </div>
+
               </div>
+
             </td>
+
+            <!-- TYPE -->
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                Professeur
+
+              <span class="px-3 py-1 rounded-full text-xs font-medium" [ngClass]="{
+                  'bg-purple-100 text-purple-700': personnel.type === 'PROFESSEUR',
+                  'bg-blue-100 text-blue-700': personnel.type === 'COMPTABLE',
+                  'bg-orange-100 text-orange-700': personnel.type === 'SURVEILLANT',
+                  'bg-pink-100 text-pink-700': personnel.type === 'ASSISTANT'
+                }">
+
+                {{ personnel.type }}
+
               </span>
+
             </td>
+
+            <!-- SPECIALITE -->
             <td class="px-6 py-4">
-              <div class="flex flex-wrap gap-1">
-                <span
-                  class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded border border-gray-200">Mathématiques</span>
-                <span
-                  class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded border border-gray-200">Physique</span>
+
+              <!-- PROF -->
+              <div *ngIf="personnel.type === 'PROFESSEUR'">
+
+                <div class="flex flex-wrap gap-2">
+
+                  <span *ngFor="let matiere of personnel.matieres" class="px-2 py-1 bg-gray-100 rounded text-xs">
+
+                    {{ matiere.nom }}
+
+                  </span>
+
+                </div>
+
               </div>
+
+              <!-- SURVEILLANT / ASSISTANT -->
+              <div *ngIf="personnel.type === 'SURVEILLANT' || personnel.type === 'ASSISTANT'">
+
+                <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
+                  {{ personnel.cycleNom }}
+                </span>
+
+              </div>
+
+              <!-- COMPTABLE -->
+              <div *ngIf="personnel.type === 'COMPTABLE'">
+
+                <span class="text-gray-500 italic">
+                  Comptabilité
+                </span>
+
+              </div>
+
             </td>
+
+            <!-- CONTACT -->
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">+222 45 67 89 00</div>
-              <div class="text-sm text-gray-500">Nouakchott</div>
+
+              <div class="text-sm text-gray-900">
+                {{ personnel.telephone }}
+              </div>
+
+              <div class="text-sm text-gray-500">
+                {{ personnel.adresse }}
+              </div>
+
             </td>
+
+            <!-- SALAIRE -->
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Actif</span>
+
+              <span class="font-semibold text-green-700">
+                {{ personnel.salaire | number }} MRU
+              </span>
+
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <div class="flex items-center justify-end space-x-4">
-                <button class="text-blue-600 hover:text-blue-700" title="Voir">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                </button>
-                <button class="text-indigo-600 hover:text-indigo-700" title="Modifier">
+
+            <!-- ACTIONS -->
+            <td class="px-6 py-4 whitespace-nowrap text-right">
+
+              <div class="flex justify-end gap-2">
+
+                <!-- EDIT -->
+                <button (click)="editPersonnel(personnel)" class="p-2 rounded-lg hover:bg-indigo-50 text-indigo-600">
+
                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
+
                 </button>
-                <label class="relative inline-flex items-center cursor-pointer" title="Activer/Désactiver">
-                  <input type="checkbox" checked class="sr-only peer">
-                  <div
-                    class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600">
-                  </div>
-                </label>
+
+                <!-- DELETE -->
+                <button (click)="deletePersonnel(personnel.id)" class="p-2 rounded-lg hover:bg-red-50 text-red-600">
+
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22" />
+                  </svg>
+
+                </button>
+
               </div>
+
             </td>
+
           </tr>
 
-          <!-- Exemple personnel 2 (Comptable) -->
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <span class="text-green-600 font-semibold">FS</span>
-                </div>
-                <div class="ml-4">
-                  <div class="font-medium text-gray-900">Fatma Sow</div>
-                  <div class="text-sm text-gray-500">fatma&#64;example.com</div>
-                </div>
-              </div>
+          <!-- EMPTY -->
+          <tr *ngIf="filteredPersonnels.length === 0">
+
+            <td colspan="6" class="text-center py-10 text-gray-400">
+              Aucun personnel trouvé
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                Comptable
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <span class="text-sm text-gray-500 italic">Chef Comptable</span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">+222 22 33 44 55</div>
-              <div class="text-sm text-gray-500">Nouadhibou</div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Actif</span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <div class="flex items-center justify-end space-x-4">
-                <button class="text-blue-600 hover:text-blue-700" title="Voir">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                </button>
-                <button class="text-indigo-600 hover:text-indigo-700" title="Modifier">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </button>
-                <label class="relative inline-flex items-center cursor-pointer" title="Activer/Désactiver">
-                  <input type="checkbox" checked class="sr-only peer">
-                  <div
-                    class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600">
-                  </div>
-                </label>
-              </div>
-            </td>
+
           </tr>
 
-          <!-- Exemple personnel 3 (Surveillant) -->
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <span class="text-green-600 font-semibold">BD</span>
-                </div>
-                <div class="ml-4">
-                  <div class="font-medium text-gray-900">Bakary Diallo</div>
-                  <div class="text-sm text-gray-500">bakary&#64;example.com</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                Surveillant
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded border border-gray-200">Lycée</span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">+222 33 44 55 66</div>
-              <div class="text-sm text-gray-500">Nouakchott</div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Inactif</span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <div class="flex items-center justify-end space-x-4">
-                <button class="text-blue-600 hover:text-blue-700" title="Voir">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                </button>
-                <button class="text-indigo-600 hover:text-indigo-700" title="Modifier">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </button>
-                <label class="relative inline-flex items-center cursor-pointer" title="Activer/Désactiver">
-                  <input type="checkbox" class="sr-only peer">
-                  <div
-                    class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600">
-                  </div>
-                </label>
-              </div>
-            </td>
-          </tr>
         </tbody>
+
       </table>
+
     </div>
+
   </div>
+
 </div>
 
+<!-- MODAL -->
+<div *ngIf="isModalOpen" class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
 
-<!-- Modal ajout/modification -->
-<div *ngIf="isModalOpen" (click)="closeModal()" class="fixed inset-0 bg-transparent overflow-y-auto h-full w-full z-50">
-  <div class="relative top-10 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white"
-    (click)="$event.stopPropagation()">
-    <div class="mt-3">
-      <h3 class="text-lg text-gray-900 mb-4">
-        <!-- {{isEditing ? 'Modifier' : 'Ajouter'}}  -->
-        Ajouter un membre du personnel
-      </h3>
+  <div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl p-6 max-h-[90vh] overflow-y-auto">
 
-      <form [formGroup]="personnelForm" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm text-gray-700 mb-1">Prénom *</label>
-            <input type="text" formControlName="prenom"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
-            <!-- <div *ngIf="personnelForm.get('prenom')?.invalid && personnelForm.get('prenom')?.touched" class="text-red-600 text-sm mt-1">
-                    Prénom requis
-                  </div> -->
-          </div>
+    <!-- TITLE -->
+    <div class="flex justify-between items-center mb-6">
 
-          <div>
-            <label class="block text-sm text-gray-700 mb-1">Nom *</label>
-            <input type="text" formControlName="nom"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
-            <!-- <div *ngIf="personnelForm.get('nom')?.invalid && personnelForm.get('nom')?.touched" class="text-red-600 text-sm mt-1">
-                    Nom requis
-                  </div> -->
-          </div>
+      <h2 class="text-xl font-bold text-gray-900">
+        {{ isEditMode ? 'Modifier' : 'Ajouter' }} un personnel
+      </h2>
 
-          <div>
-            <label class="block text-sm text-gray-700 mb-1">Email *</label>
-            <input type="email" formControlName="email"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
-            <!-- <div *ngIf="personnelForm.get('email')?.invalid && personnelForm.get('email')?.touched" class="text-red-600 text-sm mt-1">
-                    Email valide requis
-                  </div> -->
-          </div>
+      <button (click)="closeModal()" class="text-gray-400 hover:text-red-500">
 
-          <div>
-            <label class="block text-sm text-gray-700 mb-1">Téléphone</label>
-            <input type="tel" formControlName="telephone"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
-          </div>
+        ✕
 
-          <div>
-            <label class="block text-sm text-gray-700 mb-1">Type de personnel *</label>
-            <select formControlName="type"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-              <option value="">Sélectionner un type</option>
-              <option value="professeur">Professeur</option>
-              <option value="comptable">Comptable</option>
-              <option value="surveillant">Surveillant</option>
-              <option value="assistant">Assistant</option>
-            </select>
-          </div>
-        </div>
+      </button>
 
-        <!-- Section Matières pour Professeur (Custom Editable Multi-Select) -->
-        <!-- Section Matières pour Professeur (Integrated Editable Multi-Select) -->
-        <div *ngIf="modalPersonnelType === 'professeur'" class="relative">
-          <label class="block text-sm text-gray-700 mb-1">Matières *</label>
-          <div (click)="showMatiereDropdown = true"
-            class="min-h-[42px] p-1.5 flex flex-wrap gap-2 border border-gray-300 rounded-md cursor-text hover:border-green-500 focus-within:ring-2 focus-within:ring-green-500 bg-white transition-all">
-
-            <!-- Chips -->
-            <div *ngFor="let m of selectedMatieres"
-              class="flex items-center space-x-1 bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full group shadow-sm">
-              <span>{{m.nom}}</span>
-              <button (click)="$event.stopPropagation(); removeMatiere(m.id)"
-                class="hover:text-green-900 transition-colors">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <!-- Input éditable intégré -->
-            <div class="flex-1 min-w-[120px] relative flex items-center">
-              <input type="text" [(ngModel)]="matiereSearch" [ngModelOptions]="{standalone: true}"
-                (focus)="showMatiereDropdown = true" (click)="$event.stopPropagation()"
-                placeholder="{{selectedMatieres.length === 0 ? 'Sélectionner des matières...' : ''}}"
-                class="w-full bg-transparent border-none outline-none text-sm p-1 focus:ring-0 pr-6">
-
-              <button *ngIf="matiereSearch" (click)="$event.stopPropagation(); clearSearch()"
-                class="absolute right-0 text-gray-400 hover:text-gray-600">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <div class="flex items-center pr-1 text-gray-400">
-              <svg class="w-4 h-4 transition-transform duration-200" [class.rotate-180]="showMatiereDropdown"
-                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
-
-          <!-- Menu déroulant simplifié -->
-          <div *ngIf="showMatiereDropdown"
-            class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-xl max-h-48 overflow-y-auto">
-            <div *ngFor="let matiere of filteredMatieres"
-              (click)="$event.stopPropagation(); toggleMatiere(matiere); clearSearch()"
-              class="px-4 py-2 hover:bg-green-50 cursor-pointer flex items-center justify-between group">
-              <span [class.text-green-600]="isMatiereSelected(matiere.id)" class="text-sm">{{matiere.nom}}</span>
-              <svg *ngIf="isMatiereSelected(matiere.id)" class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <div *ngIf="filteredMatieres.length === 0" class="px-4 py-3 text-sm text-gray-500 text-center">
-              Aucune matière trouvée
-            </div>
-          </div>
-        </div>
-
-        <!-- Section Cycle pour Surveillant et Assistant -->
-        <div *ngIf="modalPersonnelType === 'surveillant' || modalPersonnelType === 'assistant'">
-          <label class="block text-sm text-gray-700 mb-1">Cycle *</label>
-          <select
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-            <option value="">Sélectionner un cycle</option>
-            <option *ngFor="let cycle of cycles" [value]="cycle.id">
-              {{cycle.nom}}
-            </option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm text-gray-700 mb-1">Adresse</label>
-          <textarea formControlName="adresse" rows="2"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-          </textarea>
-        </div>
-
-        <div class="flex justify-end space-x-3 pt-4 border-t">
-          <button type="button" (click)="closeModal()"
-            class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors">
-            Annuler
-          </button>
-          <button type="submit"
-            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-            <!-- {{isEditing ? 'Modifier' : 'Ajouter'}} -->
-
-            Ajouter
-          </button>
-        </div>
-      </form>
     </div>
+
+    <!-- FORM -->
+    <form [formGroup]="personnelForm" (ngSubmit)="savePersonnel()" class="space-y-5">
+
+      <!-- GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- PRENOM -->
+        <div>
+
+          <label class="block text-sm text-gray-700 mb-1">
+            Prénom *
+          </label>
+
+          <input type="text" formControlName="prenom"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+        </div>
+
+        <!-- NOM -->
+        <div>
+
+          <label class="block text-sm text-gray-700 mb-1">
+            Nom *
+          </label>
+
+          <input type="text" formControlName="nom"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+        </div>
+
+        <!-- EMAIL -->
+        <div>
+
+          <label class="block text-sm text-gray-700 mb-1">
+            Email *
+          </label>
+
+          <input type="email" formControlName="email"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+        </div>
+
+        <!-- TELEPHONE -->
+        <div>
+
+          <label class="block text-sm text-gray-700 mb-1">
+            Téléphone
+          </label>
+
+          <input type="text" formControlName="telephone"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+        </div>
+
+        <!-- UTILISATEUR -->
+        <div>
+
+          <label class="block text-sm text-gray-700 mb-1">
+            Utilisateur *
+          </label>
+
+          <select formControlName="utilisateurId"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+            <option value="">Sélectionner</option>
+
+            <option *ngFor="let user of utilisateurs" [value]="user.id">
+
+              {{ user.nom }}
+
+            </option>
+
+          </select>
+
+        </div>
+
+        <!-- DATE EMBAUCHE -->
+        <div>
+
+          <label class="block text-sm text-gray-700 mb-1">
+            Date embauche *
+          </label>
+
+          <input type="date" formControlName="dateEmbauche"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+        </div>
+
+        <!-- TYPE -->
+        <div>
+
+          <label class="block text-sm text-gray-700 mb-1">
+            Type *
+          </label>
+
+          <select formControlName="type"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+            <option value="">Sélectionner</option>
+
+            <option value="PROFESSEUR">Professeur</option>
+            <option value="COMPTABLE">Comptable</option>
+            <option value="SURVEILLANT">Surveillant</option>
+            <option value="ASSISTANT">Assistant</option>
+
+          </select>
+
+        </div>
+
+        <!-- SALAIRE -->
+        <div>
+
+          <label class="block text-sm text-gray-700 mb-1">
+            Salaire
+          </label>
+
+          <input type="number" formControlName="salaire"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+        </div>
+
+      </div>
+
+      <!-- MATIERES -->
+      <div *ngIf="personnelForm.value.type === 'PROFESSEUR'">
+
+        <label class="block text-sm text-gray-700 mb-2">
+          Matières
+        </label>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+
+          <label *ngFor="let matiere of matieres"
+            class="flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-50">
+
+            <input type="checkbox" [checked]="isMatiereSelected(matiere.id)" (change)="toggleMatiere(matiere)">
+
+            <span class="text-sm">
+              {{ matiere.nom }}
+            </span>
+
+          </label>
+
+        </div>
+
+      </div>
+
+      <!-- CYCLE -->
+      <div *ngIf="personnelForm.value.type === 'SURVEILLANT'
+        || personnelForm.value.type === 'ASSISTANT'">
+
+        <label class="block text-sm text-gray-700 mb-2">
+          Cycle
+        </label>
+
+        <select formControlName="cycleId"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+          <option value="">Sélectionner un cycle</option>
+
+          <option *ngFor="let cycle of cycles" [value]="cycle.id">
+
+            {{ cycle.nom }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- ADRESSE -->
+      <div>
+
+        <label class="block text-sm text-gray-700 mb-1">
+          Adresse
+        </label>
+
+        <textarea rows="3" formControlName="adresse"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"></textarea>
+
+      </div>
+
+      <!-- BUTTONS -->
+      <div class="flex justify-end gap-3 pt-4 border-t">
+
+        <button type="button" (click)="closeModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">
+
+          Annuler
+
+        </button>
+
+        <button type="submit" [disabled]="personnelForm.invalid"
+          class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg disabled:opacity-50">
+
+          {{ isEditMode ? 'Modifier' : 'Ajouter' }}
+
+        </button>
+
+      </div>
+
+    </form>
+
   </div>
+
 </div>

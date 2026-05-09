@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { API } from '../core/api-routes';
 import { toHttpParams } from '../core/http.utils';
+import { AnneeAcademique } from '../models/annee-academique';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { toHttpParams } from '../core/http.utils';
 export class AnneeAcademiqueService {
   private readonly apiUrl = environment.apiUrl;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   listAnnees(page = 0, size = 20): Observable<Record<string, unknown>> {
     return this.http.get<Record<string, unknown>>(`${this.apiUrl}${API.ANNEES}`, {
@@ -19,8 +20,11 @@ export class AnneeAcademiqueService {
     });
   }
 
-  getCourante(): Observable<Record<string, unknown>> {
-    return this.http.get<Record<string, unknown>>(`${this.apiUrl}${API.ANNEES}/courante`);
+  // getCourante(): Observable<Record<string, unknown>> {
+  //   return this.http.get<Record<string, unknown>>(`${this.apiUrl}${API.ANNEES}/courante`);
+  // }
+  getCourante() {
+    return this.http.get<AnneeAcademique>(`${this.apiUrl}/courante`);
   }
 
   createAnnee(dto: Record<string, unknown>): Observable<Record<string, unknown>> {

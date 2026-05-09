@@ -13,7 +13,7 @@ import { toHttpParams } from '../core/http.utils';
 export class ClasseService {
   private readonly apiUrl = environment.apiUrl;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   listClasses(page = 0, size = 50): Observable<PageResponse<Classe>> {
     return this.http.get<PageResponse<Classe> | Classe[]>(`${this.apiUrl}${API.CLASSES}`, {
@@ -21,12 +21,12 @@ export class ClasseService {
     }).pipe(
       map((response) => Array.isArray(response)
         ? {
-            content: response,
-            page,
-            size,
-            totalElements: response.length,
-            totalPages: 1
-          }
+          content: response,
+          page,
+          size,
+          totalElements: response.length,
+          totalPages: 1
+        }
         : response)
     );
   }

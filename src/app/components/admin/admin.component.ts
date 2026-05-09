@@ -25,21 +25,43 @@ export class AdminComponent implements OnInit {
 
   // Cycles
   cycles: any[] = [];
+
   showCycleModal = false;
+
   editingCycleId: string | null = null;
-  cycleForm = { nom: '', description: '' };
+
+  cycleForm = {
+    code: '',
+    libelle: '',
+    actif: true
+  };
 
   // Niveaux
   niveaux: any[] = [];
   showNiveauModal = false;
   editingNiveauId: string | null = null;
-  niveauForm = { nom: '', cycleId: '', ordre: '' };
+  niveauForm = {
+    code: '',
+    libelle: '',
+    cycleId: '',
+    ordre: 1,
+    actif: true
+  };
 
   // Matières
   matieres: any[] = [];
+
   showMatiereModal = false;
+
   editingMatiereId: string | null = null;
-  matiereForm = { nom: '', code: '', description: '' };
+
+  matiereForm = {
+    nom: '',
+    code: '',
+    description: '',
+    coefficient: 1,
+    categorie: ''
+  };
 
   // Bâtiments
   batiments: any[] = [];
@@ -61,10 +83,13 @@ export class AdminComponent implements OnInit {
     private readonly matiereService: MatiereService,
     private readonly batimentService: BatimentService,
     private readonly salleService: SalleService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadAnnees();
+    this.loadCycles();
+
+    this.loadNiveaux();
   }
 
   setTab(tab: Tab): void {
@@ -129,36 +154,88 @@ export class AdminComponent implements OnInit {
 
   loadCycles(): void {
     this.loading = true;
+
     this.cycleService.list().subscribe({
-      next: (data) => { this.cycles = Array.isArray(data) ? data : []; this.loading = false; },
-      error: () => { this.errorMessage = 'Impossible de charger les cycles.'; this.loading = false; }
+      next: (data) => {
+        this.cycles = Array.isArray(data) ? data : [];
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Impossible de charger les cycles.';
+        this.loading = false;
+      }
     });
   }
 
   openCycleModal(cycle?: any): void {
+
     this.editingCycleId = cycle?.id ?? null;
-    this.cycleForm = { nom: cycle?.nom ?? '', description: cycle?.description ?? '' };
+
+    this.cycleForm = {
+      code: cycle?.code ?? '',
+      libelle: cycle?.libelle ?? '',
+      actif: cycle?.actif ?? true
+    };
+
     this.showCycleModal = true;
   }
 
+
   saveCycle(): void {
-    this.successMessage = ''; this.errorMessage = '';
-    if (!this.cycleForm.nom) { this.errorMessage = 'Le nom est obligatoire.'; return; }
-    const dto: Record<string, unknown> = { ...this.cycleForm };
+
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    if (!this.cycleForm.libelle) {
+      this.errorMessage = 'Le libellé est obligatoire.';
+      return;
+    }
+
+    if (!this.cycleForm.code) {
+      this.errorMessage = 'Le code est obligatoire.';
+      return;
+    }
+
+    const dto: Record<string, unknown> = {
+      code: this.cycleForm.code,
+      libelle: this.cycleForm.libelle,
+      actif: this.cycleForm.actif
+    };
+
     const obs = this.editingCycleId
       ? this.cycleService.update(this.editingCycleId, dto)
       : this.cycleService.create(dto);
+
     obs.subscribe({
-      next: () => { this.successMessage = this.editingCycleId ? 'Cycle modifié.' : 'Cycle créé.'; this.showCycleModal = false; this.loadCycles(); },
-      error: () => { this.errorMessage = 'Opération impossible.'; }
+      next: () => {
+
+        this.successMessage = this.editingCycleId
+          ? 'Cycle modifié.'
+          : 'Cycle créé.';
+
+        this.showCycleModal = false;
+
+        this.loadCycles();
+      },
+
+      error: () => {
+        this.errorMessage = 'Opération impossible.';
+      }
     });
   }
 
   deleteCycle(id: string): void {
+
     if (!confirm('Supprimer ce cycle ?')) return;
+
     this.cycleService.delete(id).subscribe({
-      next: () => { this.successMessage = 'Cycle supprimé.'; this.loadCycles(); },
-      error: () => { this.errorMessage = 'Suppression impossible.'; }
+      next: () => {
+        this.successMessage = 'Cycle supprimé.';
+        this.loadCycles();
+      },
+      error: () => {
+        this.errorMessage = 'Suppression impossible.';
+      }
     });
   }
 
@@ -173,23 +250,66 @@ export class AdminComponent implements OnInit {
   }
 
   openNiveauModal(niveau?: any): void {
+
     if (!this.cycles.length) this.loadCycles();
+
     this.editingNiveauId = niveau?.id ?? null;
-    this.niveauForm = { nom: niveau?.nom ?? '', cycleId: niveau?.cycleId ?? '', ordre: niveau?.ordre ?? '' };
+
+    this.niveauForm = {
+      code: niveau?.code ?? '',
+      libelle: niveau?.libelle ?? '',
+      cycleId: niveau?.cycleId ?? '',
+      ordre: niveau?.ordre ?? 1,
+      actif: niveau?.actif ?? true
+    };
+
     this.showNiveauModal = true;
   }
 
   saveNiveau(): void {
-    this.successMessage = ''; this.errorMessage = '';
-    if (!this.niveauForm.nom || !this.niveauForm.cycleId) { this.errorMessage = 'Nom et cycle sont obligatoires.'; return; }
-    const dto: Record<string, unknown> = { ...this.niveauForm };
+
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    if (!this.niveauForm.libelle || !this.niveauForm.cycleId) {
+      this.errorMessage = 'Libellé et cycle sont obligatoires.';
+      return;
+    }
+
+    const dto = {
+      code: this.niveauForm.libelle, // ⚠️ important (ou généré)
+      libelle: this.niveauForm.libelle,
+      cycleId: this.niveauForm.cycleId,
+      ordre: this.niveauForm.ordre,
+      actif: true
+    };
+
     const obs = this.editingNiveauId
       ? this.niveauService.update(this.editingNiveauId, dto)
       : this.niveauService.create(dto);
+
     obs.subscribe({
-      next: () => { this.successMessage = this.editingNiveauId ? 'Niveau modifié.' : 'Niveau créé.'; this.showNiveauModal = false; this.loadNiveaux(); },
-      error: () => { this.errorMessage = 'Opération impossible.'; }
+      next: () => {
+        this.successMessage = this.editingNiveauId ? 'Niveau modifié.' : 'Niveau créé.';
+        this.showNiveauModal = false;
+        this.loadNiveaux();
+      },
+      error: (err) => {
+        console.log(err);
+        this.errorMessage = 'Erreur création niveau.';
+      }
     });
+  }
+
+  getCycleNom(cycleId: string): string {
+
+    if (!this.cycles || !this.cycles.length) {
+      return '-';
+    }
+
+    const cycle = this.cycles.find(c => c.id === cycleId);
+
+    return cycle ? cycle.libelle : cycleId;
   }
 
   deleteNiveau(id: string): void {
@@ -200,50 +320,171 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  getCycleNom(cycleId: string): string {
-    const c = this.cycles.find((x: any) => x.id === cycleId);
-    return c ? c.nom : cycleId;
+  closeNiveauModal(): void {
+
+    this.showNiveauModal = false;
+    this.editingNiveauId = null;
+
+    this.niveauForm = {
+      code: '',
+      libelle: '',
+      cycleId: '',
+      ordre: 1,
+      actif: true
+    };
   }
+
+
 
   // ─── Matières ─────────────────────────────────────────────────────────────
 
+
+  // ================= LOAD =================
+
   loadMatieres(): void {
+
     this.loading = true;
+
     this.matiereService.listMatieres(0, 200).subscribe({
-      next: (r) => { this.matieres = (r as any)?.content ?? r ?? []; this.loading = false; },
-      error: () => { this.errorMessage = 'Impossible de charger les matières.'; this.loading = false; }
+
+      next: (res: any) => {
+
+        this.matieres = res?.content ?? res ?? [];
+
+        this.loading = false;
+      },
+
+      error: () => {
+
+        this.errorMessage = 'Impossible de charger les matières.';
+
+        this.loading = false;
+      }
     });
   }
 
+
+  // ================= MODAL =================
+
   openMatiereModal(m?: any): void {
+
     this.editingMatiereId = m?.id ?? null;
-    this.matiereForm = { nom: m?.nom ?? '', code: m?.code ?? '', description: m?.description ?? '' };
+
+    this.matiereForm = {
+      nom: m?.nom ?? '',
+      code: m?.code ?? '',
+      description: m?.description ?? '',
+      coefficient: m?.coefficient ?? 1,
+      categorie: m?.categorie ?? ''
+    };
+
     this.showMatiereModal = true;
   }
 
-  saveMatiere(): void {
-    this.successMessage = ''; this.errorMessage = '';
-    if (!this.matiereForm.nom || !this.matiereForm.code) { this.errorMessage = 'Nom et code sont obligatoires.'; return; }
-    if (this.editingMatiereId) {
-      this.matiereService.updateMatiere(this.editingMatiereId, this.matiereForm).subscribe({
-        next: () => { this.successMessage = 'Matière modifiée.'; this.showMatiereModal = false; this.loadMatieres(); },
-        error: () => { this.errorMessage = 'Modification impossible.'; }
-      });
-    } else {
-      this.matiereService.createMatiere(this.matiereForm).subscribe({
-        next: () => { this.successMessage = 'Matière créée.'; this.showMatiereModal = false; this.loadMatieres(); },
-        error: () => { this.errorMessage = 'Création impossible.'; }
-      });
-    }
+
+  closeMatiereModal(): void {
+
+    this.showMatiereModal = false;
+
+    this.editingMatiereId = null;
+
+    this.matiereForm = {
+      nom: '',
+      code: '',
+      description: '',
+      coefficient: 1,
+      categorie: ''
+    };
   }
 
-  deleteMatiere(id: string): void {
-    if (!confirm('Supprimer cette matière ?')) return;
-    this.matiereService.deleteMatiere(id).subscribe({
-      next: () => { this.successMessage = 'Matière supprimée.'; this.loadMatieres(); },
-      error: () => { this.errorMessage = 'Suppression impossible.'; }
+
+  // ================= SAVE =================
+
+  saveMatiere(): void {
+
+    this.successMessage = '';
+
+    this.errorMessage = '';
+
+    if (!this.matiereForm.nom) {
+
+      this.errorMessage = 'Le nom est obligatoire.';
+
+      return;
+    }
+
+    if (!this.matiereForm.code) {
+
+      this.errorMessage = 'Le code est obligatoire.';
+
+      return;
+    }
+
+    const dto = {
+
+      nom: this.matiereForm.nom,
+
+      code: this.matiereForm.code,
+
+      description: this.matiereForm.description,
+
+      coefficient: this.matiereForm.coefficient,
+
+      categorie: this.matiereForm.categorie
+    };
+
+    const obs = this.editingMatiereId
+      ? this.matiereService.updateMatiere(this.editingMatiereId, dto)
+      : this.matiereService.createMatiere(dto);
+
+    obs.subscribe({
+
+      next: () => {
+
+        this.successMessage = this.editingMatiereId
+          ? 'Matière modifiée.'
+          : 'Matière créée.';
+
+        this.showMatiereModal = false;
+
+        this.loadMatieres();
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+        this.errorMessage = 'Erreur lors de la création.';
+      }
     });
   }
+
+
+  // ================= DELETE =================
+
+  deleteMatiere(id: string): void {
+
+    if (!confirm('Supprimer cette matière ?')) {
+      return;
+    }
+
+    this.matiereService.deleteMatiere(id).subscribe({
+
+      next: () => {
+
+        this.successMessage = 'Matière supprimée.';
+
+        this.loadMatieres();
+      },
+
+      error: () => {
+
+        this.errorMessage = 'Suppression impossible.';
+      }
+    });
+  }
+
+
 
   // ─── Bâtiments ────────────────────────────────────────────────────────────
 

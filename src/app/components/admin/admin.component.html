@@ -8,8 +8,10 @@
   </div>
 
   <!-- Alertes -->
-  <p *ngIf="successMessage" class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">{{ successMessage }}</p>
-  <p *ngIf="errorMessage" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{{ errorMessage }}</p>
+  <p *ngIf="successMessage" class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">{{
+    successMessage }}</p>
+  <p *ngIf="errorMessage" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{{
+    errorMessage }}</p>
 
   <!-- Onglets -->
   <div class="bg-white shadow-sm rounded-lg p-2">
@@ -111,103 +113,284 @@
 
   <!-- ═══════════════ CYCLES ═══════════════ -->
   <ng-container *ngIf="activeTab === 'cycles'">
+
     <div class="bg-white shadow-sm rounded-lg p-6">
+
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg text-gray-900">Cycles d'enseignement</h3>
+
+        <h3 class="text-lg text-gray-900">
+          Cycles d'enseignement
+        </h3>
+
         <button (click)="openCycleModal()"
           class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-sm">
+
           + Nouveau cycle
+
         </button>
+
       </div>
-      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+
+      <div *ngIf="loading" class="text-sm text-gray-500">
+        Chargement...
+      </div>
+
       <div class="overflow-x-auto" *ngIf="!loading">
+
         <table class="min-w-full border border-gray-200 rounded-md">
+
           <thead class="bg-gray-50">
             <tr>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Nom</th>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Description</th>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Actions</th>
+
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">
+                Code
+              </th>
+
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">
+                Libellé
+              </th>
+
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">
+                Statut
+              </th>
+
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">
+                Actions
+              </th>
+
             </tr>
           </thead>
+
           <tbody>
+
             <tr *ngFor="let c of cycles" class="border-t hover:bg-gray-50">
-              <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ c.nom }}</td>
-              <td class="px-4 py-2 text-sm text-gray-600">{{ c.description || '-' }}</td>
-              <td class="px-4 py-2 text-sm">
-                <div class="flex gap-2">
-                  <button (click)="openCycleModal(c)" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
-                  <button (click)="deleteCycle(c.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
-                </div>
+
+              <td class="px-4 py-2 text-sm text-gray-700">
+                {{ c.code }}
               </td>
+
+              <td class="px-4 py-2 text-sm font-medium text-gray-900">
+                {{ c.libelle }}
+              </td>
+
+              <td class="px-4 py-2 text-sm">
+
+                <span class="px-2 py-1 rounded-full text-xs" [ngClass]="c.actif
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-red-100 text-red-700'">
+
+                  {{ c.actif ? 'Actif' : 'Inactif' }}
+
+                </span>
+
+              </td>
+
+              <td class="px-4 py-2 text-sm">
+
+                <div class="flex gap-2">
+
+                  <button (click)="openCycleModal(c)"
+                    class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">
+
+                    Modifier
+
+                  </button>
+
+                  <button (click)="deleteCycle(c.id)"
+                    class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">
+
+                    Supprimer
+
+                  </button>
+
+                </div>
+
+              </td>
+
             </tr>
-            <tr *ngIf="!cycles.length"><td colspan="3" class="px-4 py-6 text-center text-gray-500">Aucun cycle.</td></tr>
+
+            <tr *ngIf="!cycles.length">
+
+              <td colspan="4" class="px-4 py-6 text-center text-gray-500">
+                Aucun cycle.
+              </td>
+
+            </tr>
+
           </tbody>
+
         </table>
+
       </div>
+
     </div>
+
   </ng-container>
 
   <!-- ═══════════════ NIVEAUX ═══════════════ -->
   <ng-container *ngIf="activeTab === 'niveaux'">
+
     <div class="bg-white shadow-sm rounded-lg p-6">
+
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg text-gray-900">Niveaux scolaires</h3>
+
+        <h3 class="text-lg text-gray-900">
+          Niveaux scolaires
+        </h3>
+
         <button (click)="openNiveauModal()"
           class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-sm">
+
           + Nouveau niveau
+
         </button>
+
       </div>
-      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+
+      <div *ngIf="loading" class="text-sm text-gray-500">
+        Chargement...
+      </div>
+
       <div class="overflow-x-auto" *ngIf="!loading">
+
         <table class="min-w-full border border-gray-200 rounded-md">
+
           <thead class="bg-gray-50">
+
             <tr>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Nom</th>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Cycle</th>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Ordre</th>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Actions</th>
+
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">
+                Code
+              </th>
+
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">
+                Nom
+              </th>
+
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">
+                Cycle
+              </th>
+
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">
+                Ordre
+              </th>
+
+              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">
+                Actions
+              </th>
+
             </tr>
+
           </thead>
+
           <tbody>
+
             <tr *ngFor="let n of niveaux" class="border-t hover:bg-gray-50">
-              <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ n.nom }}</td>
-              <td class="px-4 py-2 text-sm text-gray-700">{{ getCycleNom(n.cycleId) }}</td>
-              <td class="px-4 py-2 text-sm text-gray-700">{{ n.ordre || '-' }}</td>
-              <td class="px-4 py-2 text-sm">
-                <div class="flex gap-2">
-                  <button (click)="openNiveauModal(n)" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
-                  <button (click)="deleteNiveau(n.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
-                </div>
+
+              <!-- CODE -->
+              <td class="px-4 py-2 text-sm text-gray-700">
+                {{ n.code }}
               </td>
+
+              <!-- LIBELLE -->
+              <td class="px-4 py-2 text-sm font-medium text-gray-900">
+                {{ n.libelle }}
+              </td>
+
+              <!-- NOM DU CYCLE -->
+              <td class="px-4 py-2 text-sm text-gray-700">
+                {{ getCycleNom(n.cycleId) }}
+              </td>
+
+              <!-- ORDRE -->
+              <td class="px-4 py-2 text-sm text-gray-700">
+                {{ n.ordre || '-' }}
+              </td>
+
+              <!-- ACTIONS -->
+              <td class="px-4 py-2 text-sm">
+
+                <div class="flex gap-2">
+
+                  <button (click)="openNiveauModal(n)"
+                    class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">
+
+                    Modifier
+
+                  </button>
+
+                  <button (click)="deleteNiveau(n.id)"
+                    class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">
+
+                    Supprimer
+
+                  </button>
+
+                </div>
+
+              </td>
+
             </tr>
-            <tr *ngIf="!niveaux.length"><td colspan="4" class="px-4 py-6 text-center text-gray-500">Aucun niveau.</td></tr>
+
+            <tr *ngIf="!niveaux.length">
+
+              <td colspan="5" class="px-4 py-6 text-center text-gray-500">
+                Aucun niveau.
+              </td>
+
+            </tr>
+
           </tbody>
+
         </table>
+
       </div>
+
     </div>
+
   </ng-container>
+
+
 
   <!-- ═══════════════ MATIÈRES ═══════════════ -->
   <ng-container *ngIf="activeTab === 'matieres'">
+
     <div class="bg-white shadow-sm rounded-lg p-6">
+
+      <!-- HEADER -->
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg text-gray-900">Matières enseignées</h3>
+
         <button (click)="openMatiereModal()"
           class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-sm">
           + Nouvelle matière
         </button>
       </div>
+
+      <!-- MESSAGES -->
+      <div *ngIf="successMessage" class="mb-3 text-green-600 text-sm">
+        {{ successMessage }}
+      </div>
+
+      <div *ngIf="errorMessage" class="mb-3 text-red-600 text-sm">
+        {{ errorMessage }}
+      </div>
+
+      <!-- LOADING -->
       <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+
+      <!-- TABLE -->
       <div class="overflow-x-auto" *ngIf="!loading">
         <table class="min-w-full border border-gray-200 rounded-md">
           <thead class="bg-gray-50">
             <tr>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Nom</th>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Code</th>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Description</th>
-              <th class="text-left text-sm font-medium text-gray-700 px-4 py-2">Actions</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Nom</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Code</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Description</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Actions</th>
             </tr>
           </thead>
+
           <tbody>
             <tr *ngFor="let m of matieres" class="border-t hover:bg-gray-50">
               <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ m.nom }}</td>
@@ -215,17 +398,34 @@
               <td class="px-4 py-2 text-sm text-gray-600">{{ m.description || '-' }}</td>
               <td class="px-4 py-2 text-sm">
                 <div class="flex gap-2">
-                  <button (click)="openMatiereModal(m)" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
-                  <button (click)="deleteMatiere(m.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
+
+                  <button (click)="openMatiereModal(m)"
+                    class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">
+                    Modifier
+                  </button>
+
+                  <button (click)="deleteMatiere(m.id)"
+                    class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">
+                    Supprimer
+                  </button>
+
                 </div>
               </td>
             </tr>
-            <tr *ngIf="!matieres.length"><td colspan="4" class="px-4 py-6 text-center text-gray-500">Aucune matière.</td></tr>
+
+            <tr *ngIf="!matieres.length">
+              <td colspan="4" class="px-4 py-6 text-center text-gray-500">
+                Aucune matière.
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
+
     </div>
+
   </ng-container>
+
 
   <!-- ═══════════════ BÂTIMENTS ═══════════════ -->
   <ng-container *ngIf="activeTab === 'batiments'">
@@ -255,12 +455,16 @@
               <td class="px-4 py-2 text-sm text-gray-600">{{ b.description || '-' }}</td>
               <td class="px-4 py-2 text-sm">
                 <div class="flex gap-2">
-                  <button (click)="openBatimentModal(b)" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
-                  <button (click)="deleteBatiment(b.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
+                  <button (click)="openBatimentModal(b)"
+                    class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
+                  <button (click)="deleteBatiment(b.id)"
+                    class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
                 </div>
               </td>
             </tr>
-            <tr *ngIf="!batiments.length"><td colspan="4" class="px-4 py-6 text-center text-gray-500">Aucun bâtiment.</td></tr>
+            <tr *ngIf="!batiments.length">
+              <td colspan="4" class="px-4 py-6 text-center text-gray-500">Aucun bâtiment.</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -297,12 +501,16 @@
               <td class="px-4 py-2 text-sm text-gray-700">{{ s.capacite || '-' }}</td>
               <td class="px-4 py-2 text-sm">
                 <div class="flex gap-2">
-                  <button (click)="openSalleModal(s)" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
-                  <button (click)="deleteSalle(s.id)" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
+                  <button (click)="openSalleModal(s)"
+                    class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 border border-indigo-300 rounded">Modifier</button>
+                  <button (click)="deleteSalle(s.id)"
+                    class="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-300 rounded">Supprimer</button>
                 </div>
               </td>
             </tr>
-            <tr *ngIf="!salles.length"><td colspan="5" class="px-4 py-6 text-center text-gray-500">Aucune salle.</td></tr>
+            <tr *ngIf="!salles.length">
+              <td colspan="5" class="px-4 py-6 text-center text-gray-500">Aucune salle.</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -313,90 +521,209 @@
 <!-- ═══════════ MODALS ═══════════ -->
 
 <!-- Modal Cycle -->
-<div *ngIf="showCycleModal" (click)="showCycleModal=false" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+<div *ngIf="showCycleModal" (click)="showCycleModal=false"
+  class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+
   <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingCycleId ? 'Modifier le cycle' : 'Créer un cycle' }}</h3>
+
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+      {{ editingCycleId ? 'Modifier le cycle' : 'Créer un cycle' }}
+    </h3>
+
     <div class="space-y-4">
+
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
-        <input type="text" [(ngModel)]="cycleForm.nom" placeholder="Ex: Primaire"
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Code *
+        </label>
+
+        <input type="text" [(ngModel)]="cycleForm.code" placeholder="Ex: PRIMAIRE"
           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
       </div>
+
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-        <textarea [(ngModel)]="cycleForm.description" rows="2"
-          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Libellé *
+        </label>
+
+        <input type="text" [(ngModel)]="cycleForm.libelle" placeholder="Ex: Primaire"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
       </div>
+
     </div>
+
     <div class="flex justify-end gap-3 mt-6">
-      <button (click)="showCycleModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
-      <button (click)="saveCycle()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ editingCycleId ? 'Modifier' : 'Créer' }}</button>
+
+      <button (click)="showCycleModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+        Annuler
+      </button>
+
+      <button (click)="saveCycle()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+
+        {{ editingCycleId ? 'Modifier' : 'Créer' }}
+
+      </button>
+
     </div>
+
   </div>
+
 </div>
 
 <!-- Modal Niveau -->
-<div *ngIf="showNiveauModal" (click)="showNiveauModal=false" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+<div *ngIf="showNiveauModal" (click)="showNiveauModal=false"
+  class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+
   <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingNiveauId ? 'Modifier le niveau' : 'Créer un niveau' }}</h3>
+
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+      {{ editingNiveauId ? 'Modifier le niveau' : 'Créer un niveau' }}
+    </h3>
+
     <div class="space-y-4">
+
+      <!-- CODE (AJOUTÉ - obligatoire backend) -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
-        <input type="text" [(ngModel)]="niveauForm.nom" placeholder="Ex: 6ème"
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Code *
+        </label>
+
+        <input type="text" [(ngModel)]="niveauForm.code" placeholder="Ex: 6EME"
           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
       </div>
+
+      <!-- NOM / LIBELLE -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Cycle *</label>
-        <select [(ngModel)]="niveauForm.cycleId" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Nom *
+        </label>
+
+        <input type="text" [(ngModel)]="niveauForm.libelle" placeholder="Ex: 6ème"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+
+      <!-- CYCLE -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Cycle *
+        </label>
+
+        <select [(ngModel)]="niveauForm.cycleId"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+
           <option value="">Sélectionner un cycle...</option>
-          <option *ngFor="let c of cycles" [value]="c.id">{{ c.nom }}</option>
+
+          <option *ngFor="let c of cycles" [value]="c.id">
+            {{ c.libelle }}
+          </option>
+
         </select>
       </div>
+
+      <!-- ORDRE -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Ordre</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Ordre
+        </label>
+
         <input type="number" [(ngModel)]="niveauForm.ordre" placeholder="1"
           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
       </div>
+
     </div>
+
+    <!-- ACTIONS -->
     <div class="flex justify-end gap-3 mt-6">
-      <button (click)="showNiveauModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
-      <button (click)="saveNiveau()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ editingNiveauId ? 'Modifier' : 'Créer' }}</button>
+
+      <button (click)="showNiveauModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+        Annuler
+      </button>
+
+      <button (click)="saveNiveau()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+
+        {{ editingNiveauId ? 'Modifier' : 'Créer' }}
+
+      </button>
+
     </div>
+
   </div>
+
 </div>
 
-<!-- Modal Matière -->
-<div *ngIf="showMatiereModal" (click)="showMatiereModal=false" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+<!-- ═══════════════ MODAL MATIÈRE ═══════════════ -->
+<div *ngIf="showMatiereModal" (click)="closeMatiereModal()"
+  class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+
   <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingMatiereId ? 'Modifier la matière' : 'Créer une matière' }}</h3>
+
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+      {{ editingMatiereId ? 'Modifier la matière' : 'Créer une matière' }}
+    </h3>
+
     <div class="space-y-4">
+
+      <!-- NOM -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
         <input type="text" [(ngModel)]="matiereForm.nom" placeholder="Ex: Mathématiques"
-          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500" />
       </div>
+
+      <!-- CODE -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Code *</label>
         <input type="text" [(ngModel)]="matiereForm.code" placeholder="Ex: MATH"
-          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500" />
       </div>
+
+      <!-- DESCRIPTION -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
         <textarea [(ngModel)]="matiereForm.description" rows="2"
-          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500">
+        </textarea>
       </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Coefficient
+        </label>
+
+        <input type="number" [(ngModel)]="matiereForm.coefficient"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Catégorie
+        </label>
+
+        <input type="text" [(ngModel)]="matiereForm.categorie" placeholder="Ex: Langue"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+
     </div>
+
+    <!-- ACTIONS -->
     <div class="flex justify-end gap-3 mt-6">
-      <button (click)="showMatiereModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
-      <button (click)="saveMatiere()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ editingMatiereId ? 'Modifier' : 'Créer' }}</button>
+      <button (click)="closeMatiereModal()" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+        Annuler
+      </button>
+
+      <button (click)="saveMatiere()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+        {{ editingMatiereId ? 'Modifier' : 'Créer' }}
+      </button>
     </div>
+
   </div>
 </div>
 
 <!-- Modal Bâtiment -->
-<div *ngIf="showBatimentModal" (click)="showBatimentModal=false" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+<div *ngIf="showBatimentModal" (click)="showBatimentModal=false"
+  class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
   <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingBatimentId ? 'Modifier le bâtiment' : 'Créer un bâtiment' }}</h3>
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingBatimentId ? 'Modifier le bâtiment' : 'Créer un
+      bâtiment' }}</h3>
     <div class="space-y-4">
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
@@ -415,16 +742,20 @@
       </div>
     </div>
     <div class="flex justify-end gap-3 mt-6">
-      <button (click)="showBatimentModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
-      <button (click)="saveBatiment()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ editingBatimentId ? 'Modifier' : 'Créer' }}</button>
+      <button (click)="showBatimentModal=false"
+        class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
+      <button (click)="saveBatiment()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{
+        editingBatimentId ? 'Modifier' : 'Créer' }}</button>
     </div>
   </div>
 </div>
 
 <!-- Modal Salle -->
-<div *ngIf="showSalleModal" (click)="showSalleModal=false" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+<div *ngIf="showSalleModal" (click)="showSalleModal=false"
+  class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
   <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingSalleId ? 'Modifier la salle' : 'Créer une salle' }}</h3>
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ editingSalleId ? 'Modifier la salle' : 'Créer une salle' }}
+    </h3>
     <div class="space-y-4">
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
@@ -433,14 +764,16 @@
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Bâtiment *</label>
-        <select [(ngModel)]="salleForm.batimentId" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+        <select [(ngModel)]="salleForm.batimentId"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
           <option value="">Sélectionner un bâtiment...</option>
           <option *ngFor="let b of batiments" [value]="b.id">{{ b.nom }}</option>
         </select>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-        <select [(ngModel)]="salleForm.type" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+        <select [(ngModel)]="salleForm.type"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
           <option value="">Sélectionner...</option>
           <option *ngFor="let t of salleTypes" [value]="t">{{ t }}</option>
         </select>
@@ -452,8 +785,10 @@
       </div>
     </div>
     <div class="flex justify-end gap-3 mt-6">
-      <button (click)="showSalleModal=false" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
-      <button (click)="saveSalle()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ editingSalleId ? 'Modifier' : 'Créer' }}</button>
+      <button (click)="showSalleModal=false"
+        class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
+      <button (click)="saveSalle()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{
+        editingSalleId ? 'Modifier' : 'Créer' }}</button>
     </div>
   </div>
 </div>
