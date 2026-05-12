@@ -1,13 +1,12 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { createIcons, icons } from 'lucide';
+import { Component, OnInit } from '@angular/core';
+import { PrimeNGConfig } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit {
   title = 'noura_school_frontend';
 
    ecoleInfo = {
@@ -30,16 +29,9 @@ export class AppComponent implements AfterViewInit {
     description: 'Développement de solutions numériques modernes.'
   };
 
-  
-  constructor(private router: Router) {}
+  constructor(private primengConfig: PrimeNGConfig) {}
 
-  ngAfterViewInit() {
-    createIcons({ icons });
-
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        setTimeout(() => createIcons({ icons }), 0);
-      }
-    });
+  ngOnInit(): void {
+    this.primengConfig.ripple = true;
   }
 }

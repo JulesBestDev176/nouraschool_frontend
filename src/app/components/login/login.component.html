@@ -1,53 +1,52 @@
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-yellow-100 flex items-center justify-center px-4">
-  <div class="max-w-md w-full space-y-8">
+<div class="login-page">
 
-    <!-- Header -->
-    <div class="text-center">
-      <img src="../../../assets/images/logo.png" alt="Logo École NOURA" class="mx-auto h-24 w-24 object-contain mb-4" />
-      <h2 class="text-3xl font-bold text-gray-900 mb-2">École NOURA</h2>
-      <p class="text-lg text-green-700 font-medium mb-6">"L’éducation, notre fierté"</p>
-      <p class="text-gray-600">Connectez-vous à votre espace</p>
-      <p class="text-sm text-gray-500 mt-1">Nouakchott, Mauritanie</p>
+  <div class="login-bg"></div>
+  <div class="login-overlay"></div>
+
+  <div class="login-card">
+
+    <div class="login-header">
+      <img src="../../../assets/images/logo.png" alt="Logo" class="login-logo" />
+      <h1>École NOURA</h1>
+      <p>Connectez-vous à votre espace</p>
     </div>
 
-    <!-- Formulaire -->
-    <form class="mt-8 space-y-6">
-      <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
-          <input #emailInput id="email" name="email" type="email" required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            placeholder="votre@email.mr" />
-        </div>
+    <div class="login-form">
 
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-          <input #passwordInput id="password" name="password" type="password" required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            placeholder="Votre mot de passe" />
+      <div class="field">
+        <label>Adresse email</label>
+        <div class="input-wrapper">
+          <lucide-angular [img]="mailIcon" [size]="16" class="input-icon"></lucide-angular>
+          <input pInputText type="email" [(ngModel)]="email" placeholder="votre@email.mr" />
         </div>
-
-        <div *ngIf="errorMsg" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded border border-red-100"
-          id="error-msg">
-          {{errorMsg}}
-        </div>
-
-        <button type="submit" (click)="$event.preventDefault(); onSubmit(emailInput.value, passwordInput.value)"
-          class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md font-medium transition-colors duration-200 flex items-center justify-center">
-          Se connecter
-        </button>
       </div>
-    </form>
-    <!-- Bouton retour -->
-    <div class="text-center">
-      <a routerLink="/home"
-        class="text-green-600 hover:text-green-700 font-medium flex items-center justify-center mx-auto">
-        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Retour à l'accueil
-      </a>
+
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="input-wrapper password-wrapper">
+          <lucide-angular [img]="lockIcon" [size]="16" class="input-icon"></lucide-angular>
+          <p-password [(ngModel)]="password" [feedback]="false" [toggleMask]="true"
+            placeholder="Votre mot de passe">
+          </p-password>
+        </div>
+      </div>
+
+      <div class="error-msg" *ngIf="errorMsg">
+        <lucide-angular [img]="alertIcon" [size]="14"></lucide-angular>
+        {{ errorMsg }}
+      </div>
+
+      <button class="submit-btn" (click)="onSubmit()" [disabled]="isLoading">
+        {{ isLoading ? 'Connexion…' : 'Se connecter' }}
+      </button>
+
     </div>
+
+    <a routerLink="/home" class="back-link">
+      <lucide-angular [img]="arrowLeftIcon" [size]="13"></lucide-angular>
+      Retour à l'accueil
+    </a>
 
   </div>
+
 </div>

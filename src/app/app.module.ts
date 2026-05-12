@@ -2,6 +2,14 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
+import { DividerModule } from 'primeng/divider';
+import { TooltipModule } from 'primeng/tooltip';
+import { BadgeModule } from 'primeng/badge';
+import { RippleModule } from 'primeng/ripple';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -43,6 +51,13 @@ import { EnseignantComponent } from './components/enseignant/enseignant.componen
 import { CoursComponent } from './components/cours/cours.component';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import {
+  AlertCircle, ArrowLeft, Ban, BookOpen, Building2, CalendarDays, ChartColumn,
+  CircleUserRound, ClipboardList, Clock3, CreditCard, FileText, Globe,
+  GraduationCap, Heart, LayoutDashboard, Lightbulb, Lock, LogOut, LucideAngularModule,
+  Mail, Megaphone, MessageSquareWarning, NotebookPen, School, Settings,
+  TriangleAlert, Users, UsersRound, Wallet
+} from 'lucide-angular';
 
 @NgModule({
   declarations: [
@@ -88,7 +103,46 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
     ReactiveFormsModule,
     HttpClientModule,
     AppRoutingModule,
-    CommonModule
+    CommonModule,
+    ButtonModule,
+    CardModule,
+    InputTextModule,
+    PasswordModule,
+    DividerModule,
+    TooltipModule,
+    BadgeModule,
+    RippleModule,
+    LucideAngularModule.pick({
+      AlertCircle,
+      ArrowLeft,
+      Ban,
+      BookOpen,
+      Building2,
+      CalendarDays,
+      ChartColumn,
+      CircleUserRound,
+      ClipboardList,
+      Clock3,
+      CreditCard,
+      FileText,
+      Globe,
+      GraduationCap,
+      Heart,
+      LayoutDashboard,
+      Lightbulb,
+      Lock,
+      LogOut,
+      Mail,
+      Megaphone,
+      MessageSquareWarning,
+      NotebookPen,
+      School,
+      Settings,
+      TriangleAlert,
+      Users,
+      UsersRound,
+      Wallet
+    })
   ],
   providers: [
     provideAnimationsAsync(),

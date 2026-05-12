@@ -1,0 +1,215 @@
+.login-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.login-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/images/eleves2.jpg');
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+
+  // Fallback gradient si l'image ne charge pas
+  background-color: #0f172a;
+}
+
+.login-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.60) 0%, rgba(15, 23, 42, 0.72) 100%);
+  z-index: 1;
+}
+
+.login-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 3rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 0;
+
+  @media (max-width: 600px) {
+    padding: 2rem 1.5rem;
+    max-width: 100%;
+    min-height: 100vh;
+    justify-content: center;
+  }
+}
+
+.login-header {
+  text-align: center;
+
+  .login-logo {
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 1rem;
+  }
+
+  h1 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.35rem;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+
+  label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #374151;
+  }
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  .input-icon {
+    position: absolute;
+    left: 0.9rem;
+    z-index: 5;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  input[pInputText] {
+    width: 100%;
+    padding: 0.75rem 0.9rem 0.75rem 2.6rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1e293b;
+    background: #f8fafc;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+
+    &:focus {
+      border-color: #16a34a;
+      background: #fff;
+    }
+
+    &::placeholder { color: #cbd5e1; }
+  }
+}
+
+// Password wrapper — icon + p-password full width
+.password-wrapper {
+  ::ng-deep p-password {
+    width: 100%;
+    display: block;
+  }
+
+  ::ng-deep .p-password {
+    width: 100%;
+    display: block;
+  }
+
+  ::ng-deep .p-password input {
+    width: 100%;
+    padding: 0.75rem 2.8rem 0.75rem 2.6rem !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    font-size: 0.875rem !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    color: #1e293b !important;
+    background: #f8fafc !important;
+    box-sizing: border-box !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s, background 0.2s !important;
+
+    &:focus {
+      border-color: #16a34a !important;
+      background: #fff !important;
+    }
+
+    &::placeholder { color: #cbd5e1 !important; }
+  }
+
+  ::ng-deep .p-password-toggle-icon {
+    color: #94a3b8;
+  }
+}
+
+.error-msg {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 0.82rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 8px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.25rem;
+
+  &:hover:not(:disabled) { background: #15803d; }
+  &:disabled { opacity: 0.65; cursor: not-allowed; }
+}
+
+.back-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover { color: #16a34a; }
+}
