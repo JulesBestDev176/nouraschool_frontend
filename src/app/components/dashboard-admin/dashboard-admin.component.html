@@ -1,217 +1,115 @@
 <app-layout></app-layout>
-<div class="space-y-6 ml-80 mt-6 mr-6">
-  <!-- Statistiques principales -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <!-- Total Élèves -->
-    <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-6.5a6 6 0 11-12 0 6 6 0 0112 0z" />
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm text-gray-500 truncate">Total Élèves</dt>
-              <dd class="text-lg text-gray-900">{{statistiques.totalEleves}}</dd>
-            </dl>
-          </div>
-        </div>
+<p-toast></p-toast>
+
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Tableau de bord</h1>
+      <p class="page-subtitle">Année académique {{ ecoleInfo.anneeAcademique }}</p>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="stat-cards">
+    <div class="stat-card">
+      <div class="stat-icon-box blue">
+        <lucide-angular [img]="graduationIcon" [size]="20"></lucide-angular>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ statistiques.totalEleves ?? '—' }}</div>
+        <div class="stat-label">Élèves inscrits</div>
       </div>
     </div>
-
-    <!-- Total Enseignants -->
-    <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm text-gray-500 truncate">Personnel</dt>
-              <dd class="text-lg text-gray-900">{{statistiques.totalEnseignants}}</dd>
-            </dl>
-          </div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-box green">
+        <lucide-angular [img]="usersIcon" [size]="20"></lucide-angular>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ statistiques.totalEnseignants ?? '—' }}</div>
+        <div class="stat-label">Personnel</div>
       </div>
     </div>
-
-    <!-- Total Classes -->
-    <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h4a1 1 0 011 1v5m-6 0V9a1 1 0 011-1h4a1 1 0 011 1v11" />
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm text-gray-500 truncate">Classes</dt>
-              <dd class="text-lg text-gray-900">{{statistiques.totalClasses}}</dd>
-            </dl>
-          </div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-box purple">
+        <lucide-angular [img]="buildingIcon" [size]="20"></lucide-angular>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ statistiques.totalClasses ?? '—' }}</div>
+        <div class="stat-label">Classes</div>
       </div>
     </div>
-
-    <!-- Moyenne École -->
-    <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm text-gray-500 truncate">Moyenne École</dt>
-              <dd class="text-lg text-gray-900">{{statistiques.moyenneGeneraleEcole | number:'1.1-1'}}/20</dd>
-            </dl>
-          </div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-box amber">
+        <lucide-angular [img]="chartIcon" [size]="20"></lucide-angular>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ (statistiques.moyenneGeneraleEcole | number:'1.1-1') ?? '—' }}/20</div>
+        <div class="stat-label">Moyenne générale</div>
       </div>
     </div>
   </div>
 
-  <!-- Résumé financier -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Paiements -->
-    <div class="bg-white shadow-sm rounded-lg">
-      <div class="p-6">
-        <h3 class="text-lg leading-6 text-gray-900 mb-4">Situation Financière</h3>
-        <div class="space-y-4">
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">Montant collecté</span>
-            <span class="text-lg text-green-600">{{statistiques.totalMontantPaye | number}} MRU</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">En attente</span>
-            <span class="text-lg text-orange-600">{{statistiques.totalMontantEnAttente | number}} MRU</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">Paiements en attente</span>
-            <span class="text-lg text-red-600">{{statistiques.paiementsEnAttente}}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Row 2 -->
+  <div class="dashboard-grid">
 
-    <!-- Activités récentes -->
-    <div class="bg-white shadow-sm rounded-lg">
-      <div class="p-6">
-        <h3 class="text-lg leading-6 text-gray-900 mb-4">Activités Récentes</h3>
-        <div class="space-y-4">
-          <div class="flex items-center space-x-3">
-            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-            <span class="text-sm text-gray-600">{{statistiques.totalEleves}} élèves inscrits</span>
-          </div>
-          <div class="flex items-center space-x-3">
-            <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
-            <span class="text-sm text-gray-600">{{statistiques.totalEnseignants}} membres du personnel actifs</span>
-          </div>
-          <div class="flex items-center space-x-3">
-            <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
-            <span class="text-sm text-gray-600">{{statistiques.totalClasses}} classes ouvertes</span>
-          </div>
-          <div class="flex items-center space-x-3">
-            <div class="w-2 h-2 bg-yellow-400 rounded-full"></div>
-            <span class="text-sm text-gray-600">Année scolaire {{ecoleInfo.anneeAcademique}}</span>
-          </div>
+    <!-- Finance -->
+    <p-card header="Situation financière" styleClass="content-card h-full">
+      <div class="finance-rows">
+        <div class="finance-row">
+          <span>Montant collecté</span>
+          <strong class="green">{{ statistiques.totalMontantPaye | number }} MRU</strong>
+        </div>
+        <p-divider></p-divider>
+        <div class="finance-row">
+          <span>En attente</span>
+          <strong class="amber">{{ statistiques.totalMontantEnAttente | number }} MRU</strong>
+        </div>
+        <p-divider></p-divider>
+        <div class="finance-row">
+          <span>Paiements en attente</span>
+          <p-tag [value]="statistiques.paiementsEnAttente?.toString()" severity="warning"></p-tag>
         </div>
       </div>
-    </div>
+    </p-card>
+
+    <!-- Activités -->
+    <p-card header="Activités récentes" styleClass="content-card h-full">
+      <div class="activity-list">
+        <div class="activity-item">
+          <span class="dot green"></span>
+          <span>{{ statistiques.totalEleves }} élèves inscrits</span>
+        </div>
+        <div class="activity-item">
+          <span class="dot blue"></span>
+          <span>{{ statistiques.totalEnseignants }} membres du personnel actifs</span>
+        </div>
+        <div class="activity-item">
+          <span class="dot purple"></span>
+          <span>{{ statistiques.totalClasses }} classes ouvertes</span>
+        </div>
+        <div class="activity-item">
+          <span class="dot amber"></span>
+          <span>Année scolaire {{ ecoleInfo.anneeAcademique }}</span>
+        </div>
+      </div>
+    </p-card>
+
   </div>
 
   <!-- Actions rapides -->
-  <div class="bg-white shadow-sm rounded-lg">
-    <div class="p-6">
-      <h3 class="text-lg leading-6 text-gray-900 mb-6">Actions Rapides</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <button
-          class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors group">
-          <svg class="w-8 h-8 text-gray-400 group-hover:text-blue-500 mb-2" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          <span class="text-sm text-gray-600 group-hover:text-blue-600">Nouvel Élève</span>
-        </button>
-
-        <button
-          class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-400 hover:bg-green-50 transition-colors group">
-          <svg class="w-8 h-8 text-gray-400 group-hover:text-green-500 mb-2" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-          <span class="text-sm text-gray-600 group-hover:text-green-600">Nouveau Personnel</span>
-        </button>
-
-        <button
-          class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-colors group">
-          <svg class="w-8 h-8 text-gray-400 group-hover:text-purple-500 mb-2" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h4a1 1 0 011 1v5m-6 0V9a1 1 0 011-1h4a1 1 0 011 1v11" />
-          </svg>
-          <span class="text-sm text-gray-600 group-hover:text-purple-600">Nouvelle Classe</span>
-        </button>
-
-        <button
-          class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-yellow-400 hover:bg-yellow-50 transition-colors group">
-          <svg class="w-8 h-8 text-gray-400 group-hover:text-yellow-500 mb-2" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <span class="text-sm text-gray-600 group-hover:text-yellow-600">Générer Bulletins</span>
-        </button>
-      </div>
+  <p-card header="Actions rapides" styleClass="content-card" [style]="{'margin-top':'1.25rem'}">
+    <div class="quick-actions">
+      <button pButton pRipple label="Nouvel élève" icon="pi pi-user-plus"
+        class="p-button-outlined p-button-info" (click)="navigate('/admin/eleves')"></button>
+      <button pButton pRipple label="Nouveau personnel" icon="pi pi-id-card"
+        class="p-button-outlined p-button-success" (click)="navigate('/admin/personnel')"></button>
+      <button pButton pRipple label="Nouvelle classe" icon="pi pi-building"
+        class="p-button-outlined p-button-help" (click)="navigate('/admin/classes')"></button>
+      <button pButton pRipple label="Générer bulletins" icon="pi pi-file-pdf"
+        class="p-button-outlined p-button-warning" (click)="navigate('/admin/bulletins')"></button>
     </div>
-  </div>
+  </p-card>
 
-  <!-- Informations de l'école -->
-  <!-- <div class="bg-gradient-to-r from-green-50 to-yellow-50 border border-green-200 rounded-lg">
-        <div class="p-6">
-          <div class="flex items-center">
-            <img src="../../../assets/images/logo.png" alt="Logo École NOURA" class="h-16 w-16 object-contain mr-4" />
-            <div class="flex-1">
-              <h3 class="text-lg text-gray-900 mb-2">{{ecoleInfo.nom}}</h3>
-              <p class="text-green-700 mb-2">"{{ecoleInfo.slogan}}"</p>
-              <p class="text-sm text-gray-600">{{ecoleInfo.adresse}}</p>
-              <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div>
-                  <span class="text-gray-500">Directeur:</span>
-                  <span class="ml-2 text-gray-900">{{ecoleInfo.directeur}}</span>
-                </div>
-                <div>
-                  <span class="text-gray-500">Dir. Pédagogique:</span>
-                  <span class="ml-2 text-gray-900">{{ecoleInfo.directeurPedagogique}}</span>
-                </div>
-                <div>
-                  <span class="text-gray-500">Année:</span>
-                  <span class="ml-2 text-gray-900">{{ecoleInfo.anneeAcademique}}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
 </div>

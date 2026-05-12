@@ -1,0 +1,46 @@
+@use '../../../styles/page' as *;
+
+.cell-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cell-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.cell-sub {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin-top: 0.1rem;
+}
+
+.cell-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.empty-msg {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  padding: 2rem !important;
+}
+
+.cred-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+
+  code {
+    background: #fef3c7;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.82rem;
+  }
+}

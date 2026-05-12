@@ -14,7 +14,6 @@ export class AlertService {
       icon:          'swal-icon',
     },
     buttonsStyling: false,
-    fontFamily: "'Plus Jakarta Sans', sans-serif",
   });
 
   // ── Succès ───────────────────────────────────────────
@@ -78,7 +77,6 @@ export class AlertService {
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-      fontFamily: "'Plus Jakarta Sans', sans-serif",
       customClass: { popup: 'swal-toast' },
     }).fire({ icon, title });
   }

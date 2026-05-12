@@ -1,0 +1,62 @@
+@use '../../../styles/page' as *;
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr; }
+}
+
+.finance-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.finance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  color: #475569;
+
+  strong {
+    font-weight: 700;
+    &.green { color: #16a34a; }
+    &.amber { color: #d97706; }
+    &.red   { color: #ef4444; }
+  }
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: #475569;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    &.green  { background: #16a34a; }
+    &.blue   { background: #3b82f6; }
+    &.purple { background: #9333ea; }
+    &.amber  { background: #d97706; }
+  }
+}
+
+.quick-actions {
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}

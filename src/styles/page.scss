@@ -1,0 +1,290 @@
+// ── Shared page layout ───────────────────────────────────
+// Usage: @use '../../../styles/page' as *;
+
+.page-wrapper {
+  margin-left: 240px;
+  padding: 1.75rem 2rem;
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .page-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .page-subtitle {
+    font-size: 0.82rem;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+// ── Stat cards ───────────────────────────────────────────
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px)  { grid-template-columns: 1fr; }
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .stat-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &.blue   { background: #eff6ff; color: #3b82f6; }
+    &.green  { background: #f0fdf4; color: #16a34a; }
+    &.purple { background: #faf5ff; color: #9333ea; }
+    &.amber  { background: #fffbeb; color: #d97706; }
+    &.red    { background: #fef2f2; color: #ef4444; }
+    &.teal   { background: #f0fdfa; color: #0d9488; }
+  }
+
+  .stat-info {
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-top: 0.2rem;
+    }
+  }
+}
+
+// ── Content card ─────────────────────────────────────────
+.content-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+// ── PrimeNG Table overrides ──────────────────────────────
+::ng-deep {
+  .p-datatable {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+
+    .p-datatable-header {
+      background: #fff;
+      border: none;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 1rem 1.25rem;
+    }
+
+    .p-datatable-thead > tr > th {
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-color: #e2e8f0;
+      padding: 0.75rem 1rem;
+    }
+
+    .p-datatable-tbody > tr {
+      transition: background 0.15s;
+
+      > td {
+        border-color: #f1f5f9;
+        padding: 0.85rem 1rem;
+        font-size: 0.875rem;
+        color: #1e293b;
+      }
+
+      &:hover > td { background: #f8fafc; }
+    }
+
+    .p-paginator {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+    }
+  }
+
+  // Dialog
+  .p-dialog {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    border-radius: 14px;
+    overflow: hidden;
+
+    .p-dialog-header {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 1.25rem 1.5rem;
+
+      .p-dialog-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+      }
+    }
+
+    .p-dialog-content {
+      padding: 1.5rem;
+      background: #fff;
+    }
+
+    .p-dialog-footer {
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+  }
+
+  // Toolbar
+  .p-toolbar {
+    background: #fff;
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 0;
+    padding: 1rem 1.25rem;
+  }
+
+  // Tag
+  .p-tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 0.2rem 0.6rem;
+  }
+
+  // Button
+  .p-button {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    border-radius: 8px;
+    font-size: 0.85rem;
+
+    &.p-button-sm {
+      font-size: 0.78rem;
+      padding: 0.4rem 0.85rem;
+    }
+  }
+
+  // InputText
+  .p-inputtext {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    border-radius: 8px;
+    border-color: #e2e8f0;
+    background: #f8fafc;
+
+    &:focus {
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+    }
+  }
+
+  // Dropdown
+  .p-dropdown {
+    border-radius: 8px;
+    border-color: #e2e8f0;
+    background: #f8fafc;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+
+    &:not(.p-disabled).p-focus {
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+    }
+  }
+
+  // Toast
+  .p-toast {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+
+    .p-toast-message {
+      border-radius: 10px;
+      font-size: 0.875rem;
+    }
+  }
+
+  // Avatar
+  .p-avatar {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+  }
+}
+
+// ── Form field ───────────────────────────────────────────
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+
+  label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  input, textarea, .p-dropdown, .p-calendar {
+    width: 100%;
+  }
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+// ── Avatar initials ──────────────────────────────────────
+.avatar-initials {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  &.blue   { background: #eff6ff; color: #3b82f6; }
+  &.green  { background: #f0fdf4; color: #16a34a; }
+  &.purple { background: #faf5ff; color: #9333ea; }
+  &.amber  { background: #fffbeb; color: #d97706; }
+}

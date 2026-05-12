@@ -1,526 +1,195 @@
 <app-layout></app-layout>
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
 
-<div class="space-y-6 ml-80 mt-6 mr-6">
-
-  <!-- Credentials -->
-  <div *ngIf="createdCredentials" class="bg-amber-50 border border-amber-300 rounded-lg p-4">
-    <div class="flex items-start justify-between gap-4">
-      <div>
-        <h3 class="text-sm font-semibold text-amber-800">
-          Identifiants élève générés
-        </h3>
-
-        <p class="text-sm text-amber-700 mt-1">
-          Un email a été envoyé à
-          <span class="font-medium">
-            {{ createdCredentials.email }}
-          </span>
-        </p>
-
-        <p class="text-sm text-amber-700 mt-2">
-          Username:
-          <span class="font-mono">
-            {{ createdCredentials.username }}
-          </span>
-
-          |
-
-          Password:
-          <span class="font-mono">
-            {{ createdCredentials.password }}
-          </span>
-        </p>
-      </div>
-
-      <button type="button" (click)="closeCredentialsBanner()" class="text-amber-700 hover:text-amber-900">
-
-        Fermer
-      </button>
-    </div>
-  </div>
+<div class="page-wrapper">
 
   <!-- Header -->
-  <div class="flex justify-between items-center">
-
+  <div class="page-header">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900">
-        Gestion des Élèves
-      </h1>
-
-      <p class="text-gray-600 mt-1">
-        {{ filteredEleves.length }} élève(s) inscrit(s)
-      </p>
+      <h1 class="page-title">Gestion des Élèves</h1>
+      <p class="page-subtitle">{{ filteredEleves.length }} élève(s) inscrit(s)</p>
     </div>
-
-    <button *ngIf="canAddEleve" (click)="openModal()"
-      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center shadow-sm">
-
-      <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-      </svg>
-
-      Ajouter un élève
-    </button>
-
+    <p-button *ngIf="canAddEleve" label="Ajouter un élève" icon="pi pi-plus"
+      (onClick)="openModal()"></p-button>
   </div>
 
-  <!-- Filters -->
-  <div class="bg-white p-4 rounded-lg shadow-sm space-y-4">
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-      <!-- Search -->
-      <div>
-
-        <label class="block text-sm font-medium text-gray-700 mb-1">
-          Rechercher
-        </label>
-
-        <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applyFilters()"
-          placeholder="Nom, prénom ou email..."
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-
+  <!-- Credentials banner -->
+  <p-messages *ngIf="createdCredentials" severity="warn" [closable]="true"
+    (valueChange)="createdCredentials = null">
+    <ng-template pTemplate>
+      <div class="cred-banner">
+        <strong>Identifiants générés —</strong>
+        <span>Email: <code>{{ createdCredentials.email }}</code></span>
+        <span>Username: <code>{{ createdCredentials.username }}</code></span>
+        <span>Password: <code>{{ createdCredentials.password }}</code></span>
       </div>
+    </ng-template>
+  </p-messages>
 
-      <!-- Classe -->
-      <div>
+  <!-- Table card -->
+  <div class="content-card">
+    <p-table [value]="filteredEleves" [paginator]="true" [rows]="10"
+      [rowsPerPageOptions]="[10,25,50]" [globalFilterFields]="['firstName','lastName','email']"
+      styleClass="p-datatable-sm" [loading]="loading" responsiveLayout="scroll">
 
-        <label class="block text-sm font-medium text-gray-700 mb-1">
-          Classe
-        </label>
+      <!-- Header toolbar -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="firstName">
+            Élève <p-sortIcon field="firstName"></p-sortIcon>
+          </th>
+          <th>Informations</th>
+          <th pSortableColumn="classeId">
+            Classe <p-sortIcon field="classeId"></p-sortIcon>
+          </th>
+          <th>Parents</th>
+          <th>Statut</th>
+          <th style="width:100px">Actions</th>
+        </tr>
+        <tr>
+          <th colspan="2">
+            <span class="p-input-icon-left w-full">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" [(ngModel)]="searchQuery"
+                (ngModelChange)="applyFilters()" placeholder="Rechercher…" class="w-full" />
+            </span>
+          </th>
+          <th>
+            <p-dropdown [options]="classeOptions" [(ngModel)]="filterClasseId"
+              (onChange)="applyFilters()" placeholder="Toutes" [showClear]="true"
+              optionLabel="label" optionValue="value" styleClass="w-full"></p-dropdown>
+          </th>
+          <th colspan="3"></th>
+        </tr>
+      </ng-template>
 
-        <select [(ngModel)]="filterClasseId" (change)="applyFilters()"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-
-          <option value="">Toutes les classes</option>
-
-          <option *ngFor="let c of allClasses" [value]="c.id">
-            {{ c.nom }}
-          </option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- Table -->
-  <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-
-    <div class="overflow-x-auto">
-
-      <table class="min-w-full divide-y divide-gray-200">
-
-        <thead class="bg-gray-50">
-
-          <tr>
-
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Élève
-            </th>
-
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Informations
-            </th>
-
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Classe
-            </th>
-
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Parents
-            </th>
-
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Statut
-            </th>
-
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
-
-          </tr>
-
-        </thead>
-
-        <tbody class="bg-white divide-y divide-gray-200">
-
-          <tr *ngFor="let eleve of filteredEleves" class="hover:bg-gray-50">
-
-            <!-- Eleve -->
-            <td class="px-6 py-4 whitespace-nowrap">
-
-              <div class="flex items-center">
-
-                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-
-                  <span class="text-blue-600 font-semibold uppercase">
-                    {{ eleve.firstName?.charAt(0) }}
-                    {{ eleve.lastName?.charAt(0) }}
-                  </span>
-
-                </div>
-
-                <div class="ml-4">
-
-                  <div class="font-medium text-gray-900">
-                    {{ eleve.firstName }} {{ eleve.lastName }}
-                  </div>
-
-                  <div class="text-sm text-gray-500">
-                    {{ eleve.email }}
-                  </div>
-
-                </div>
-
+      <ng-template pTemplate="body" let-eleve>
+        <tr>
+          <!-- Élève -->
+          <td>
+            <div class="cell-user">
+              <div class="avatar-initials blue">
+                {{ eleve.firstName?.charAt(0) }}{{ eleve.lastName?.charAt(0) }}
               </div>
-
-            </td>
-
-            <!-- Infos -->
-            <td class="px-6 py-4 whitespace-nowrap">
-
-              <div class="text-sm text-gray-900">
-                {{ eleve.genre === 'M' ? 'Masculin' : 'Féminin' }}
+              <div>
+                <div class="cell-name">{{ eleve.firstName }} {{ eleve.lastName }}</div>
+                <div class="cell-sub">{{ eleve.email }}</div>
               </div>
-
-              <div class="text-sm text-gray-500">
-
-                {{ eleve.dateNaissance | date:'shortDate' }}
-
-                •
-
-                {{ eleve.lieuNaissance || 'Non renseigné' }}
-
-              </div>
-
-            </td>
-
-            <!-- Classe -->
-            <td class="px-6 py-4 whitespace-nowrap">
-
-              <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded-full">
-
-                {{ getClasseName(eleve.classeId) }}
-
-              </span>
-
-            </td>
-
-            <!-- Parents -->
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-
-              {{ getParentNames(eleve.parentIds) }}
-
-            </td>
-
-            <!-- Statut -->
-            <td class="px-6 py-4 whitespace-nowrap">
-
-              <span [class]="eleve.active
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-gray-100 text-gray-800'" class="px-2 py-1 text-xs font-medium rounded-full">
-
-                {{ eleve.active ? 'Actif' : 'Inactif' }}
-
-              </span>
-
-            </td>
-
-            <!-- Actions -->
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-
-              <div class="flex items-center justify-end space-x-4">
-
-                <button (click)="openModal(eleve)" class="text-blue-600 hover:text-blue-700" title="Modifier">
-
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-
-                  </svg>
-
-                </button>
-
-              </div>
-
-            </td>
-
-          </tr>
-
-          <!-- Empty -->
-          <tr *ngIf="filteredEleves.length === 0">
-
-            <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-              Aucun élève trouvé
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!-- MODAL -->
-<div *ngIf="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-
-  <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl h-[85vh] overflow-y-auto relative">
-
-    <!-- Header -->
-    <div
-      class="sticky top-0 z-40 px-6 py-4 border-b flex justify-between items-center bg-gray-50 flex-none rounded-t-lg shadow-sm">
-
-      <h2 class="text-xl font-bold text-gray-800">
-
-        {{ isEditing ? 'Modifier l\'élève' : 'Ajouter un nouvel élève' }}
-
-      </h2>
-
-      <button (click)="closeModal()" class="text-gray-500 hover:text-gray-700">
-
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-
-        </svg>
-
-      </button>
-
-    </div>
-
-    <!-- Body -->
-    <div class="p-6">
-
-      <form [formGroup]="eleveForm" class="space-y-6">
-
-        <!-- Nom -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-          <div>
-
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Prénom
-            </label>
-
-            <input type="text" formControlName="firstName"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-
-          </div>
-
-          <div>
-
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Nom
-            </label>
-
-            <input type="text" formControlName="lastName"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-
-          </div>
-
-        </div>
-
-        <!-- Date -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-          <div>
-
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Date de naissance
-            </label>
-
-            <input type="date" formControlName="dateNaissance"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-
-          </div>
-
-          <div>
-
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Lieu de naissance
-            </label>
-
-            <input type="text" formControlName="lieuNaissance"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-
-          </div>
-
-        </div>
-
-        <!-- Genre -->
-        <div>
-
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Sexe
-          </label>
-
-          <select formControlName="genre"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-
-            <option value="">Sélectionner</option>
-
-            <option value="MASCULIN">Masculin</option>
-
-            <option value="FEMININ">Féminin</option>
-
-          </select>
-
-        </div>
-
-        <!-- Contact -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-          <div>
-
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-
-            <input type="email" formControlName="email"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-
-          </div>
-
-          <div>
-
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Téléphone
-            </label>
-
-            <input type="tel" formControlName="telephone"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-
-          </div>
-
-        </div>
-
-        <!-- Adresse -->
-        <div>
-
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Adresse
-          </label>
-
-          <textarea formControlName="adresse" rows="2"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
-
-        </div>
-
-        <!-- Relations -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
-
+            </div>
+          </td>
+          <!-- Infos -->
+          <td>
+            <div class="cell-name">{{ eleve.genre === 'MASCULIN' ? 'Masculin' : 'Féminin' }}</div>
+            <div class="cell-sub">{{ eleve.dateNaissance | date:'dd/MM/yyyy' }} · {{ eleve.lieuNaissance || '—' }}</div>
+          </td>
           <!-- Classe -->
-          <div class="relative custom-select-container">
-
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Classe
-            </label>
-
-            <div (click)="showClasseDropdown = true; $event.stopPropagation()"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white cursor-text flex items-center hover:border-green-500 focus-within:ring-2 focus-within:ring-green-500 transition-all">
-
-              <input type="text" [(ngModel)]="classeSearch" [ngModelOptions]="{standalone: true}"
-                placeholder="Sélectionner une classe..."
-                class="flex-1 bg-transparent border-none outline-none text-sm p-0 focus:ring-0">
-
-              <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-
-              </svg>
-
+          <td>
+            <p-tag [value]="getClasseName(eleve.classeId)" severity="info"></p-tag>
+          </td>
+          <!-- Parents -->
+          <td class="cell-sub">{{ getParentNames(eleve.parentIds) }}</td>
+          <!-- Statut -->
+          <td>
+            <p-tag [value]="eleve.active ? 'Actif' : 'Inactif'"
+              [severity]="eleve.active ? 'success' : 'secondary'"></p-tag>
+          </td>
+          <!-- Actions -->
+          <td>
+            <div class="cell-actions">
+              <p-button icon="pi pi-pencil" styleClass="p-button-text p-button-sm p-button-info"
+                pTooltip="Modifier" (onClick)="openModal(eleve)"></p-button>
             </div>
+          </td>
+        </tr>
+      </ng-template>
 
-            <div *ngIf="showClasseDropdown"
-              class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-xl max-h-48 overflow-y-auto">
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="empty-msg">Aucun élève trouvé</td>
+        </tr>
+      </ng-template>
 
-              <div *ngFor="let c of filteredClassesDisplay" (click)="selectClasse(c)"
-                class="px-4 py-2 hover:bg-green-50 cursor-pointer text-sm">
-
-                {{ c.nom }}
-
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- Tuteur -->
-          <div class="relative custom-select-container">
-
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Tuteur
-            </label>
-
-            <div (click)="showTuteurDropdown = true; $event.stopPropagation()"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white cursor-text flex items-center hover:border-green-500 focus-within:ring-2 focus-within:ring-green-500 transition-all">
-
-              <input type="text" [(ngModel)]="tuteurSearch" [ngModelOptions]="{standalone: true}"
-                (ngModelChange)="onTuteurSearchChange($event)" placeholder="Sélectionner un tuteur..."
-                class="flex-1 bg-transparent border-none outline-none text-sm p-0 focus:ring-0">
-
-              <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-
-              </svg>
-
-            </div>
-
-            <div *ngIf="showTuteurDropdown"
-              class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-xl max-h-48 overflow-y-auto">
-
-              <div *ngFor="let p of filteredTuteursDisplay" (click)="selectTuteur(p)"
-                class="px-4 py-2 hover:bg-green-50 cursor-pointer">
-
-                <div class="text-sm font-medium">
-                  {{ p.prenom }} {{ p.nom }}
-                </div>
-
-                <div class="text-xs text-gray-500">
-                  {{ p.email }}
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </form>
-
-    </div>
-
-    <!-- Footer -->
-    <div
-      class="sticky bottom-0 z-40 px-6 py-4 border-t bg-gray-50 flex justify-end space-x-3 flex-none rounded-b-lg shadow-inner">
-
-      <button (click)="closeModal()"
-        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition">
-
-        Annuler
-      </button>
-
-      <button (click)="onSubmit()" [disabled]="eleveForm.invalid"
-        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
-
-        {{ isEditing ? 'Modifier' : 'Enregistrer' }}
-
-      </button>
-
-    </div>
-
+    </p-table>
   </div>
 
 </div>
+
+<!-- Dialog -->
+<p-dialog [(visible)]="isModalOpen"
+  [header]="isEditing ? 'Modifier l\'élève' : 'Ajouter un élève'"
+  [modal]="true" [style]="{width:'640px'}" [draggable]="false"
+  [resizable]="false" (onHide)="closeModal()">
+
+  <form [formGroup]="eleveForm">
+    <div class="form-grid-2">
+      <div class="form-field">
+        <label>Prénom *</label>
+        <input pInputText formControlName="firstName" placeholder="ex: Fatima" />
+      </div>
+      <div class="form-field">
+        <label>Nom *</label>
+        <input pInputText formControlName="lastName" placeholder="ex: Ould Ahmed" />
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-field">
+        <label>Date de naissance *</label>
+        <p-calendar formControlName="dateNaissance" dateFormat="yy-mm-dd"
+          [showIcon]="true" styleClass="w-full" placeholder="jj/mm/aaaa"></p-calendar>
+      </div>
+      <div class="form-field">
+        <label>Lieu de naissance</label>
+        <input pInputText formControlName="lieuNaissance" placeholder="ex: Nouakchott" />
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-field">
+        <label>Sexe *</label>
+        <p-dropdown [options]="genreOptions" formControlName="genre"
+          placeholder="Sélectionner" optionLabel="label" optionValue="value"
+          styleClass="w-full"></p-dropdown>
+      </div>
+      <div class="form-field">
+        <label>Téléphone</label>
+        <input pInputText formControlName="telephone" placeholder="ex: 22 00 00 00" />
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-field">
+        <label>Email *</label>
+        <input pInputText formControlName="email" type="email" placeholder="ex: fatima@gmail.com" />
+      </div>
+      <div class="form-field">
+        <label>Adresse</label>
+        <input pInputText formControlName="adresse" placeholder="ex: Tevragh Zeina" />
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-field">
+        <label>Classe *</label>
+        <p-dropdown [options]="classeOptions" formControlName="classeId"
+          placeholder="Sélectionner une classe" optionLabel="label" optionValue="value"
+          [filter]="true" styleClass="w-full"></p-dropdown>
+      </div>
+      <div class="form-field">
+        <label>Tuteur *</label>
+        <p-dropdown [options]="parentOptions" formControlName="parent"
+          placeholder="Sélectionner un tuteur" optionLabel="label" optionValue="value"
+          [filter]="true" styleClass="w-full"></p-dropdown>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" icon="pi pi-times" styleClass="p-button-text"
+      (onClick)="closeModal()"></p-button>
+    <p-button [label]="isEditing ? 'Modifier' : 'Enregistrer'" icon="pi pi-check"
+      [disabled]="eleveForm.invalid" (onClick)="onSubmit()"></p-button>
+  </ng-template>
+
+</p-dialog>

@@ -2,14 +2,41 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+
+// PrimeNG
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
 import { TooltipModule } from 'primeng/tooltip';
 import { BadgeModule } from 'primeng/badge';
 import { RippleModule } from 'primeng/ripple';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { SkeletonModule } from 'primeng/skeleton';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToolbarModule } from 'primeng/toolbar';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { CalendarModule } from 'primeng/calendar';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { ChipModule } from 'primeng/chip';
+import { AvatarModule } from 'primeng/avatar';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { PanelModule } from 'primeng/panel';
+import { TabViewModule } from 'primeng/tabview';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { MessageModule } from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { MenuModule } from 'primeng/menu';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -55,7 +82,7 @@ import {
   AlertCircle, ArrowLeft, Ban, BookOpen, Building2, CalendarDays, ChartColumn,
   CircleUserRound, ClipboardList, Clock3, CreditCard, FileText, Globe,
   GraduationCap, Heart, LayoutDashboard, Lightbulb, Lock, LogOut, LucideAngularModule,
-  Mail, Megaphone, MessageSquareWarning, NotebookPen, School, Settings,
+  Mail, Megaphone, MessageSquareWarning, NotebookPen, Plus, School, Settings,
   TriangleAlert, Users, UsersRound, Wallet
 } from 'lucide-angular';
 
@@ -104,48 +131,51 @@ import {
     HttpClientModule,
     AppRoutingModule,
     CommonModule,
+    // PrimeNG
     ButtonModule,
     CardModule,
     InputTextModule,
+    InputTextareaModule,
     PasswordModule,
     DividerModule,
     TooltipModule,
     BadgeModule,
     RippleModule,
+    TableModule,
+    DialogModule,
+    DropdownModule,
+    TagModule,
+    ToastModule,
+    SkeletonModule,
+    ConfirmDialogModule,
+    ToolbarModule,
+    InputNumberModule,
+    CalendarModule,
+    SelectButtonModule,
+    ChipModule,
+    AvatarModule,
+    ProgressBarModule,
+    PanelModule,
+    TabViewModule,
+    AutoCompleteModule,
+    MultiSelectModule,
+    MessageModule,
+    MessagesModule,
+    OverlayPanelModule,
+    MenuModule,
+    BreadcrumbModule,
     LucideAngularModule.pick({
-      AlertCircle,
-      ArrowLeft,
-      Ban,
-      BookOpen,
-      Building2,
-      CalendarDays,
-      ChartColumn,
-      CircleUserRound,
-      ClipboardList,
-      Clock3,
-      CreditCard,
-      FileText,
-      Globe,
-      GraduationCap,
-      Heart,
-      LayoutDashboard,
-      Lightbulb,
-      Lock,
-      LogOut,
-      Mail,
-      Megaphone,
-      MessageSquareWarning,
-      NotebookPen,
-      School,
-      Settings,
-      TriangleAlert,
-      Users,
-      UsersRound,
-      Wallet
+      AlertCircle, ArrowLeft, Ban, BookOpen, Building2, CalendarDays, ChartColumn,
+      CircleUserRound, ClipboardList, Clock3, CreditCard, FileText, Globe,
+      GraduationCap, Heart, LayoutDashboard, Lightbulb, Lock, LogOut,
+      Mail, Megaphone, MessageSquareWarning, NotebookPen, Plus, School, Settings,
+      TriangleAlert, Users, UsersRound, Wallet
     })
   ],
   providers: [
     provideAnimationsAsync(),
+    MessageService,
+    ConfirmationService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],

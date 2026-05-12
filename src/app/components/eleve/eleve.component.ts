@@ -1,6 +1,8 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
+import { AlertService } from '../../services/alert.service';
 import { Classe } from '../../models/classe';
 import { Parent } from '../../models/parent';
 import { ClasseService } from '../../services/classe.service';
@@ -15,487 +17,184 @@ import { EleveService } from '../../services/eleve.service';
 export class EleveComponent implements OnInit {
 
   eleveForm!: FormGroup;
-
   isModalOpen = false;
   isEditing = false;
-
+  loading = true;
   currentEleveId: string | null = null;
 
   allClasses: Classe[] = [];
-  filteredClasses: Classe[] = [];
-
   parents: Parent[] = [];
-
   eleves: any[] = [];
   filteredEleves: any[] = [];
 
   searchQuery = '';
   filterClasseId = '';
 
-  showClasseDropdown = false;
-  classeSearch = '';
-  selectedClasse: Classe | null = null;
+  createdCredentials: { username: string; password: string; email: string } | null = null;
 
-  showTuteurDropdown = false;
-  tuteurSearch = '';
-  selectedTuteur: Parent | null = null;
+  genreOptions = [
+    { label: 'Masculin', value: 'MASCULIN' },
+    { label: 'Féminin',  value: 'FEMININ'  }
+  ];
 
-  createdCredentials: {
-    username: string;
-    password: string;
-    email: string;
-  } | null = null;
+  classeOptions: { label: string; value: string }[] = [];
+  parentOptions: { label: string; value: string }[] = [];
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private classeService: ClasseService,
     private parentService: ParentService,
-    private eleveService: EleveService
-  ) { }
+    private eleveService: EleveService,
+    private messageService: MessageService,
+    private alert: AlertService
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
     this.loadData();
   }
 
-  // ========================= LOAD =========================
-
   loadData(): void {
-
     this.classeService.listClasses().subscribe({
-      next: (response: any) => {
-        this.allClasses = response?.content ?? response ?? [];
-        this.filteredClasses = [...this.allClasses];
+      next: (r: any) => {
+        this.allClasses = r?.content ?? r ?? [];
+        this.classeOptions = this.allClasses.map(c => ({ label: c.nom, value: c.id }));
       }
     });
-
     this.parentService.listParents().subscribe({
-      next: (response: any) => {
-        this.parents = response?.content ?? response ?? [];
+      next: (r: any) => {
+        this.parents = r?.content ?? r ?? [];
+        this.parentOptions = this.parents.map(p => ({
+          label: `${p.prenom} ${p.nom}`,
+          value: p.id
+        }));
       }
     });
-
     this.eleveService.listEleves().subscribe({
-      next: (response: any) => {
-        this.eleves = response?.content ?? response ?? [];
+      next: (r: any) => {
+        this.eleves = r?.content ?? r ?? [];
         this.applyFilters();
-      }
+        this.loading = false;
+      },
+      error: () => { this.loading = false; }
     });
   }
-
-  // ========================= FORM =========================
 
   initForm(): void {
-
     this.eleveForm = this.fb.group({
-
-      firstName: ['', Validators.required],
-
-      lastName: ['', Validators.required],
-
-      email: ['', [Validators.required, Validators.email]],
-
-      telephone: [''],
-
+      firstName:     ['', Validators.required],
+      lastName:      ['', Validators.required],
+      email:         ['', [Validators.required, Validators.email]],
+      telephone:     [''],
       dateNaissance: ['', Validators.required],
-
       lieuNaissance: [''],
-
-      genre: ['', Validators.required],
-
-      adresse: [''],
-
-      classeId: ['', Validators.required],
-
-      parent: ['', Validators.required],
-
-      active: [true]
+      genre:         ['', Validators.required],
+      adresse:       [''],
+      classeId:      ['', Validators.required],
+      parent:        ['', Validators.required],
+      active:        [true]
     });
   }
-
-  // ========================= FILTER =========================
 
   applyFilters(): void {
-
     this.filteredEleves = this.eleves.filter(e => {
-
-      const matchesSearch =
-        !this.searchQuery ||
-        e.firstName?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        e.lastName?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        e.email?.toLowerCase().includes(this.searchQuery.toLowerCase());
-
-      const matchesClasse =
-        !this.filterClasseId ||
-        e.classeId === this.filterClasseId;
-
-      return matchesSearch && matchesClasse;
+      const q = this.searchQuery.toLowerCase();
+      const matchSearch = !q ||
+        e.firstName?.toLowerCase().includes(q) ||
+        e.lastName?.toLowerCase().includes(q) ||
+        e.email?.toLowerCase().includes(q);
+      const matchClasse = !this.filterClasseId || e.classeId === this.filterClasseId;
+      return matchSearch && matchClasse;
     });
   }
 
-  // ========================= MODAL =========================
-
   openModal(eleve?: any): void {
-
     this.isEditing = !!eleve;
-
     this.currentEleveId = eleve?.id ?? null;
-
-    this.eleveForm.reset({
-      active: true
-    });
-
-    this.selectedClasse = null;
-    this.selectedTuteur = null;
-
-    this.classeSearch = '';
-    this.tuteurSearch = '';
+    this.eleveForm.reset({ active: true });
 
     if (eleve) {
-
       this.eleveForm.patchValue({
-
-        firstName: eleve.firstName,
-
-        lastName: eleve.lastName,
-
-        email: eleve.email,
-
-        telephone: eleve.telephone,
-
-        dateNaissance: eleve.dateNaissance,
-
-        lieuNaissance: eleve.lieuNaissance,
-
-        genre: eleve.genre,
-
-        adresse: eleve.adresse,
-
-        classeId: eleve.classeId,
-
-        active: eleve.active
+        firstName: eleve.firstName, lastName: eleve.lastName,
+        email: eleve.email, telephone: eleve.telephone,
+        dateNaissance: eleve.dateNaissance, lieuNaissance: eleve.lieuNaissance,
+        genre: eleve.genre, adresse: eleve.adresse,
+        classeId: eleve.classeId, active: eleve.active
       });
-
-      // Classe
-      const classe = this.allClasses.find(c => c.id === eleve.classeId);
-
-      if (classe) {
-        this.selectedClasse = classe;
-        this.classeSearch = classe.nom;
-      }
-
-      // Parent
       if (eleve.parentIds?.length) {
-
-        const parent = this.parents.find(
-          p => p.id === eleve.parentIds[0]
-        );
-
-        if (parent) {
-
-          this.selectedTuteur = parent;
-
-          this.tuteurSearch =
-            `${parent.prenom} ${parent.nom}`;
-
-          this.eleveForm.patchValue({
-            parent: this.tuteurSearch
-          });
-        }
+        this.eleveForm.patchValue({ parent: eleve.parentIds[0] });
       }
     }
-
     this.isModalOpen = true;
   }
 
   closeModal(): void {
-
     this.isModalOpen = false;
-
     this.isEditing = false;
-
     this.currentEleveId = null;
-
     this.eleveForm.reset();
-
-    this.selectedClasse = null;
-    this.selectedTuteur = null;
-
-    this.classeSearch = '';
-    this.tuteurSearch = '';
   }
 
-  // ========================= SUBMIT =========================
+  onSubmit(): void {
+    if (this.eleveForm.invalid) { this.eleveForm.markAllAsTouched(); return; }
 
-  onSubmit() {
-
-    if (this.eleveForm.invalid) {
-      this.eleveForm.markAllAsTouched();
-      return;
-    }
-
-    const formValue = this.eleveForm.value;
-
-    const eleveData = {
-
-      firstName: formValue.firstName,
-      lastName: formValue.lastName,
-
-      email: formValue.email,
-      telephone: formValue.telephone,
-      adresse: formValue.adresse,
-
-      dateNaissance: formValue.dateNaissance,
-      lieuNaissance: formValue.lieuNaissance,
-
-      genre: formValue.genre === 'MASCULIN' ? 'MASCULIN' : formValue.genre === 'FEMININ' ? 'FEMININ' : undefined,
-
-      cycle: formValue.cycle,
-
-      classeId: this.selectedClasse?.id,
-
-      parentIds: this.selectedTuteur
-        ? [this.selectedTuteur.id]
-        : [],
-
-      active: formValue.statut === 'actif'
+    const v = this.eleveForm.value;
+    const payload = {
+      firstName: v.firstName, lastName: v.lastName,
+      email: v.email, telephone: v.telephone,
+      adresse: v.adresse, dateNaissance: v.dateNaissance,
+      lieuNaissance: v.lieuNaissance, genre: v.genre,
+      classeId: v.classeId,
+      parentIds: v.parent ? [v.parent] : [],
+      active: v.active
     };
 
-    console.log('DATA ENVOYEE => ', eleveData);
-
-    // =========================================
-    // UPDATE
-    // =========================================
     if (this.isEditing && this.currentEleveId) {
-
-      this.eleveService
-        .updateEleve(this.currentEleveId, eleveData)
-        .subscribe({
-
-          next: (updated) => {
-
-            const index = this.eleves.findIndex(
-              e => e.id === this.currentEleveId
-            );
-
-            if (index !== -1) {
-              this.eleves[index] = updated;
-            }
-
-            this.applyFilters();
-
-            this.closeModal();
-          },
-
-          error: (err) => {
-
-            console.error('ERREUR UPDATE => ', err);
-
-            if (err?.error?.details) {
-              console.log('DETAILS VALIDATION => ', err.error.details);
-            }
+      this.eleveService.updateEleve(this.currentEleveId, payload).subscribe({
+        next: (updated) => {
+          const i = this.eleves.findIndex(e => e.id === this.currentEleveId);
+          if (i !== -1) this.eleves[i] = updated;
+          this.applyFilters();
+          this.closeModal();
+          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Élève modifié avec succès' });
+        },
+        error: () => this.alert.error('Erreur', 'Impossible de modifier l\'élève.')
+      });
+    } else {
+      this.eleveService.createEleve(payload).subscribe({
+        next: (newEleve) => {
+          this.eleves.push(newEleve);
+          this.applyFilters();
+          if (newEleve?.generatedUsername && newEleve?.generatedPassword) {
+            this.createdCredentials = {
+              username: newEleve.generatedUsername,
+              password: newEleve.generatedPassword,
+              email: newEleve.email
+            };
           }
-        });
-
-    }
-
-    // =========================================
-    // CREATE
-    // =========================================
-    else {
-
-      this.eleveService
-        .createEleve(eleveData)
-        .subscribe({
-
-          next: (newEleve) => {
-
-            this.eleves.push(newEleve);
-
-            this.applyFilters();
-
-            if (
-              newEleve?.generatedUsername &&
-              newEleve?.generatedPassword
-            ) {
-
-              this.createdCredentials = {
-                username: newEleve.generatedUsername,
-                password: newEleve.generatedPassword,
-                email: newEleve.email
-              };
-            }
-
-            this.closeModal();
-          },
-
-          error: (err) => {
-
-            console.error('ERREUR CREATE => ', err);
-
-            if (err?.error?.details) {
-              console.log('DETAILS VALIDATION => ', err.error.details);
-            }
-          }
-        });
+          this.closeModal();
+          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Élève ajouté avec succès' });
+        },
+        error: () => this.alert.error('Erreur', 'Impossible d\'ajouter l\'élève.')
+      });
     }
   }
-
-  // ========================= CUSTOM SELECT =========================
-
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: MouseEvent): void {
-
-    const target = event.target as HTMLElement;
-
-    if (!target.closest('.custom-select-container')) {
-
-      this.showClasseDropdown = false;
-
-      this.showTuteurDropdown = false;
-    }
-  }
-
-  // ========================= CLASSE =========================
-
-  get filteredClassesDisplay(): Classe[] {
-
-    let list = this.filteredClasses;
-
-    if (this.classeSearch) {
-
-      const search = this.classeSearch.toLowerCase();
-
-      list = list.filter(c =>
-        c.nom.toLowerCase().includes(search)
-      );
-    }
-
-    return list;
-  }
-
-  selectClasse(classe: Classe): void {
-
-    this.selectedClasse = classe;
-
-    this.classeSearch = classe.nom;
-
-    this.eleveForm.patchValue({
-      classeId: classe.id
-    });
-
-    this.showClasseDropdown = false;
-  }
-
-  clearClasseSearch(): void {
-
-    this.selectedClasse = null;
-
-    this.classeSearch = '';
-
-    this.eleveForm.patchValue({
-      classeId: ''
-    });
-  }
-
-  // ========================= TUTEUR =========================
-
-  get filteredTuteursDisplay(): Parent[] {
-
-    let list = this.parents;
-
-    if (this.tuteurSearch) {
-
-      const search = this.tuteurSearch.toLowerCase();
-
-      list = list.filter(p =>
-
-        p.nom.toLowerCase().includes(search) ||
-
-        p.prenom.toLowerCase().includes(search) ||
-
-        p.email?.toLowerCase().includes(search)
-      );
-    }
-
-    return list;
-  }
-
-  selectTuteur(tuteur: Parent): void {
-
-    this.selectedTuteur = tuteur;
-
-    const fullName =
-      `${tuteur.prenom} ${tuteur.nom}`;
-
-    this.tuteurSearch = fullName;
-
-    this.eleveForm.patchValue({
-      parent: fullName
-    });
-
-    this.showTuteurDropdown = false;
-  }
-
-  onTuteurSearchChange(value: string): void {
-
-    this.tuteurSearch = value;
-
-    this.eleveForm.patchValue({
-      parent: value
-    });
-  }
-
-  clearTuteurSearch(): void {
-
-    this.selectedTuteur = null;
-
-    this.tuteurSearch = '';
-
-    this.eleveForm.patchValue({
-      parent: ''
-    });
-  }
-
-  // ========================= UTILS =========================
 
   getClasseName(id: string): string {
-
-    return this.allClasses.find(
-      c => c.id === id
-    )?.nom ?? 'N/A';
+    return this.allClasses.find(c => c.id === id)?.nom ?? '—';
   }
 
   getParentNames(ids: string[]): string {
-
-    if (!ids?.length) {
-      return 'Aucun parent';
-    }
-
+    if (!ids?.length) return '—';
     return ids.map(id => {
-
-      const p = this.parents.find(
-        parent => parent.id === id
-      );
-
-      return p
-        ? `${p.prenom} ${p.nom}`
-        : '';
-
-    }).join(', ');
+      const p = this.parents.find(x => x.id === id);
+      return p ? `${p.prenom} ${p.nom}` : '';
+    }).filter(Boolean).join(', ');
   }
 
   get canAddEleve(): boolean {
-
     const user = this.authService.currentUserValue;
-
-    return user
-      ? ['ADMIN', 'SUPER_ADMIN'].includes(user.role)
-      : false;
-  }
-
-  closeCredentialsBanner(): void {
-    this.createdCredentials = null;
+    return user ? ['ADMIN', 'SUPER_ADMIN'].includes(user.role) : false;
   }
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
 import { AnneeAcademiqueService } from '../../services/annee-academique.service';
+import { Building2, ChartColumn, GraduationCap, LucideIconData, Users } from 'lucide-angular';
 
 @Component({
   selector: 'app-dashboard-admin',
@@ -11,22 +13,23 @@ export class DashboardAdminComponent implements OnInit {
   statistiques: any = {};
   ecoleInfo: any = {};
 
+  graduationIcon: LucideIconData = GraduationCap;
+  usersIcon: LucideIconData = Users;
+  buildingIcon: LucideIconData = Building2;
+  chartIcon: LucideIconData = ChartColumn;
+
   constructor(
     private readonly adminService: AdminService,
-    private readonly anneeService: AnneeAcademiqueService
+    private readonly anneeService: AnneeAcademiqueService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadStatistiques();
+    this.adminService.getStats().subscribe(s => this.statistiques = s);
+    this.anneeService.getCourante().subscribe(a => this.ecoleInfo = a);
   }
 
-  private loadStatistiques(): void {
-    this.adminService.getStats().subscribe((stats) => {
-      this.statistiques = stats;
-    });
-    this.anneeService.getCourante().subscribe((annee) => {
-      this.ecoleInfo = annee;
-    });
+  navigate(path: string): void {
+    this.router.navigate([path]);
   }
-
 }
