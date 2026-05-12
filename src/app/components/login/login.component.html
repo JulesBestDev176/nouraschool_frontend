@@ -31,11 +31,6 @@
         </div>
       </div>
 
-      <div class="error-msg" *ngIf="errorMsg">
-        <lucide-angular [img]="alertIcon" [size]="14"></lucide-angular>
-        {{ errorMsg }}
-      </div>
-
       <button class="submit-btn" (click)="onSubmit()" [disabled]="isLoading">
         {{ isLoading ? 'Connexion…' : 'Se connecter' }}
       </button>

@@ -1,6 +1,7 @@
 @import "../node_modules/primeng/resources/themes/lara-light-green/theme.css";
 @import "../node_modules/primeng/resources/primeng.css";
 @import "../node_modules/primeicons/primeicons.css";
+@import "../node_modules/sweetalert2/src/sweetalert2.scss";
 
 @tailwind base;
 @tailwind components;
@@ -27,4 +28,89 @@ span-lucide {
   display: inline-flex;
   line-height: 0;
   vertical-align: middle;
+}
+
+// ── SweetAlert2 custom theme ─────────────────────────────
+.swal-popup {
+  border-radius: 16px !important;
+  padding: 2rem 2rem 1.75rem !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.swal-title {
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.swal-html {
+  font-size: 0.875rem !important;
+  color: #64748b !important;
+  line-height: 1.6 !important;
+}
+
+.swal-icon {
+  margin-bottom: 1rem !important;
+}
+
+// Bouton confirmer (vert)
+.swal-btn-confirm {
+  background: #16a34a !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.4rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
+
+  &:hover { background: #15803d !important; }
+  &:focus { box-shadow: 0 0 0 3px rgba(22,163,74,0.25) !important; outline: none !important; }
+}
+
+// Bouton supprimer (rouge)
+.swal-btn-delete {
+  background: #ef4444 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.4rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
+
+  &:hover { background: #dc2626 !important; }
+  &:focus { box-shadow: 0 0 0 3px rgba(239,68,68,0.25) !important; outline: none !important; }
+}
+
+// Bouton annuler (gris)
+.swal-btn-cancel {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.4rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
+
+  &:hover { background: #e2e8f0 !important; }
+}
+
+// Toast
+.swal-toast {
+  border-radius: 10px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.875rem !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+  border: 1px solid #e2e8f0 !important;
 }
