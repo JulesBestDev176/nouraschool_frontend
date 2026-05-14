@@ -87,9 +87,13 @@ export class EleveComponent implements OnInit {
       lastName:      ['', Validators.required],
       email:         ['', [Validators.required, Validators.email]],
       telephone:     [''],
+      matricule:     ['', Validators.required],
       dateNaissance: ['', Validators.required],
       lieuNaissance: [''],
       genre:         ['', Validators.required],
+      numeroUrgence: [''],
+      dateInscription: [new Date()],
+      photoUrl:      [''],
       adresse:       [''],
       classeId:      ['', Validators.required],
       parent:        ['', Validators.required],
@@ -112,14 +116,16 @@ export class EleveComponent implements OnInit {
   openModal(eleve?: any): void {
     this.isEditing = !!eleve;
     this.currentEleveId = eleve?.id ?? null;
-    this.eleveForm.reset({ active: true });
+    this.eleveForm.reset({ active: true, dateInscription: new Date() });
 
     if (eleve) {
       this.eleveForm.patchValue({
         firstName: eleve.firstName, lastName: eleve.lastName,
         email: eleve.email, telephone: eleve.telephone,
-        dateNaissance: eleve.dateNaissance, lieuNaissance: eleve.lieuNaissance,
+        dateNaissance: this.toCalendarDate(eleve.dateNaissance), lieuNaissance: eleve.lieuNaissance,
         genre: eleve.genre, adresse: eleve.adresse,
+        matricule: eleve.matricule, numeroUrgence: eleve.numeroUrgence,
+        dateInscription: this.toCalendarDate(eleve.dateInscription), photoUrl: eleve.photoUrl,
         classeId: eleve.classeId, active: eleve.active
       });
       if (eleve.parentIds?.length) {
@@ -143,8 +149,12 @@ export class EleveComponent implements OnInit {
     const payload = {
       firstName: v.firstName, lastName: v.lastName,
       email: v.email, telephone: v.telephone,
+      matricule: v.matricule,
       adresse: v.adresse, dateNaissance: v.dateNaissance,
       lieuNaissance: v.lieuNaissance, genre: v.genre,
+      numeroUrgence: v.numeroUrgence,
+      dateInscription: v.dateInscription,
+      photoUrl: v.photoUrl,
       classeId: v.classeId,
       parentIds: v.parent ? [v.parent] : [],
       active: v.active
@@ -196,5 +206,12 @@ export class EleveComponent implements OnInit {
   get canAddEleve(): boolean {
     const user = this.authService.currentUserValue;
     return user ? ['ADMIN', 'SUPER_ADMIN'].includes(user.role) : false;
+  }
+
+  private toCalendarDate(value: Date | string | null | undefined): Date | null {
+    if (!value) return null;
+    if (value instanceof Date) return value;
+    const [year, month, day] = value.slice(0, 10).split('-').map(Number);
+    return year && month && day ? new Date(year, month - 1, day) : null;
   }
 }
