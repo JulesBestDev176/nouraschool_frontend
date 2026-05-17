@@ -1,0 +1,100 @@
+:host ::ng-deep .overflow-x-auto {
+  overflow: visible;
+}
+
+:host ::ng-deep div.bg-white.shadow-sm.rounded-lg:has(table) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+:host ::ng-deep table {
+  border: 0 !important;
+  min-width: 0 !important;
+}
+
+:host ::ng-deep thead {
+  display: none;
+}
+
+:host ::ng-deep tbody {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+  background: transparent !important;
+}
+
+:host ::ng-deep tr {
+  display: block;
+  background: #ffffff;
+  border: 1px solid rgba(229, 231, 235, 0.95) !important;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(17, 24, 39, 0.06);
+  transition: box-shadow 200ms ease;
+}
+
+:host ::ng-deep tr:hover {
+  box-shadow: 0 10px 20px rgba(17, 24, 39, 0.1);
+}
+
+:host ::ng-deep td {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0 !important;
+  border: 0 !important;
+  white-space: normal !important;
+}
+
+:host ::ng-deep td:first-child {
+  display: block;
+  padding-top: 0 !important;
+  padding-bottom: 1rem !important;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+:host ::ng-deep td:last-child {
+  justify-content: flex-start;
+  padding-top: 1rem !important;
+}
+
+:host ::ng-deep td:nth-child(2)::before {
+  content: "Info";
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+:host ::ng-deep td:nth-child(3)::before {
+  content: "Statut";
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+:host ::ng-deep td:nth-child(4)::before {
+  content: "Actions";
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+:host ::ng-deep td:nth-child(5)::before {
+  content: "Actions";
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  :host ::ng-deep tbody {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  :host ::ng-deep tbody {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

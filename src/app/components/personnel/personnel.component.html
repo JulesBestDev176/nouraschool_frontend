@@ -125,9 +125,8 @@
 
               <div class="flex items-center gap-3">
 
-                <div
-                  class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-semibold uppercase">
-                  {{ personnel.prenom?.charAt(0) }}{{ personnel.nom?.charAt(0) }}
+                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <span class="text-purple-600 font-semibold uppercase">{{ personnel.prenom?.charAt(0) }}{{ personnel.nom?.charAt(0) }}</span>
                 </div>
 
                 <div>
@@ -225,10 +224,18 @@
             <!-- ACTIONS -->
             <td class="px-6 py-4 whitespace-nowrap text-right">
 
-              <div class="flex justify-end gap-2">
+              <div class="entity-actions">
+                <a [href]="'#personnel-details-' + personnel.id" class="entity-action" title="Details">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </a>
 
                 <!-- EDIT -->
-                <button (click)="editPersonnel(personnel)" class="p-2 rounded-lg hover:bg-indigo-50 text-indigo-600">
+                <button (click)="editPersonnel(personnel)" class="entity-action entity-action-edit">
 
                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -238,7 +245,7 @@
                 </button>
 
                 <!-- DELETE -->
-                <button (click)="deletePersonnel(personnel.id)" class="p-2 rounded-lg hover:bg-red-50 text-red-600">
+                <button (click)="deletePersonnel(personnel.id)" class="entity-action entity-action-danger">
 
                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -270,6 +277,26 @@
 
   </div>
 
+</div>
+
+<div *ngFor="let personnel of filteredPersonnels" [id]="'personnel-details-' + personnel.id" class="entity-detail-modal">
+  <div class="entity-detail-panel">
+    <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
+      <h2 class="text-xl font-bold text-gray-800">{{ personnel.prenom }} {{ personnel.nom }}</h2>
+      <a href="#" class="text-gray-500 hover:text-gray-700">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </a>
+    </div>
+    <div class="p-6">
+      <div class="entity-detail-row"><span>Email</span><span>{{ personnel.email }}</span></div>
+      <div class="entity-detail-row"><span>Telephone</span><span>{{ personnel.telephone }}</span></div>
+      <div class="entity-detail-row"><span>Adresse</span><span>{{ personnel.adresse }}</span></div>
+      <div class="entity-detail-row"><span>Type</span><span>{{ personnel.type }}</span></div>
+      <div class="entity-detail-row"><span>Salaire</span><span>{{ personnel.salaire | number }} MRU</span></div>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL -->

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ClasseService } from '../../services/classe.service';
 import { AnneeAcademiqueService } from '../../services/annee-academique.service';
 import { AnneeAcademique } from '../../models/annee-academique';
@@ -27,12 +28,15 @@ export class ClasseComponent implements OnInit {
   constructor(
     private classeService: ClasseService,
     private anneeService: AnneeAcademiqueService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.loadData();
+    this.handleQuickAction();
   }
 
   // ================= INIT FORM =================
@@ -113,5 +117,21 @@ export class ClasseComponent implements OnInit {
     }
 
     this.closeModal();
+  }
+
+  private handleQuickAction(): void {
+    if (this.route.snapshot.queryParamMap.get('action') === 'create') {
+      this.openModal();
+      this.clearQuickActionParam();
+    }
+  }
+
+  private clearQuickActionParam(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { action: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 }

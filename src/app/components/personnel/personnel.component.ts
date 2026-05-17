@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PersonnelService } from '../../services/personnel.service';
 
 @Component({
@@ -53,12 +54,15 @@ export class PersonnelComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private personnelService: PersonnelService
+    private personnelService: PersonnelService,
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.loadPersonnel();
+    this.handleQuickAction();
   }
 
   // ================= FORM =================
@@ -322,5 +326,21 @@ export class PersonnelComponent implements OnInit {
     const nom = personnel.nom?.charAt(0) ?? '';
 
     return (prenom + nom).toUpperCase();
+  }
+
+  private handleQuickAction(): void {
+    if (this.route.snapshot.queryParamMap.get('action') === 'create') {
+      this.openModal();
+      this.clearQuickActionParam();
+    }
+  }
+
+  private clearQuickActionParam(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { action: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 }
