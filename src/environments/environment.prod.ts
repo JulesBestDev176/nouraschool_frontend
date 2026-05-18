@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.noura-school.com/api'
+  apiUrl: 'https://nouraschool-backend.assanediallo.com/api'
 };

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { Eleve } from '../models/eleve';
@@ -59,9 +59,10 @@ export class EleveService {
   private fromApi(eleve: any): Eleve {
     return {
       id: String(eleve.id),
+      username: eleve.username ?? '',
 
-      firstName: eleve.firstName ?? eleve.firstName ?? '',
-      lastName: eleve.lastName ?? eleve.lastName ?? '',
+      firstName: eleve.firstName ?? '',
+      lastName: eleve.lastName ?? '',
 
       email: eleve.email ?? '',
       telephone: eleve.telephone ?? '',
@@ -70,12 +71,19 @@ export class EleveService {
 
       adresse: eleve.adresse ?? '',
       lieuNaissance: eleve.lieuNaissance ?? '',
+      genre: eleve.genre,
 
       sexe: eleve.genre === 'MASCULIN'
         ? 'M'
         : eleve.genre === 'FEMININ'
           ? 'F'
           : eleve.sexe,
+
+      active: eleve.active !== false,
+      matricule: eleve.matricule ?? '',
+      numeroUrgence: eleve.numeroUrgence ?? '',
+      dateInscription: eleve.dateInscription ?? null,
+      photoUrl: eleve.photoUrl ?? '',
 
       cycle: eleve.cycle,
 
@@ -97,16 +105,19 @@ export class EleveService {
     const firstName = String(dto.firstName ?? '').trim();
     const lastName = String(dto.lastName ?? '').trim();
     return {
-      username: email || `${firstName}.${lastName}`.toLowerCase(),
+      username: this.cleanString(dto.username) || email || `${firstName}.${lastName}`.toLowerCase(),
       email,
-      password: 'Eleve123!',
       firstName: firstName,
       lastName: lastName,
-      telephone: dto.telephone ?? '',
-      adresse: dto.adresse ?? '',
-      dateNaissance: dto.dateNaissance,
-      lieuNaissance: dto.lieuNaissance ?? '',
-      genre: dto.sexe === 'M' ? 'MASCULIN' : dto.sexe === 'F' ? 'FEMININ' : undefined,
+      telephone: this.cleanString(dto.telephone),
+      adresse: this.cleanString(dto.adresse),
+      matricule: this.cleanString(dto.matricule),
+      dateNaissance: this.toDateOnly(dto.dateNaissance),
+      lieuNaissance: this.cleanString(dto.lieuNaissance),
+      genre: this.toApiGenre(dto),
+      numeroUrgence: this.cleanString(dto.numeroUrgence),
+      dateInscription: this.toDateOnly(dto.dateInscription),
+      photoUrl: this.cleanString(dto.photoUrl),
       parentIds: dto.parentIds ?? [],
       classeId: dto.classeId || undefined
     };
@@ -119,12 +130,41 @@ export class EleveService {
       email: dto.email,
       telephone: dto.telephone,
       adresse: dto.adresse,
-      active: dto.statut ? dto.statut === 'actif' : undefined,
-      dateNaissance: dto.dateNaissance,
+      active: dto.active ?? (dto.statut ? dto.statut === 'actif' : undefined),
+      matricule: dto.matricule,
+      dateNaissance: this.toDateOnly(dto.dateNaissance),
       lieuNaissance: dto.lieuNaissance,
-      genre: dto.sexe === 'M' ? 'MASCULIN' : dto.sexe === 'F' ? 'FEMININ' : undefined,
+      genre: this.toApiGenre(dto),
+      numeroUrgence: dto.numeroUrgence,
+      dateInscription: this.toDateOnly(dto.dateInscription),
+      photoUrl: dto.photoUrl,
       parentIds: dto.parentIds,
       classeId: dto.classeId || undefined
     };
+  }
+
+  private toApiGenre(dto: Partial<Eleve>): 'MASCULIN' | 'FEMININ' | undefined {
+    if (dto.genre === 'MASCULIN' || dto.genre === 'FEMININ') {
+      return dto.genre;
+    }
+    return dto.sexe === 'M' ? 'MASCULIN' : dto.sexe === 'F' ? 'FEMININ' : undefined;
+  }
+
+  private toDateOnly(value: Date | string | null | undefined): string | undefined {
+    if (!value) {
+      return undefined;
+    }
+    if (value instanceof Date) {
+      const year = value.getFullYear();
+      const month = String(value.getMonth() + 1).padStart(2, '0');
+      const day = String(value.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    return String(value).slice(0, 10);
+  }
+
+  private cleanString(value: unknown): string | undefined {
+    const cleaned = String(value ?? '').trim();
+    return cleaned || undefined;
   }
 }
