@@ -7,6 +7,7 @@ import { Parent } from '../../models/parent';
 import { ClasseService } from '../../services/classe.service';
 import { ParentService } from '../../services/parent.service';
 import { EleveService } from '../../services/eleve.service';
+import { Eleve } from '../../models/eleve';
 
 @Component({
   selector: 'app-eleve',
@@ -240,8 +241,13 @@ export class EleveComponent implements OnInit {
     }
 
     const formValue = this.eleveForm.value;
+    const genre: Eleve['genre'] = formValue.genre === 'MASCULIN'
+      ? 'MASCULIN'
+      : formValue.genre === 'FEMININ'
+        ? 'FEMININ'
+        : undefined;
 
-    const eleveData = {
+    const eleveData: Partial<Eleve> = {
 
       firstName: formValue.firstName,
       lastName: formValue.lastName,
@@ -253,7 +259,7 @@ export class EleveComponent implements OnInit {
       dateNaissance: formValue.dateNaissance,
       lieuNaissance: formValue.lieuNaissance,
 
-      genre: formValue.genre === 'MASCULIN' ? 'MASCULIN' : formValue.genre === 'FEMININ' ? 'FEMININ' : undefined,
+      genre,
 
       cycle: formValue.cycle,
 
