@@ -70,8 +70,16 @@
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <div class="flex items-center justify-end space-x-4">
-                <button (click)="openModal(parent)" class="text-indigo-600 hover:text-indigo-700" title="Modifier">
+              <div class="entity-actions">
+                <a [href]="'#parent-details-' + parent.id" class="entity-action" title="Details">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </a>
+                <button (click)="openModal(parent)" class="entity-action entity-action-edit" title="Modifier">
                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -92,6 +100,27 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<div *ngFor="let parent of filteredParents" [id]="'parent-details-' + parent.id" class="entity-detail-modal">
+  <div class="entity-detail-panel">
+    <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
+      <h2 class="text-xl font-bold text-gray-800">{{parent.prenom}} {{parent.nom}}</h2>
+      <a href="#" class="text-gray-500 hover:text-gray-700">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </a>
+    </div>
+    <div class="p-6">
+      <div class="entity-detail-row"><span>Email</span><span>{{parent.email}}</span></div>
+      <div class="entity-detail-row"><span>Telephone</span><span>{{parent.telephone}}</span></div>
+      <div class="entity-detail-row"><span>Adresse</span><span>{{parent.adresse}}</span></div>
+      <div class="entity-detail-row"><span>Profession</span><span>{{parent.profession || 'Non renseigne'}}</span></div>
+      <div class="entity-detail-row"><span>Enfants</span><span>{{parent.enfantIds.length || 0}}</span></div>
+      <div class="entity-detail-row"><span>Statut</span><span>{{parent.statut | titlecase}}</span></div>
     </div>
   </div>
 </div>

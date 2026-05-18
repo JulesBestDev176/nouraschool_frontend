@@ -146,6 +146,8 @@
       <h3 class="text-lg leading-6 text-gray-900 mb-6">Actions Rapides</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <button
+          type="button"
+          (click)="openQuickAction('/admin/eleves')"
           class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors group">
           <svg class="w-8 h-8 text-gray-400 group-hover:text-blue-500 mb-2" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
@@ -155,6 +157,8 @@
         </button>
 
         <button
+          type="button"
+          (click)="openQuickAction('/admin/personnel')"
           class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-400 hover:bg-green-50 transition-colors group">
           <svg class="w-8 h-8 text-gray-400 group-hover:text-green-500 mb-2" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
@@ -165,6 +169,8 @@
         </button>
 
         <button
+          type="button"
+          (click)="openQuickAction('/admin/classes')"
           class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-colors group">
           <svg class="w-8 h-8 text-gray-400 group-hover:text-purple-500 mb-2" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
@@ -175,6 +181,8 @@
         </button>
 
         <button
+          type="button"
+          (click)="openQuickAction('/admin/bulletins')"
           class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-yellow-400 hover:bg-yellow-50 transition-colors group">
           <svg class="w-8 h-8 text-gray-400 group-hover:text-yellow-500 mb-2" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">

@@ -1,102 +1,115 @@
 <app-layout></app-layout>
 
 <div class="space-y-6 ml-80 mt-6 mr-6">
-
-  <!-- En-tête -->
   <div class="flex justify-between items-center">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900">Gestion des Matières</h1>
-      <p class="text-gray-600 mt-1">
-        {{filteredMatieres.length}} matière(s) configurée(s)
-      </p>
+      <h1 class="text-2xl font-bold text-gray-900">Gestion des Mati&egrave;res</h1>
+      <p class="text-gray-600 mt-1">{{filteredMatieres.length}} mati&egrave;re(s) configur&eacute;e(s)</p>
     </div>
 
     <button (click)="openModal()"
       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition">
-      <span>Nouvelle matière</span>
+      <span>Nouvelle mati&egrave;re</span>
     </button>
   </div>
 
-  <!-- Recherche -->
-  <div class="bg-white p-4 rounded-lg shadow-sm">
+  <div class="p-4 rounded-lg shadow-sm">
     <label class="block text-sm font-medium text-gray-700 mb-1">Rechercher</label>
     <input type="text" [ngModel]="searchQuery" (ngModelChange)="onSearch($event)"
-      placeholder="Nom, code ou catégorie..."
+      placeholder="Nom, code ou categorie..."
       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
   </div>
 
-  <!-- Grille -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-    <div *ngFor="let matiere of filteredMatieres" class="bg-white rounded-lg shadow-md hover:shadow-lg transition">
-
+    <div *ngFor="let matiere of filteredMatieres"
+      class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
       <div class="p-6">
-
-        <!-- Header -->
         <div class="flex justify-between items-start mb-4">
           <div>
             <h3 class="text-lg font-semibold text-gray-900">{{ matiere.nom }}</h3>
             <p class="text-sm text-gray-600 font-mono">{{ matiere.code }}</p>
           </div>
 
-          <div class="flex space-x-2">
-            <button (click)="openModal(matiere)" class="text-indigo-600 hover:text-indigo-700">
-              ✏️
+          <div class="flex space-x-1">
+            <a [href]="'#matiere-details-' + matiere.id" class="p-1 text-blue-600 hover:text-blue-700" title="Details">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </a>
+            <button type="button" (click)="openModal(matiere)" class="p-1 text-indigo-600 hover:text-indigo-700"
+              title="Modifier">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
             </button>
-            <button (click)="deleteMatiere(matiere.id)" class="text-red-600 hover:text-red-700">
-              🗑️
+            <button type="button" (click)="deleteMatiere(matiere.id)" class="p-1 text-red-600 hover:text-red-700"
+              title="Supprimer">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
             </button>
           </div>
         </div>
 
-        <!-- Content -->
         <div class="space-y-3">
-
           <div class="border-t pt-3">
             <p class="text-sm text-gray-600 mb-1">Description</p>
             <p class="text-sm text-gray-900">{{ matiere.description || '-' }}</p>
           </div>
-
           <div class="flex justify-between text-sm text-gray-700 bg-gray-50 p-2 rounded">
             <span>Coefficient</span>
             <span class="font-semibold">{{ matiere.coefficient }}</span>
           </div>
-
           <div class="flex justify-between text-sm text-gray-700 bg-gray-50 p-2 rounded">
-            <span>Catégorie</span>
+            <span>Cat&eacute;gorie</span>
             <span class="font-semibold">{{ matiere.categorie }}</span>
           </div>
-
         </div>
-
       </div>
     </div>
 
-    <!-- Vide -->
     <div *ngIf="filteredMatieres.length === 0" class="text-gray-500 col-span-full text-center py-6">
-      Aucune matière disponible.
+      Aucune mati&egrave;re disponible.
     </div>
-
   </div>
 </div>
 
+<div *ngFor="let matiere of filteredMatieres" [id]="'matiere-details-' + matiere.id" class="entity-detail-modal">
+  <div class="entity-detail-panel">
+    <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
+      <h2 class="text-xl font-bold text-gray-800">{{ matiere.nom }}</h2>
+      <a href="#" class="text-gray-500 hover:text-gray-700">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </a>
+    </div>
+    <div class="p-6">
+      <div class="entity-detail-row"><span>Code</span><span>{{ matiere.code }}</span></div>
+      <div class="entity-detail-row"><span>Description</span><span>{{ matiere.description || '-' }}</span></div>
+      <div class="entity-detail-row"><span>Coefficient</span><span>{{ matiere.coefficient }}</span></div>
+      <div class="entity-detail-row"><span>Categorie</span><span>{{ matiere.categorie }}</span></div>
+    </div>
+  </div>
+</div>
 
-<!-- ================= MODAL ================= -->
 <div *ngIf="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-
   <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
-
-    <!-- Header -->
     <div class="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
-      <h2 class="text-lg font-bold">
-        {{isEditing ? 'Modifier la matière' : 'Créer une matière'}}
-      </h2>
-      <button (click)="closeModal()">✖</button>
+      <h2 class="text-lg font-bold">{{isEditing ? 'Modifier la mati&egrave;re' : 'Cr&eacute;er une mati&egrave;re'}}</h2>
+      <button (click)="closeModal()">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
 
-    <!-- Form -->
     <form [formGroup]="matiereForm" (ngSubmit)="onSubmit()" class="p-6 space-y-4">
-
       <div>
         <label class="block text-sm mb-1">Nom *</label>
         <input formControlName="nom" class="w-full border p-2 rounded focus:ring-2 focus:ring-green-500">
@@ -108,7 +121,7 @@
       </div>
 
       <div>
-        <label class="block text-sm mb-1">Catégorie *</label>
+        <label class="block text-sm mb-1">Cat&eacute;gorie *</label>
         <input formControlName="categorie" class="w-full border p-2 rounded focus:ring-2 focus:ring-green-500">
       </div>
 
@@ -124,19 +137,13 @@
           class="w-full border p-2 rounded focus:ring-2 focus:ring-green-500"></textarea>
       </div>
 
-      <!-- Footer -->
       <div class="flex justify-end space-x-3 pt-4 border-t">
-        <button type="button" (click)="closeModal()" class="px-4 py-2 bg-gray-200 rounded">
-          Annuler
-        </button>
-
+        <button type="button" (click)="closeModal()" class="px-4 py-2 bg-gray-200 rounded">Annuler</button>
         <button type="submit" [disabled]="matiereForm.invalid"
           class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50">
-          {{isEditing ? 'Modifier' : 'Créer'}}
+          {{isEditing ? 'Modifier' : 'Cr&eacute;er'}}
         </button>
       </div>
-
     </form>
-
   </div>
 </div>

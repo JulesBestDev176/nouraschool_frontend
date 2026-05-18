@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Classe } from '../../models/classe';
 import { Parent } from '../../models/parent';
@@ -51,12 +52,15 @@ export class EleveComponent implements OnInit {
     private authService: AuthService,
     private classeService: ClasseService,
     private parentService: ParentService,
-    private eleveService: EleveService
+    private eleveService: EleveService,
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.loadData();
+    this.handleQuickAction();
   }
 
   // ========================= LOAD =========================
@@ -497,5 +501,21 @@ export class EleveComponent implements OnInit {
 
   closeCredentialsBanner(): void {
     this.createdCredentials = null;
+  }
+
+  private handleQuickAction(): void {
+    if (this.route.snapshot.queryParamMap.get('action') === 'create') {
+      this.openModal();
+      this.clearQuickActionParam();
+    }
+  }
+
+  private clearQuickActionParam(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { action: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 }

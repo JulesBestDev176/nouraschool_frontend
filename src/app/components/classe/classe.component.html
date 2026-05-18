@@ -1,18 +1,15 @@
 <app-layout></app-layout>
 
 <div class="space-y-6 ml-80 mt-6 mr-6 pb-12">
-
-  <!-- EN-TÊTE -->
   <div class="flex justify-between items-center">
     <div>
       <h1 class="text-2xl font-bold text-gray-900">Consultation des Classes</h1>
       <p class="text-gray-600 mt-1">
-        Année actuelle : <span class="font-semibold text-green-700">{{currentYear}}</span> •
-        {{filteredClasses.length}} classe(s) affichée(s)
+        Annee actuelle : <span class="font-semibold text-green-700">{{currentYear}}</span> -
+        {{filteredClasses.length}} classe(s) affichee(s)
       </p>
     </div>
 
-    <!-- BTN AJOUT -->
     <button (click)="openModal()"
       class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center shadow-sm">
       <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -22,7 +19,6 @@
     </button>
   </div>
 
-  <!-- FILTRES -->
   <div class="bg-white p-4 rounded-lg shadow-sm">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
@@ -44,51 +40,78 @@
     </div>
   </div>
 
-  <!-- GRILLE -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let classe of filteredClasses" class="bg-white rounded-lg shadow-md border-l-4"
-      [ngClass]="classe.status === 'Active' ? 'border-green-500' : 'border-gray-400'">
-
+    <div *ngFor="let classe of filteredClasses"
+      class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
       <div class="p-6">
-
         <div class="flex justify-between items-start mb-4">
           <div>
-            <h3 class="text-lg font-bold">{{classe.nom}}</h3>
-            <p class="text-xs text-gray-500">
-              {{classe.niveau}} • {{classe.anneeScolaire}}
-            </p>
+            <h3 class="text-lg font-semibold text-gray-900">{{classe.nom}}</h3>
+            <p class="text-sm text-gray-600">{{classe.niveau}}</p>
+            <p class="text-xs text-gray-500 mt-1">{{classe.anneeScolaire || currentYear}}</p>
+          </div>
+
+          <div class="flex space-x-1">
+            <button type="button" class="p-1 text-blue-600 hover:text-blue-700" title="Details">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+
+            <button type="button" (click)="openModal(classe)" class="p-1 text-indigo-600 hover:text-indigo-700"
+              title="Modifier">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </button>
+
+            <button type="button" class="p-1 text-red-600 hover:text-red-700" title="Supprimer">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
           </div>
         </div>
 
-        <div class="text-sm text-gray-700">
-          Salle : {{classe.salleClasse}} <br>
-          Effectif max : {{classe.effectifMax}}
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600">Salle</span>
+            <span class="font-medium text-gray-900">{{classe.salleClasse || 'Non assignee'}}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600">Effectif max</span>
+            <span class="font-medium text-gray-900">{{classe.effectifMax || 0}}</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-green-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
         </div>
-
       </div>
     </div>
   </div>
-
 </div>
 
-<!-- ================= MODAL ================= -->
 <div *ngIf="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-
   <div class="bg-white rounded-lg w-full max-w-xl">
-
-    <!-- HEADER -->
     <div class="px-6 py-4 border-b flex justify-between bg-gray-50">
       <h2 class="font-bold text-lg">
         {{isEditing ? 'Modifier la classe' : 'Ajouter une classe'}}
       </h2>
 
-      <button (click)="closeModal()">✕</button>
+      <button (click)="closeModal()">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
 
-    <!-- FORM -->
     <div class="p-6">
       <form [formGroup]="classeForm" class="space-y-4">
-
         <div>
           <label>Nom</label>
           <input formControlName="nom" class="w-full border px-3 py-2 rounded">
@@ -104,7 +127,7 @@
         </div>
 
         <div>
-          <label>Année scolaire</label>
+          <label>Annee scolaire</label>
           <input formControlName="anneeScolaire" class="w-full border px-3 py-2 rounded">
         </div>
 
@@ -117,13 +140,10 @@
           <label>Salle</label>
           <input formControlName="salleClasse" class="w-full border px-3 py-2 rounded">
         </div>
-
       </form>
     </div>
 
-    <!-- FOOTER -->
     <div class="px-6 py-4 border-t flex justify-end space-x-3 bg-gray-50">
-
       <button (click)="closeModal()" class="px-4 py-2 border rounded">
         Annuler
       </button>
@@ -131,8 +151,6 @@
       <button (click)="onSubmit()" class="px-4 py-2 bg-green-600 text-white rounded">
         {{isEditing ? 'Modifier' : 'Enregistrer'}}
       </button>
-
     </div>
-
   </div>
 </div>

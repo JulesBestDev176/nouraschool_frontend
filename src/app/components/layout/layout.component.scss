@@ -1,0 +1,58 @@
+.noura-shell {
+  height: 0;
+}
+
+.noura-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.noura-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.noura-sidebar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 999px;
+}
+
+.noura-sidebar button {
+  text-align: left;
+}
+
+.noura-header {
+  min-height: 73px;
+}
+
+.noura-header button {
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .noura-sidebar {
+    position: fixed;
+    inset: 0 0 auto 0;
+    width: 100%;
+    height: 17rem;
+    transform: none;
+  }
+
+  .noura-header {
+    display: block;
+    top: 17rem;
+    left: 0;
+    min-height: 4.25rem;
+  }
+
+  .noura-sidebar nav {
+    margin-top: 0.75rem;
+  }
+
+  .noura-header > div {
+    padding: 0.75rem 1rem;
+  }
+
+  .noura-header p {
+    display: none;
+  }
+}

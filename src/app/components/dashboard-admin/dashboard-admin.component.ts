@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
 import { AnneeAcademiqueService } from '../../services/annee-academique.service';
 
@@ -13,7 +14,8 @@ export class DashboardAdminComponent implements OnInit {
 
   constructor(
     private readonly adminService: AdminService,
-    private readonly anneeService: AnneeAcademiqueService
+    private readonly anneeService: AnneeAcademiqueService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -26,6 +28,12 @@ export class DashboardAdminComponent implements OnInit {
     });
     this.anneeService.getCourante().subscribe((annee) => {
       this.ecoleInfo = annee;
+    });
+  }
+
+  openQuickAction(route: string): void {
+    this.router.navigate([route], {
+      queryParams: { action: 'create' }
     });
   }
 
