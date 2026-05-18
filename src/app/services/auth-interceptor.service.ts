@@ -34,6 +34,13 @@ export class AuthInterceptorService implements HttpInterceptor {
         if (error.status !== 401 || this.isRefreshing || isAuthRoute) {
           return throwError(() => error);
         }
+
+        if (!this.authService.hasRefreshToken()) {
+          this.authService.clearSession();
+          this.router.navigate(['/login']);
+          return throwError(() => error);
+        }
+
         this.isRefreshing = true;
         return this.authService.refreshToken().pipe(
           switchMap((response) => {

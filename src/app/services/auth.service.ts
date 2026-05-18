@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, throwError, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { API } from '../core/api-routes';
 import {
@@ -47,7 +47,10 @@ export class AuthService {
   }
 
   refreshToken(): Observable<LoginResponse> {
-    const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY) ?? '';
+    const refreshToken = this.getStoredRefreshToken();
+    if (!refreshToken) {
+      return throwError(() => new Error('REFRESH_TOKEN_MANQUANT'));
+    }
     const payload: RefreshRequest = { refreshToken };
     return this.http.post<LoginResponse>(`${this.apiUrl}${API.AUTH}/refresh`, payload).pipe(
       tap((response) => this.setTokens(response))
@@ -97,6 +100,10 @@ export class AuthService {
     return !!localStorage.getItem(TOKEN_KEY);
   }
 
+  hasRefreshToken(): boolean {
+    return !!this.getStoredRefreshToken();
+  }
+
   hasRole(roles: string[]): boolean {
     const user = this.currentUserValue;
     return !!user && roles.includes(user.role);
@@ -118,6 +125,18 @@ export class AuthService {
 
   private setTokens(response: LoginResponse): void {
     localStorage.setItem(TOKEN_KEY, response.accessToken);
-    localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+    if (response.refreshToken && response.refreshToken !== 'null' && response.refreshToken !== 'undefined') {
+      localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+    } else {
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+    }
+  }
+
+  private getStoredRefreshToken(): string {
+    const value = localStorage.getItem(REFRESH_TOKEN_KEY);
+    if (!value || value === 'null' || value === 'undefined') {
+      return '';
+    }
+    return value;
   }
 }
