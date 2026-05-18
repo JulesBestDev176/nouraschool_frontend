@@ -1,0 +1,25 @@
+node_modules
+dist
+coverage
+.nyc_output
+
+# Env / secrets
+.env
+.env.*
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+
+# Docs / misc
+README.md
+*.log
+*.md
+
+# Docker files themselves
+docker-compose*.yml
