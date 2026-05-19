@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, throwError, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map, throwError, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { API } from '../core/api-routes';
 import {
@@ -42,7 +42,7 @@ export class AuthService {
     const payload: LoginRequest = { login, password };
     return this.http.post<LoginResponse>(`${this.apiUrl}${API.AUTH}/login`, payload).pipe(
       tap((response) => this.setTokens(response)),
-      switchMap(() => this.getMe())
+      map((response) => this.buildSessionUser(response.accessToken))
     );
   }
 
@@ -61,7 +61,11 @@ export class AuthService {
     return this.http.get<AuthMeDto>(`${this.apiUrl}${API.AUTH}/me`).pipe(
       tap((me) => {
         localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(me));
-        localStorage.setItem(TENANT_ID_KEY, me.tenantId);
+        if (me.tenantId) {
+          localStorage.setItem(TENANT_ID_KEY, me.tenantId);
+        } else {
+          localStorage.removeItem(TENANT_ID_KEY);
+        }
         this.currentUserSubject.next(me);
       })
     );
@@ -138,5 +142,60 @@ export class AuthService {
       return '';
     }
     return value;
+  }
+
+  private buildSessionUser(accessToken: string): AuthMeDto {
+    const payload = this.decodeJwtPayload(accessToken);
+    const email = typeof payload?.['email'] === 'string' ? (payload['email'] as string) : '';
+    const nameParts = email ? email.split('@')[0].split('.') : [];
+    const prenom = this.normalizeNamePart(nameParts[0] ?? 'Utilisateur');
+    const nom = this.normalizeNamePart(nameParts[1] ?? nameParts[0] ?? 'Noura');
+    const tenantId = typeof payload?.['tenantId'] === 'string' ? (payload['tenantId'] as string) : '';
+    const role = payload?.['role'] as AuthMeDto['role'] | undefined;
+
+    const me: AuthMeDto = {
+      id: typeof payload?.['sub'] === 'string' ? (payload['sub'] as string) : '',
+      email,
+      role: role ?? 'ADMIN',
+      tenantId,
+      prenom,
+      nom
+    };
+
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(me));
+    if (tenantId) {
+      localStorage.setItem(TENANT_ID_KEY, tenantId);
+    } else {
+      localStorage.removeItem(TENANT_ID_KEY);
+    }
+    this.currentUserSubject.next(me);
+    return me;
+  }
+
+  private decodeJwtPayload(token: string): Record<string, unknown> | null {
+    const parts = token.split('.');
+    if (parts.length < 2) {
+      return null;
+    }
+
+    try {
+      const normalized = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+      return JSON.parse(atob(padded));
+    } catch {
+      return null;
+    }
+  }
+
+  private normalizeNamePart(value: string): string {
+    const cleaned = value.replace(/[^a-zA-ZÀ-ÿ'-]+/g, ' ').trim();
+    if (!cleaned) {
+      return 'Utilisateur';
+    }
+
+    return cleaned
+      .split(/\s+/)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join(' ');
   }
 }
