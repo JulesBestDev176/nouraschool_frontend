@@ -31,13 +31,11 @@ export class EnseignantComponent implements OnInit {
 
   private initForm(): void {
     this.enseignantForm = this.fb.group({
-      username: [''],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       telephone: [''],
       adresse: [''],
-      matricule: [''],
       specialite: [''],
       active: [true]
     });
@@ -62,25 +60,21 @@ export class EnseignantComponent implements OnInit {
 
     if (enseignant) {
       this.enseignantForm.patchValue({
-        username: enseignant.username ?? '',
         firstName: enseignant.firstName ?? enseignant.prenom ?? '',
         lastName: enseignant.lastName ?? enseignant.nom ?? '',
         email: enseignant.email ?? '',
         telephone: enseignant.telephone ?? '',
         adresse: enseignant.adresse ?? '',
-        matricule: enseignant.matricule ?? '',
         specialite: enseignant.specialite ?? '',
         active: enseignant.active ?? (enseignant.statut !== 'inactif')
       });
     } else {
       this.enseignantForm.reset({
-        username: '',
         firstName: '',
         lastName: '',
         email: '',
         telephone: '',
         adresse: '',
-        matricule: '',
         specialite: '',
         active: true
       });
@@ -117,14 +111,11 @@ export class EnseignantComponent implements OnInit {
     }
 
     const createPayload = {
-      username: v.username || v.email,
-      password: 'Admin123!',
       firstName: v.firstName,
       lastName: v.lastName,
       email: v.email,
       telephone: v.telephone,
       adresse: v.adresse,
-      matricule: v.matricule,
       specialite: v.specialite
     };
 

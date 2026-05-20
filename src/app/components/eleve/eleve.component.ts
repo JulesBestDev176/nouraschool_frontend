@@ -1,20 +1,22 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Classe } from '../../models/classe';
 import { Parent } from '../../models/parent';
-import { ClasseService } from '../../services/classe.service';
-import { ParentService } from '../../services/parent.service';
-import { EleveService } from '../../services/eleve.service';
 import { Eleve } from '../../models/eleve';
+import { Store } from '@ngrx/store';
+import { Actions, ofType } from '@ngrx/effects';
+import { Subject, takeUntil } from 'rxjs';
+import * as SchoolActions from '../../store/school/school.actions';
+import { selectClasses, selectEleves, selectParents, selectSchoolError } from '../../store/school/school.selectors';
 
 @Component({
   selector: 'app-eleve',
   templateUrl: './eleve.component.html',
   styleUrl: './eleve.component.scss'
 })
-export class EleveComponent implements OnInit {
+export class EleveComponent implements OnInit, OnDestroy {
 
   eleveForm!: FormGroup;
 
@@ -47,46 +49,35 @@ export class EleveComponent implements OnInit {
     password: string;
     email: string;
   } | null = null;
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private classeService: ClasseService,
-    private parentService: ParentService,
-    private eleveService: EleveService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private store: Store,
+    private actions$: Actions
   ) { }
 
   ngOnInit(): void {
     this.initForm();
+    this.bindState();
+    this.bindActions();
     this.loadData();
     this.handleQuickAction();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // ========================= LOAD =========================
 
   loadData(): void {
-
-    this.classeService.listClasses().subscribe({
-      next: (response: any) => {
-        this.allClasses = response?.content ?? response ?? [];
-        this.filteredClasses = [...this.allClasses];
-      }
-    });
-
-    this.parentService.listParents().subscribe({
-      next: (response: any) => {
-        this.parents = response?.content ?? response ?? [];
-      }
-    });
-
-    this.eleveService.listEleves().subscribe({
-      next: (response: any) => {
-        this.eleves = response?.content ?? response ?? [];
-        this.applyFilters();
-      }
-    });
+    this.store.dispatch(SchoolActions.loadSchoolReferenceData());
+    this.store.dispatch(SchoolActions.loadEleves({ page: 0, size: 50 }));
   }
 
   // ========================= FORM =========================
@@ -173,7 +164,7 @@ export class EleveComponent implements OnInit {
 
         lieuNaissance: eleve.lieuNaissance,
 
-        genre: eleve.genre,
+        genre: this.toFormGenre(eleve.genre),
 
         adresse: eleve.adresse,
 
@@ -241,10 +232,10 @@ export class EleveComponent implements OnInit {
     }
 
     const formValue = this.eleveForm.value;
-    const genre: Eleve['genre'] = formValue.genre === 'MASCULIN'
-      ? 'MASCULIN'
-      : formValue.genre === 'FEMININ'
-        ? 'FEMININ'
+    const genre: Eleve['genre'] = formValue.genre === 'M'
+      ? 'M'
+      : formValue.genre === 'F'
+        ? 'F'
         : undefined;
 
     const eleveData: Partial<Eleve> = {
@@ -269,44 +260,15 @@ export class EleveComponent implements OnInit {
         ? [this.selectedTuteur.id]
         : [],
 
-      active: formValue.statut === 'actif'
+      active: formValue.active !== false
     };
-
-    console.log('DATA ENVOYEE => ', eleveData);
 
     // =========================================
     // UPDATE
     // =========================================
     if (this.isEditing && this.currentEleveId) {
 
-      this.eleveService
-        .updateEleve(this.currentEleveId, eleveData)
-        .subscribe({
-
-          next: (updated) => {
-
-            const index = this.eleves.findIndex(
-              e => e.id === this.currentEleveId
-            );
-
-            if (index !== -1) {
-              this.eleves[index] = updated;
-            }
-
-            this.applyFilters();
-
-            this.closeModal();
-          },
-
-          error: (err) => {
-
-            console.error('ERREUR UPDATE => ', err);
-
-            if (err?.error?.details) {
-              console.log('DETAILS VALIDATION => ', err.error.details);
-            }
-          }
-        });
+      this.store.dispatch(SchoolActions.updateEleve({ id: this.currentEleveId, changes: eleveData }));
 
     }
 
@@ -315,40 +277,7 @@ export class EleveComponent implements OnInit {
     // =========================================
     else {
 
-      this.eleveService
-        .createEleve(eleveData)
-        .subscribe({
-
-          next: (newEleve) => {
-
-            this.eleves.push(newEleve);
-
-            this.applyFilters();
-
-            if (
-              newEleve?.generatedUsername &&
-              newEleve?.generatedPassword
-            ) {
-
-              this.createdCredentials = {
-                username: newEleve.generatedUsername,
-                password: newEleve.generatedPassword,
-                email: newEleve.email
-              };
-            }
-
-            this.closeModal();
-          },
-
-          error: (err) => {
-
-            console.error('ERREUR CREATE => ', err);
-
-            if (err?.error?.details) {
-              console.log('DETAILS VALIDATION => ', err.error.details);
-            }
-          }
-        });
+      this.store.dispatch(SchoolActions.createEleve({ eleve: eleveData }));
     }
   }
 
@@ -507,6 +436,68 @@ export class EleveComponent implements OnInit {
 
   closeCredentialsBanner(): void {
     this.createdCredentials = null;
+  }
+
+  private bindState(): void {
+    this.store.select(selectClasses).pipe(takeUntil(this.destroy$)).subscribe((classes) => {
+      this.allClasses = classes;
+      this.filteredClasses = [...classes];
+    });
+
+    this.store.select(selectParents).pipe(takeUntil(this.destroy$)).subscribe((parents) => {
+      this.parents = parents;
+    });
+
+    this.store.select(selectEleves).pipe(takeUntil(this.destroy$)).subscribe((eleves) => {
+      this.eleves = eleves;
+      this.applyFilters();
+    });
+
+    this.store.select(selectSchoolError).pipe(takeUntil(this.destroy$)).subscribe((error) => {
+      if (error) {
+        console.error('[EleveComponent] Erreur store school:', error);
+      }
+    });
+  }
+
+  private bindActions(): void {
+    this.actions$
+      .pipe(ofType(SchoolActions.createEleveSuccess), takeUntil(this.destroy$))
+      .subscribe(({ eleve }) => {
+        if (eleve.generatedUsername && eleve.generatedPassword) {
+          this.createdCredentials = {
+            username: eleve.generatedUsername,
+            password: eleve.generatedPassword,
+            email: eleve.email
+          };
+        }
+        this.closeModal();
+      });
+
+    this.actions$
+      .pipe(ofType(SchoolActions.updateEleveSuccess), takeUntil(this.destroy$))
+      .subscribe(() => this.closeModal());
+  }
+
+  displayGenre(genre?: Eleve['genre']): string {
+    const normalized = this.toFormGenre(genre);
+    if (normalized === 'M') {
+      return 'Masculin';
+    }
+    if (normalized === 'F') {
+      return 'Féminin';
+    }
+    return 'Non renseigné';
+  }
+
+  private toFormGenre(genre?: Eleve['genre']): 'M' | 'F' | '' {
+    if (genre === 'M' || genre === 'MASCULIN') {
+      return 'M';
+    }
+    if (genre === 'F' || genre === 'FEMININ') {
+      return 'F';
+    }
+    return '';
   }
 
   private handleQuickAction(): void {

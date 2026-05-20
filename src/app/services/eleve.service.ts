@@ -57,6 +57,7 @@ export class EleveService {
   }
 
   private fromApi(eleve: any): Eleve {
+    const genre = this.fromApiGenre(eleve.genre ?? eleve.sexe);
     return {
       id: String(eleve.id),
       username: eleve.username ?? '',
@@ -71,11 +72,11 @@ export class EleveService {
 
       adresse: eleve.adresse ?? '',
       lieuNaissance: eleve.lieuNaissance ?? '',
-      genre: eleve.genre,
+      genre,
 
-      sexe: eleve.genre === 'MASCULIN'
+      sexe: genre === 'M'
         ? 'M'
-        : eleve.genre === 'FEMININ'
+        : genre === 'F'
           ? 'F'
           : eleve.sexe,
 
@@ -105,7 +106,6 @@ export class EleveService {
     const firstName = String(dto.firstName ?? '').trim();
     const lastName = String(dto.lastName ?? '').trim();
     return {
-      username: this.cleanString(dto.username) || email || `${firstName}.${lastName}`.toLowerCase(),
       email,
       firstName: firstName,
       lastName: lastName,
@@ -143,11 +143,30 @@ export class EleveService {
     };
   }
 
-  private toApiGenre(dto: Partial<Eleve>): 'MASCULIN' | 'FEMININ' | undefined {
-    if (dto.genre === 'MASCULIN' || dto.genre === 'FEMININ') {
+  private toApiGenre(dto: Partial<Eleve>): 'M' | 'F' | 'AUTRE' | undefined {
+    if (dto.genre === 'M' || dto.genre === 'F' || dto.genre === 'AUTRE') {
       return dto.genre;
     }
-    return dto.sexe === 'M' ? 'MASCULIN' : dto.sexe === 'F' ? 'FEMININ' : undefined;
+    if (dto.genre === 'MASCULIN') {
+      return 'M';
+    }
+    if (dto.genre === 'FEMININ') {
+      return 'F';
+    }
+    return dto.sexe === 'M' ? 'M' : dto.sexe === 'F' ? 'F' : undefined;
+  }
+
+  private fromApiGenre(value: unknown): Eleve['genre'] {
+    if (value === 'MASCULIN') {
+      return 'M';
+    }
+    if (value === 'FEMININ') {
+      return 'F';
+    }
+    if (value === 'M' || value === 'F' || value === 'AUTRE') {
+      return value;
+    }
+    return undefined;
   }
 
   private toDateOnly(value: Date | string | null | undefined): string | undefined {

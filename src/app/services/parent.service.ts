@@ -1,36 +1,29 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { Parent } from '../models/parent';
 import { environment } from '../../environments/environment';
 import { API } from '../core/api-routes';
 import { PageResponse } from '../core/models/page.models';
 import { toHttpParams } from '../core/http.utils';
+import { TenantGuardService } from './tenant-guard.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ParentService {
   private readonly apiUrl = environment.apiUrl;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient, private readonly tenantGuard: TenantGuardService) {}
 
   listParents(page = 0, size = 20): Observable<PageResponse<Parent>> {
+    if (!this.tenantGuard.hasTenant()) {
+      return of({ content: [], page, size, totalElements: 0, totalPages: 0 });
+    }
     return this.http.get<PageResponse<Parent> | Parent[]>(`${this.apiUrl}${API.PARENTS}`, {
       params: toHttpParams({ page, size })
     }).pipe(
       map((response) => Array.isArray(response)
-        ? {
-            content: response.map((p) => this.fromApi(p)),
-            page,
-            size,
-            totalElements: response.length,
-            totalPages: 1
-          }
-        : {
-            ...response,
-            content: (response.content ?? []).map((p) => this.fromApi(p))
-          })
+        ? { content: response.map((p) => this.fromApi(p)), page, size, totalElements: response.length, totalPages: 1 }
+        : { ...response, content: (response.content ?? []).map((p) => this.fromApi(p)) })
     );
   }
 
@@ -41,7 +34,8 @@ export class ParentService {
   }
 
   createParent(dto: Partial<Parent>): Observable<Parent> {
-    return this.http.post<Parent>(`${this.apiUrl}${API.PARENTS}`, this.toCreateApi(dto)).pipe(
+    const { id, ...body } = this.toCreateApi(dto) as any;
+    return this.http.post<Parent>(`${this.apiUrl}${API.PARENTS}`, body).pipe(
       map((parent) => this.fromApi(parent))
     );
   }
@@ -71,9 +65,7 @@ export class ParentService {
     const prenom = String(dto.prenom ?? '').trim();
     const nom = String(dto.nom ?? '').trim();
     return {
-      username: email || `${prenom}.${nom}`.toLowerCase(),
       email,
-      password: 'Parent123!',
       firstName: prenom,
       lastName: nom,
       telephone: dto.telephone ?? '',

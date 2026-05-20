@@ -183,7 +183,7 @@
             <td class="px-6 py-4 whitespace-nowrap">
 
               <div class="text-sm text-gray-900">
-                {{ eleve.genre === 'M' ? 'Masculin' : 'Féminin' }}
+                {{ displayGenre(eleve.genre) }}
               </div>
 
               <div class="text-sm text-gray-500">
@@ -290,7 +290,7 @@
     </div>
     <div class="p-6">
       <div class="entity-detail-row"><span>Email</span><span>{{ eleve.email }}</span></div>
-      <div class="entity-detail-row"><span>Genre</span><span>{{ eleve.genre === 'M' ? 'Masculin' : 'Feminin' }}</span></div>
+      <div class="entity-detail-row"><span>Genre</span><span>{{ displayGenre(eleve.genre) }}</span></div>
       <div class="entity-detail-row"><span>Naissance</span><span>{{ eleve.dateNaissance | date:'shortDate' }}</span></div>
       <div class="entity-detail-row"><span>Lieu</span><span>{{ eleve.lieuNaissance || 'Non renseigne' }}</span></div>
       <div class="entity-detail-row"><span>Classe</span><span>{{ getClasseName(eleve.classeId) }}</span></div>
@@ -397,9 +397,9 @@
 
             <option value="">Sélectionner</option>
 
-            <option value="MASCULIN">Masculin</option>
+            <option value="M">Masculin</option>
 
-            <option value="FEMININ">Féminin</option>
+            <option value="F">Féminin</option>
 
           </select>
 

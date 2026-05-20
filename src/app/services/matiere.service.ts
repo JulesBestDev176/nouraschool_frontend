@@ -11,7 +11,7 @@ import { toHttpParams } from '../core/http.utils';
   providedIn: 'root'
 })
 export class MatiereService {
-  private readonly baseUrl = `${environment.apiUrl}/admin/${API.MATIERES}`;
+  private readonly baseUrl = `${environment.apiUrl}${API.MATIERES}`;
 
   constructor(private readonly http: HttpClient) { }
 

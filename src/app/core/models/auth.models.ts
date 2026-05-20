@@ -21,6 +21,9 @@ export interface LoginResponse {
   accessToken: string;
   refreshToken: string | null;
   tokenType?: string;
+  expiresIn?: number;
+  refreshExpiresIn?: number;
+  passwordChangeRequired?: boolean;
 }
 
 export interface AuthMeDto {

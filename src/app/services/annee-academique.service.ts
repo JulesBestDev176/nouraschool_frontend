@@ -1,30 +1,29 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { API } from '../core/api-routes';
 import { toHttpParams } from '../core/http.utils';
 import { AnneeAcademique } from '../models/annee-academique';
+import { TenantGuardService } from './tenant-guard.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AnneeAcademiqueService {
   private readonly apiUrl = environment.apiUrl;
 
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient, private readonly tenantGuard: TenantGuardService) {}
 
   listAnnees(page = 0, size = 20): Observable<Record<string, unknown>> {
+    if (!this.tenantGuard.hasTenant()) {
+      return of({ content: [], page, size, totalElements: 0, totalPages: 0 });
+    }
     return this.http.get<Record<string, unknown>>(`${this.apiUrl}${API.ANNEES}`, {
       params: toHttpParams({ page, size })
     });
   }
 
-  // getCourante(): Observable<Record<string, unknown>> {
-  //   return this.http.get<Record<string, unknown>>(`${this.apiUrl}${API.ANNEES}/courante`);
-  // }
-  getCourante() {
-    return this.http.get<AnneeAcademique>(`${this.apiUrl}/courante`);
+  getCourante(): Observable<AnneeAcademique> {
+    return this.http.get<AnneeAcademique>(`${this.apiUrl}${API.ANNEES}/courante`);
   }
 
   createAnnee(dto: Record<string, unknown>): Observable<Record<string, unknown>> {

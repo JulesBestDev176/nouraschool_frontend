@@ -106,17 +106,16 @@ export class ClasseComponent implements OnInit {
   onSubmit() {
     if (this.classeForm.invalid) return;
 
-    const data = this.classeForm.value;
+    const data = { ...this.classeForm.value };
+    delete (data as any).id;
 
     if (this.isEditing && this.currentClasseId) {
       this.classeService.updateClasse(this.currentClasseId, data)
-        .subscribe(() => this.loadData());
+        .subscribe(() => { this.closeModal(); this.loadData(); });
     } else {
       this.classeService.createClasse(data)
-        .subscribe(() => this.loadData());
+        .subscribe(() => { this.closeModal(); this.loadData(); });
     }
-
-    this.closeModal();
   }
 
   private handleQuickAction(): void {

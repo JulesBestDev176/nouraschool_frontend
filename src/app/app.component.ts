@@ -1,6 +1,9 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { createIcons, icons } from 'lucide';
+import { TranslateService } from '@ngx-translate/core';
+import { Store } from '@ngrx/store';
+import { appInitialized } from './store';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +34,16 @@ export class AppComponent implements AfterViewInit {
   };
 
   
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private translate: TranslateService,
+    private store: Store,
+  ) {
+    this.translate.addLangs(['fr', 'en']);
+    this.translate.setFallbackLang('fr');
+    this.translate.use(this.resolveLanguage());
+    this.store.dispatch(appInitialized());
+  }
 
   ngAfterViewInit() {
     createIcons({ icons });
@@ -41,5 +53,10 @@ export class AppComponent implements AfterViewInit {
         setTimeout(() => createIcons({ icons }), 0);
       }
     });
+  }
+
+  private resolveLanguage(): string {
+    const browserLang = this.translate.getBrowserLang();
+    return browserLang && ['fr', 'en'].includes(browserLang) ? browserLang : 'fr';
   }
 }

@@ -1,0 +1,14 @@
+{
+  "APP": {
+    "NAME": "Noura School",
+    "LOADING": "Chargement..."
+  },
+  "COMMON": {
+    "SAVE": "Enregistrer",
+    "CANCEL": "Annuler",
+    "DELETE": "Supprimer",
+    "EDIT": "Modifier",
+    "SEARCH": "Rechercher",
+    "CONFIRM": "Confirmer"
+  }
+}

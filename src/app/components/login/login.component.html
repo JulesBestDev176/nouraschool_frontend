@@ -1,53 +1,114 @@
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-yellow-100 flex items-center justify-center px-4">
-  <div class="max-w-md w-full space-y-8">
-
-    <!-- Header -->
-    <div class="text-center">
-      <img src="../../../assets/images/logo.png" alt="Logo École NOURA" class="mx-auto h-24 w-24 object-contain mb-4" />
-      <h2 class="text-3xl font-bold text-gray-900 mb-2">École NOURA</h2>
-      <p class="text-lg text-green-700 font-medium mb-6">"L’éducation, notre fierté"</p>
-      <p class="text-gray-600">Connectez-vous à votre espace</p>
-      <p class="text-sm text-gray-500 mt-1">Nouakchott, Mauritanie</p>
-    </div>
-
-    <!-- Formulaire -->
-    <form class="mt-8 space-y-6">
-      <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
-          <input #emailInput id="email" name="email" type="email" required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            placeholder="votre@email.mr" />
+<section class="relative min-h-screen overflow-hidden bg-slate-950">
+  <swiper-container
+    class="absolute inset-0 h-full w-full"
+    autoplay-delay="5200"
+    effect="fade"
+    loop="true"
+    speed="900"
+    slides-per-view="1"
+  >
+    <swiper-slide *ngFor="let slide of slides">
+      <div class="relative h-screen w-full">
+        <img
+          [src]="slide.image"
+          [alt]="slide.title"
+          class="h-full w-full object-cover opacity-55"
+        />
+        <div class="absolute inset-0 bg-gradient-to-br from-emerald-950/90 via-slate-950/70 to-amber-950/55"></div>
+        <div class="absolute bottom-8 left-6 right-6 hidden max-w-xl text-white md:block">
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+            <mat-icon>{{ slide.icon }}</mat-icon>
+          </div>
+          <h2 class="text-3xl font-bold tracking-tight lg:text-4xl">{{ slide.title }}</h2>
+          <p class="mt-3 text-sm leading-7 text-white/75 lg:text-base">{{ slide.text }}</p>
         </div>
-
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-          <input #passwordInput id="password" name="password" type="password" required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            placeholder="Votre mot de passe" />
-        </div>
-
-        <div *ngIf="errorMsg" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded border border-red-100"
-          id="error-msg">
-          {{errorMsg}}
-        </div>
-
-        <button type="submit" (click)="$event.preventDefault(); onSubmit(emailInput.value, passwordInput.value)"
-          class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md font-medium transition-colors duration-200 flex items-center justify-center">
-          Se connecter
-        </button>
       </div>
-    </form>
-    <!-- Bouton retour -->
-    <div class="text-center">
-      <a routerLink="/home"
-        class="text-green-600 hover:text-green-700 font-medium flex items-center justify-center mx-auto">
-        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Retour à l'accueil
-      </a>
-    </div>
+    </swiper-slide>
+  </swiper-container>
 
+  <div class="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
+    <mat-card class="w-full max-w-md rounded-3xl border border-white/25 bg-white/95 p-6 shadow-2xl backdrop-blur md:p-8">
+      <div class="mb-8 text-center">
+        <img
+          src="assets/images/logo.png"
+          alt="Logo Noura School"
+          class="mx-auto mb-4 h-20 w-20 rounded-2xl bg-white object-contain p-2 shadow"
+        />
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700">Noura School</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950">Connexion</h1>
+        <p class="mt-2 text-sm text-slate-500">Accédez à votre espace de gestion scolaire.</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Email, username ou téléphone</mat-label>
+          <mat-icon matPrefix class="mr-2 text-slate-400">person</mat-icon>
+          <input
+            matInput
+            formControlName="login"
+            autocomplete="username"
+            placeholder="ex: admin@noura.school"
+          />
+          <mat-error *ngIf="loginForm.controls.login.hasError('required')">
+            Identifiant requis.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Mot de passe</mat-label>
+          <mat-icon matPrefix class="mr-2 text-slate-400">lock</mat-icon>
+          <input
+            matInput
+            formControlName="password"
+            [type]="hidePassword ? 'password' : 'text'"
+            autocomplete="current-password"
+            placeholder="Votre mot de passe"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Afficher ou masquer le mot de passe"
+            (click)="hidePassword = !hidePassword"
+          >
+            <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="loginForm.controls.password.hasError('required')">
+            Mot de passe requis.
+          </mat-error>
+          <mat-error *ngIf="loginForm.controls.password.hasError('minlength')">
+            Minimum 6 caractères.
+          </mat-error>
+        </mat-form-field>
+
+        <div class="flex items-center justify-between gap-3 text-sm">
+          <mat-checkbox formControlName="remember">Se souvenir de moi</mat-checkbox>
+          <a routerLink="/home" class="font-semibold text-emerald-700 hover:text-emerald-800">
+            Accueil
+          </a>
+        </div>
+
+        <div *ngIf="errorMsg" class="flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMsg }}</span>
+        </div>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="h-12 w-full rounded-2xl text-base font-semibold"
+          [disabled]="isLoading"
+        >
+          <mat-progress-spinner
+            *ngIf="isLoading"
+            diameter="20"
+            mode="indeterminate"
+            class="mr-2 inline-block"
+          ></mat-progress-spinner>
+          <span>{{ isLoading ? 'Connexion...' : 'Se connecter' }}</span>
+        </button>
+      </form>
+    </mat-card>
   </div>
-</div>
+</section>

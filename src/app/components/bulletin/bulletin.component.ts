@@ -56,7 +56,7 @@ export class BulletinComponent implements OnInit {
     this.generatedLink = '';
     this.generateError = '';
 
-    this.bulletinService.genererLienBulletin(eleveId).subscribe({
+    this.bulletinService.genererLienBulletinEleve(eleveId).subscribe({
       next: (response) => {
         this.generatedLink = response.url || response.token;
         this.isGenerating = false;

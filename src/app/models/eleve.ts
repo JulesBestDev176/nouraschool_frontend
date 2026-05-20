@@ -11,7 +11,7 @@ export interface Eleve {
   adresse?: string;
   lieuNaissance?: string;
   sexe?: 'M' | 'F';
-  genre?: 'MASCULIN' | 'FEMININ';
+  genre?: 'M' | 'F' | 'AUTRE' | 'MASCULIN' | 'FEMININ';
   cycle?: 'primaire' | 'college' | 'lycee';
   active?: boolean;
   matricule?: string;

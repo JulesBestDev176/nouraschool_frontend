@@ -15,6 +15,8 @@ import {
 } from '../core/models/auth.models';
 import {
   CURRENT_USER_KEY,
+  IS_PLATFORM_KEY,
+  REFRESH_TOKEN_EXPIRES_AT_KEY,
   REFRESH_TOKEN_KEY,
   TENANT_ID_KEY,
   TOKEN_KEY
@@ -81,8 +83,10 @@ export class AuthService {
   clearSession(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_EXPIRES_AT_KEY);
     localStorage.removeItem(CURRENT_USER_KEY);
     localStorage.removeItem(TENANT_ID_KEY);
+    localStorage.removeItem(IS_PLATFORM_KEY);
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
@@ -105,7 +109,7 @@ export class AuthService {
   }
 
   hasRefreshToken(): boolean {
-    return !!this.getStoredRefreshToken();
+    return !!this.getStoredRefreshToken() && !this.isRefreshTokenExpired();
   }
 
   hasRole(roles: string[]): boolean {
@@ -131,17 +135,30 @@ export class AuthService {
     localStorage.setItem(TOKEN_KEY, response.accessToken);
     if (response.refreshToken && response.refreshToken !== 'null' && response.refreshToken !== 'undefined') {
       localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+      const refreshExpiresIn = Number(response.refreshExpiresIn ?? 24 * 60 * 60);
+      localStorage.setItem(REFRESH_TOKEN_EXPIRES_AT_KEY, String(Date.now() + refreshExpiresIn * 1000));
     } else {
       localStorage.removeItem(REFRESH_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_EXPIRES_AT_KEY);
     }
   }
 
   private getStoredRefreshToken(): string {
+    if (this.isRefreshTokenExpired()) {
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_EXPIRES_AT_KEY);
+      return '';
+    }
     const value = localStorage.getItem(REFRESH_TOKEN_KEY);
     if (!value || value === 'null' || value === 'undefined') {
       return '';
     }
     return value;
+  }
+
+  private isRefreshTokenExpired(): boolean {
+    const expiresAt = Number(localStorage.getItem(REFRESH_TOKEN_EXPIRES_AT_KEY) ?? 0);
+    return !!expiresAt && Date.now() >= expiresAt;
   }
 
   private buildSessionUser(accessToken: string): AuthMeDto {
@@ -151,6 +168,7 @@ export class AuthService {
     const prenom = this.normalizeNamePart(nameParts[0] ?? 'Utilisateur');
     const nom = this.normalizeNamePart(nameParts[1] ?? nameParts[0] ?? 'Noura');
     const tenantId = typeof payload?.['tenantId'] === 'string' ? (payload['tenantId'] as string) : '';
+    const isPlatform = payload?.['isPlatform'] === true;
     const role = payload?.['role'] as AuthMeDto['role'] | undefined;
 
     const me: AuthMeDto = {
@@ -167,6 +185,11 @@ export class AuthService {
       localStorage.setItem(TENANT_ID_KEY, tenantId);
     } else {
       localStorage.removeItem(TENANT_ID_KEY);
+    }
+    if (isPlatform) {
+      localStorage.setItem(IS_PLATFORM_KEY, 'true');
+    } else {
+      localStorage.removeItem(IS_PLATFORM_KEY);
     }
     this.currentUserSubject.next(me);
     return me;
