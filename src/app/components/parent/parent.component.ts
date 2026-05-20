@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Parent } from '../../models/parent';
 import { ParentService } from '../../services/parent.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-parent',
@@ -12,7 +13,7 @@ export class ParentComponent implements OnInit {
   parents: Parent[] = [];
   filteredParents: Parent[] = [];
   searchQuery = '';
-  
+
   parentForm!: FormGroup;
   isModalOpen = false;
   isEditing = false;
@@ -20,7 +21,8 @@ export class ParentComponent implements OnInit {
 
   constructor(
     private parentService: ParentService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -43,14 +45,14 @@ export class ParentComponent implements OnInit {
       telephone: ['', Validators.required],
       profession: [''],
       adresse: [''],
-      statut: ['actif'] 
+      statut: ['actif']
     });
   }
 
   openModal(parent?: Parent) {
     this.isEditing = !!parent;
     this.currentParentId = parent ? parent.id : null;
-    
+
     if (parent) {
       this.parentForm.patchValue({
         prenom: parent.prenom,
@@ -75,25 +77,43 @@ export class ParentComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.parentForm.invalid) return;
+    if (this.parentForm.invalid) {
+      this.parentForm.markAllAsTouched();
+      this.alertService.warning('Champs requis', 'Veuillez compléter les champs obligatoires.');
+      return;
+    }
 
     const formData = this.parentForm.value;
-    
+
     if (this.isEditing && this.currentParentId) {
-      this.parentService.updateParent(this.currentParentId, formData).subscribe((updated) => {
-        const index = this.parents.findIndex(p => p.id === this.currentParentId);
-        if (index !== -1) {
-          this.parents[index] = updated;
+      this.parentService.updateParent(this.currentParentId, formData).subscribe({
+        next: (updated) => {
+          const index = this.parents.findIndex(p => p.id === this.currentParentId);
+          if (index !== -1) {
+            this.parents[index] = updated;
+          }
+          this.filterParents();
+          this.closeModal();
+          this.alertService.success('Succès', 'Parent modifié.');
+        },
+        error: () => {
+          this.alertService.error('Modification impossible', 'Le parent n’a pas pu être modifié.');
         }
-        this.filterParents();
       });
-    } else {
-      this.parentService.createParent(formData).subscribe((created) => {
+      return;
+    }
+
+    this.parentService.createParent(formData).subscribe({
+      next: (created) => {
         this.parents.push(created);
         this.filterParents();
-      });
-    }
-    this.closeModal();
+        this.closeModal();
+        this.alertService.success('Succès', 'Parent créé.');
+      },
+      error: () => {
+        this.alertService.error('Création impossible', 'Le parent n’a pas pu être créé.');
+      }
+    });
   }
 
   toggleStatus(parent: Parent) {
@@ -105,7 +125,7 @@ export class ParentComponent implements OnInit {
       this.filteredParents = [...this.parents];
     } else {
       const search = this.searchQuery.toLowerCase();
-      this.filteredParents = this.parents.filter(p => 
+      this.filteredParents = this.parents.filter(p =>
         p.nom.toLowerCase().includes(search) ||
         p.prenom.toLowerCase().includes(search) ||
         p.email.toLowerCase().includes(search)

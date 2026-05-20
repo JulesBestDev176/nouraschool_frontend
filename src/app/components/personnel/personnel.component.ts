@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PersonnelService } from '../../services/personnel.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-personnel',
   templateUrl: './personnel.component.html',
 })
 export class PersonnelComponent implements OnInit {
-
   personnels: any[] = [];
   filteredPersonnels: any[] = [];
 
@@ -19,20 +19,16 @@ export class PersonnelComponent implements OnInit {
 
   selectedPersonnelId: string | null = null;
 
-  // ================= FILTRES =================
   search = '';
   selectedType = '';
   selectedStatut = '';
 
-  // ================= MODAL =================
   modalPersonnelType = '';
 
-  // ================= MATIERES =================
   selectedMatieres: any[] = [];
   showMatiereDropdown = false;
   matiereSearch = '';
 
-  // ================= DONNÉES =================
   utilisateurs = [
     { id: '1', nom: 'Ahmed Mohamed' },
     { id: '2', nom: 'Fatma Sow' }
@@ -56,7 +52,8 @@ export class PersonnelComponent implements OnInit {
     private fb: FormBuilder,
     private personnelService: PersonnelService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private alertService: AlertService
   ) { }
 
   ngOnInit(): void {
@@ -65,47 +62,27 @@ export class PersonnelComponent implements OnInit {
     this.handleQuickAction();
   }
 
-  // ================= FORM =================
   initForm() {
-
     this.personnelForm = this.fb.group({
-
       prenom: ['', Validators.required],
-
       nom: ['', Validators.required],
-
       email: ['', [Validators.required, Validators.email]],
-
       telephone: [''],
-
       type: ['', Validators.required],
-
       salaire: [0, Validators.required],
-
       adresse: [''],
-
-      // IMPORTANT
       utilisateurId: ['', Validators.required],
-
       dateEmbauche: ['', Validators.required],
-
       numeroMatricule: [''],
-
       typeContrat: ['CDI'],
-
       soldeConge: [0],
-
       cycleId: ['']
-
     });
-
   }
-  // ================= LOAD =================
-  loadPersonnel(): void {
 
+  loadPersonnel(): void {
     this.personnelService.listPersonnel().subscribe({
       next: (res: any) => {
-
         this.personnels = res.content ?? res;
         this.filteredPersonnels = [...this.personnels];
       },
@@ -115,11 +92,8 @@ export class PersonnelComponent implements OnInit {
     });
   }
 
-  // ================= FILTER =================
   filterPersonnel(): void {
-
     this.filteredPersonnels = this.personnels.filter(personnel => {
-
       const fullText = `
         ${personnel.nom ?? ''}
         ${personnel.prenom ?? ''}
@@ -141,9 +115,7 @@ export class PersonnelComponent implements OnInit {
     });
   }
 
-  // ================= MODAL =================
   openModal(): void {
-
     this.isEditMode = false;
 
     this.personnelForm.reset({
@@ -163,68 +135,40 @@ export class PersonnelComponent implements OnInit {
     this.isModalOpen = false;
   }
 
-  // ================= SAVE =================
   savePersonnel() {
-
     if (this.personnelForm.invalid) {
-
-      console.log(this.personnelForm.value);
-
-      console.log(this.personnelForm.errors);
-
       this.personnelForm.markAllAsTouched();
-
+      this.alertService.warning('Champs requis', 'Veuillez compléter les champs obligatoires.');
       return;
     }
 
     const form = this.personnelForm.value;
-
     const dto = {
-
       utilisateurId: Number(form.utilisateurId),
-
       type: form.type,
-
       numeroMatricule: form.numeroMatricule,
-
       typeContrat: form.typeContrat,
-
       dateEmbauche: form.dateEmbauche,
-
       salaire: form.salaire,
-
       soldeConge: form.soldeConge,
-
       cycleId: form.cycleId,
-
       matieres: this.selectedMatieres.map(m => m.id)
-
     };
-    console.log('DTO envoyé : ', dto);
 
     this.personnelService.createPersonnel(dto).subscribe({
-
       next: () => {
-
         this.loadPersonnel();
-
         this.closeModal();
-
+        this.alertService.success('Succès', 'Personnel créé.');
       },
-
-      error: err => {
-
+      error: (err) => {
         console.error(err);
-
+        this.alertService.error('Création impossible', 'Le personnel n’a pas pu être créé.');
       }
-
     });
-
   }
 
-  // ================= EDIT =================
   editPersonnel(personnel: any): void {
-
     this.isEditMode = true;
     this.selectedPersonnelId = personnel.id;
 
@@ -238,7 +182,6 @@ export class PersonnelComponent implements OnInit {
       dateEmbauche: personnel.dateEmbauche,
       salaire: personnel.salaire,
       soldeConge: personnel.soldeConge,
-
       prenom: personnel.prenom,
       nom: personnel.nom,
       email: personnel.email,
@@ -248,39 +191,33 @@ export class PersonnelComponent implements OnInit {
     });
 
     this.selectedMatieres = personnel.matieres ?? [];
-
     this.isModalOpen = true;
   }
 
-  // ================= DELETE =================
-  deletePersonnel(id: string): void {
-
-    const confirmation = confirm('Voulez-vous supprimer ce personnel ?');
-
-    if (!confirmation) return;
+  async deletePersonnel(id: string): Promise<void> {
+    const result = await this.alertService.confirmDelete('ce personnel');
+    if (!result.isConfirmed) return;
 
     this.personnelService.deletePersonnel(id).subscribe({
       next: () => {
         this.loadPersonnel();
+        this.alertService.success('Succès', 'Personnel supprimé.');
       },
       error: err => {
         console.error(err);
+        this.alertService.error('Suppression impossible', 'Le personnel n’a pas pu être supprimé.');
       }
     });
   }
 
-  // ================= STATUT =================
   toggleStatus(personnel: any): void {
-
     personnel.statut =
       personnel.statut === 'actif'
         ? 'inactif'
         : 'actif';
   }
 
-  // ================= MATIERES =================
   toggleMatiere(matiere: any): void {
-
     const exists = this.selectedMatieres.find(m => m.id === matiere.id);
 
     if (exists) {
@@ -292,13 +229,11 @@ export class PersonnelComponent implements OnInit {
   }
 
   removeMatiere(id: string): void {
-
     this.selectedMatieres =
       this.selectedMatieres.filter(m => m.id !== id);
   }
 
   isMatiereSelected(id: string): boolean {
-
     return this.selectedMatieres.some(m => m.id === id);
   }
 
@@ -306,9 +241,7 @@ export class PersonnelComponent implements OnInit {
     this.matiereSearch = '';
   }
 
-  // ================= FILTER MATIERES =================
   get filteredMatieres(): any[] {
-
     if (!this.matiereSearch) {
       return this.matieres;
     }
@@ -319,9 +252,7 @@ export class PersonnelComponent implements OnInit {
     );
   }
 
-  // ================= UTILS =================
   getInitiales(personnel: any): string {
-
     const prenom = personnel.prenom?.charAt(0) ?? '';
     const nom = personnel.nom?.charAt(0) ?? '';
 

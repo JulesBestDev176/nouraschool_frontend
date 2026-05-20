@@ -78,7 +78,9 @@
 
     <div class="bg-white shadow-sm rounded-lg p-6">
       <h3 class="text-lg text-gray-900 mb-4">Années académiques</h3>
-      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+      <div *ngIf="loading" class="loader-centered" aria-label="Chargement">
+        <div class="loader"></div>
+      </div>
       <div class="overflow-x-auto" *ngIf="!loading">
         <table class="min-w-full border border-gray-200 rounded-md">
           <thead class="bg-gray-50">
@@ -131,8 +133,8 @@
 
       </div>
 
-      <div *ngIf="loading" class="text-sm text-gray-500">
-        Chargement...
+      <div *ngIf="loading" class="loader-centered" aria-label="Chargement">
+        <div class="loader"></div>
       </div>
 
       <div class="overflow-x-auto" *ngIf="!loading">
@@ -247,8 +249,8 @@
 
       </div>
 
-      <div *ngIf="loading" class="text-sm text-gray-500">
-        Chargement...
+      <div *ngIf="loading" class="loader-centered" aria-label="Chargement">
+        <div class="loader"></div>
       </div>
 
       <div class="overflow-x-auto" *ngIf="!loading">
@@ -377,7 +379,9 @@
       </div>
 
       <!-- LOADING -->
-      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+      <div *ngIf="loading" class="loader-centered" aria-label="Chargement">
+        <div class="loader"></div>
+      </div>
 
       <!-- TABLE -->
       <div class="overflow-x-auto" *ngIf="!loading">
@@ -437,7 +441,9 @@
           + Nouveau bâtiment
         </button>
       </div>
-      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+      <div *ngIf="loading" class="loader-centered" aria-label="Chargement">
+        <div class="loader"></div>
+      </div>
       <div class="overflow-x-auto" *ngIf="!loading">
         <table class="min-w-full border border-gray-200 rounded-md">
           <thead class="bg-gray-50">
@@ -481,7 +487,9 @@
           + Nouvelle salle
         </button>
       </div>
-      <div *ngIf="loading" class="text-sm text-gray-500">Chargement...</div>
+      <div *ngIf="loading" class="loader-centered" aria-label="Chargement">
+        <div class="loader"></div>
+      </div>
       <div class="overflow-x-auto" *ngIf="!loading">
         <table class="min-w-full border border-gray-200 rounded-md">
           <thead class="bg-gray-50">

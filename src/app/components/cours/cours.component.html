@@ -6,8 +6,10 @@
       <h1 class="text-2xl font-bold text-gray-900">Gestion des Cours</h1>
       <p class="text-gray-600 mt-1">Planification et suivi des cours par classe</p>
     </div>
-    <button (click)="openModal()"
-      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+    <button
+      (click)="openModal()"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+    >
       <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
       </svg>
@@ -18,12 +20,14 @@
   <p *ngIf="successMessage" class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">{{ successMessage }}</p>
   <p *ngIf="errorMessage" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{{ errorMessage }}</p>
 
-  <!-- Filtre par classe -->
   <div class="bg-white shadow-sm rounded-lg p-4">
     <div class="flex items-center gap-4">
       <label class="text-sm font-medium text-gray-700">Filtrer par classe :</label>
-      <select [(ngModel)]="selectedClasseId" (change)="filterByClasse()"
-        class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+      <select
+        [(ngModel)]="selectedClasseId"
+        (change)="filterByClasse()"
+        class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+      >
         <option value="">Toutes les classes</option>
         <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
       </select>
@@ -31,24 +35,26 @@
   </div>
 
   <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-    <div *ngIf="loading" class="p-8 text-center text-gray-500">Chargement...</div>
+    <div *ngIf="loading" class="loader-centered" aria-label="Chargement">
+      <div class="loader"></div>
+    </div>
 
     <table *ngIf="!loading" class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Matiere</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Classe</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Période</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Enseignant</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Volume</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
         <tr *ngFor="let c of cours" class="hover:bg-gray-50">
-          <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ c.titre ?? c.nom }}</td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ getMatiereNom(c) }}</td>
           <td class="px-6 py-4 text-sm text-gray-700">{{ getClasseNom(c.classeId) }}</td>
-          <td class="px-6 py-4 text-sm text-gray-700">{{ c.dateDebut || '-' }} {{ c.dateFin ? '→ ' + c.dateFin : '' }}</td>
-          <td class="px-6 py-4 text-sm text-gray-500">{{ c.description || '-' }}</td>
+          <td class="px-6 py-4 text-sm text-gray-700">{{ getEnseignantNom(c) }}</td>
+          <td class="px-6 py-4 text-sm text-gray-500">{{ c.volumeHoraireHebdo || '-' }} h</td>
           <td class="px-6 py-4 text-sm">
             <div class="flex items-center gap-2">
               <button (click)="openEditModal(c)" class="text-indigo-600 hover:text-indigo-800" title="Modifier">
@@ -65,44 +71,56 @@
           </td>
         </tr>
         <tr *ngIf="!cours.length">
-          <td colspan="5" class="px-6 py-8 text-center text-gray-500">Aucun cours enregistré.</td>
+          <td colspan="5" class="px-6 py-8 text-center text-gray-500">Aucun cours enregistre.</td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
 
-<!-- Modal -->
 <div *ngIf="isModalOpen" (click)="closeModal()" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
   <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6" (click)="$event.stopPropagation()">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ isEditing ? 'Modifier le cours' : 'Créer un cours' }}</h3>
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ isEditing ? 'Modifier le cours' : 'Creer un cours' }}</h3>
 
     <div class="space-y-4">
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Titre *</label>
-        <input type="text" [(ngModel)]="form.titre" placeholder="Ex: Mathématiques - Algèbre"
-          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+        <label class="block text-sm font-medium text-gray-700 mb-1">Matiere *</label>
+        <select [(ngModel)]="form.matiereId" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Selectionner une matiere...</option>
+          <option *ngFor="let matiere of matieres" [value]="matiere.id">{{ matiere.libelle || matiere.nom }}</option>
+        </select>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Classe *</label>
         <select [(ngModel)]="form.classeId" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
-          <option value="">Sélectionner une classe...</option>
+          <option value="">Selectionner une classe...</option>
           <option *ngFor="let c of classes" [value]="c.id">{{ c.nom }}</option>
         </select>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-        <textarea [(ngModel)]="form.description" rows="2"
-          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Enseignant *</label>
+        <select [(ngModel)]="form.enseignantId" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Selectionner un enseignant...</option>
+          <option *ngFor="let enseignant of enseignants" [value]="enseignant.id">
+            {{ (enseignant.firstName || enseignant.prenom || '') + ' ' + (enseignant.lastName || enseignant.nom || '') }}
+          </option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Annee academique</label>
+        <select [(ngModel)]="form.anneeAcademiqueId" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Aucune / courante</option>
+          <option *ngFor="let annee of annees" [value]="annee.id">{{ annee.libelle }}</option>
+        </select>
       </div>
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Date début</label>
-          <input type="date" [(ngModel)]="form.dateDebut" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+          <label class="block text-sm font-medium text-gray-700 mb-1">Volume hebdo</label>
+          <input type="number" [(ngModel)]="form.volumeHoraireHebdo" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Date fin</label>
-          <input type="date" [(ngModel)]="form.dateFin" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+          <label class="block text-sm font-medium text-gray-700 mb-1">Coefficient</label>
+          <input type="number" [(ngModel)]="form.coefficient" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
         </div>
       </div>
     </div>
@@ -111,7 +129,7 @@
 
     <div class="flex justify-end gap-3 mt-6">
       <button (click)="closeModal()" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Annuler</button>
-      <button (click)="save()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ isEditing ? 'Modifier' : 'Créer' }}</button>
+      <button (click)="save()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">{{ isEditing ? 'Modifier' : 'Creer' }}</button>
     </div>
   </div>
 </div>

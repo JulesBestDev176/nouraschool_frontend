@@ -21,7 +21,7 @@ export class AuthInterceptorService implements HttpInterceptor {
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = localStorage.getItem(TOKEN_KEY);
-    const tenantId = localStorage.getItem(TENANT_ID_KEY);
+    const tenantId = this.getValidTenantId();
     const isAuthRoute = req.url.includes('/auth/login') || req.url.includes('/auth/refresh');
     const isApiRequest = req.url.startsWith('http') || req.url.startsWith('/api');
     const headers: Record<string, string> = {};
@@ -37,6 +37,10 @@ export class AuthInterceptorService implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status !== 401 || isAuthRoute) {
+          return throwError(() => error);
+        }
+
+        if (!token) {
           return throwError(() => error);
         }
 
@@ -73,12 +77,19 @@ export class AuthInterceptorService implements HttpInterceptor {
   }
 
   private withAuthHeaders(req: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
-    const tenantId = localStorage.getItem(TENANT_ID_KEY);
+    const tenantId = this.getValidTenantId();
     return req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
         ...(tenantId ? { 'X-Tenant-Id': tenantId } : {}),
       },
     });
+  }
+
+  private getValidTenantId(): string {
+    const tenantId = localStorage.getItem(TENANT_ID_KEY)?.trim() ?? '';
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tenantId)
+      ? tenantId
+      : '';
   }
 }

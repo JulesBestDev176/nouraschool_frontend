@@ -1,308 +1,129 @@
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-yellow-100">
-  <!-- Header avec logo à gauche et bouton à droite -->
-  <div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-8">
-      <!-- Logo NOURA authentique et texte à gauche -->
-      <div class="flex items-center">
-        <img src="../../../assets/images/logo.png" alt="Logo École NOURA" class="h-20 w-20 object-contain mr-4" />
-        <div>
-          <h1 class="text-4xl font-bold text-gray-900 mb-1">École NOURA</h1>
-          <p class="text-lg text-green-700 font-medium">"{{ecoleInfo.slogan}}"</p>
-        </div>
-      </div>
+<main class="home-page">
+  <header class="home-nav">
+    <a routerLink="/" class="brand" aria-label="Accueil Noura School">
+      <img src="assets/images/logo.png" alt="Logo Noura School" />
+      <span>
+        <strong>Noura School</strong>
+        <small>Gestion scolaire</small>
+      </span>
+    </a>
 
-      <!-- Bouton Se connecter à droite -->
-      <button (click)="goToLogin()"
-        class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg text-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl flex items-center">
-        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-        </svg>
-        Se Connecter
+    <nav class="main-menu" aria-label="Navigation principale">
+      <a href="#plateforme">Plateforme</a>
+      <a href="#mission">Mission</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="#plateforme" class="ghost-link">Decouvrir</a>
+      <button type="button" class="login-link" (click)="goToLogin()">
+        Connexion
+        <mat-icon>arrow_forward</mat-icon>
       </button>
     </div>
+  </header>
 
-    <!-- Description de l'école -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-      <div>
-        <h2 class="text-3xl font-bold text-gray-900 mb-6">Complexe des Écoles NOURA</h2>
-        <p class="text-lg text-gray-700 mb-6 leading-relaxed">
-          Bienvenue au Complexe des Écoles NOURA, un établissement d'excellence situé à Nouakchott, Mauritanie.
-          Notre mission est de former les leaders de demain en offrant une éducation de qualité qui allie
-          tradition islamique et modernité.
-        </p>
-        <p class="text-lg text-gray-700 mb-6 leading-relaxed">
-          Depuis notre création, nous nous sommes engagés à fournir un environnement d'apprentissage
-          stimulant et bienveillant où chaque élève mauritanien peut s'épanouir et développer son plein potentiel.
-        </p>
-        <div class="bg-green-100 p-6 rounded-lg">
-          <h3 class="font-semibold text-green-800 mb-2">Notre Vision</h3>
-          <p class="text-green-700">
-            "{{ecoleInfo.slogan}}" - Cette devise guide notre approche pédagogique
-            innovante et notre engagement envers l'excellence éducative en Mauritanie.
-          </p>
-        </div>
-      </div>
-      <div>
-        <img src="../../../assets/images/topImage.png" alt="Logo École NOURA" />
-      </div>
-    </div>
-
-    <!-- {/* Section avec les élèves - Image authentique */} -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-      <div>
-        <img src="../../../assets/images/eleves2.jpg" />
-      </div>
-      <div>
-        <h2 class="text-3xl font-bold text-gray-900 mb-6">Une Communauté Éducative Mauritanienne</h2>
-        <p class="text-lg text-gray-700 mb-6 leading-relaxed">
-          Nos élèves mauritaniens sont au cœur de notre projet pédagogique. Du Primaire au Lycée, nous accompagnons
-          chaque enfant dans son parcours scolaire avec un encadrement personnalisé et une attention
-          particulière à son développement personnel et culturel.
-        </p>
-        <p class="text-lg text-gray-700 mb-6 leading-relaxed">
-          L'école NOURA offre un cadre d'apprentissage moderne et équipé à Nouakchott, avec un personnel qualifié
-          et passionné qui transmet non seulement les connaissances académiques mais aussi les
-          valeurs islamiques et mauritaniennes essentielles.
-        </p>
-        <div class="grid grid-cols-3 gap-4 text-center">
-          <div class="bg-blue-100 p-4 rounded-lg">
-            <div class="text-2xl font-bold text-blue-600">150+</div>
-            <div class="text-sm text-blue-700">Élèves</div>
-          </div>
-          <div class="bg-green-100 p-4 rounded-lg">
-            <div class="text-2xl font-bold text-green-600">20+</div>
-            <div class="text-sm text-green-700">Personnel</div>
-          </div>
-          <div class="bg-orange-100 p-4 rounded-lg">
-            <div class="text-2xl font-bold text-orange-600">3</div>
-            <div class="text-sm text-orange-700">Niveaux</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-
-    <!-- {/* Section avec les élèves - Image authentique */} -->
-    <!-- <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-           <div>
-            <div class="w-full h-80 bg-gray-200 rounded-lg shadow-lg flex items-center justify-center">
-              <!-- <p  class="text-gray-500"> -->
-    <!-- <img src="../../../assets/images/topImage.png" alt="Logo École NOURA" /> -->
-    <!-- </p> -->
-
-    <!-- </div>
-          </div>
-          <div className="order-1 lg:order-2">
-            <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-              Nos élèves mauritaniens sont au cœur de notre projet pédagogique. Du Primaire au Lycée, nous accompagnons 
-              chaque enfant dans son parcours scolaire avec un encadrement personnalisé et une attention 
-              particulière à son développement personnel et culturel.
-            </p>
-            <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-              L'école NOURA offre un cadre d'apprentissage moderne et équipé à Nouakchott, avec des enseignants qualifiés 
-              et passionnés qui transmettent non seulement les connaissances académiques mais aussi les 
-              valeurs islamiques et mauritaniennes essentielles.
-            </p>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="bg-blue-100 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">150+</div>
-                <div className="text-sm text-blue-700">Élèves</div> -->
-    <!-- </div>
-              <div className="bg-green-100 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">20+</div>
-                <div className="text-sm text-green-700">Enseignants</div>
-              </div>
-              <div className="bg-orange-100 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-orange-600">3</div>
-                <div className="text-sm text-orange-700">Niveaux</div>
-              </div>
-            </div>
-          </div> -->
-    <!-- </div> -->
-
-    <!-- Nos spécialités et atouts -->
-    <div class="mb-16">
-      <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Nos Atouts Pédagogiques</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Excellence Académique -->
-        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-6">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Excellence Académique</h3>
-          <p class="text-gray-600 text-center">
-            Programme scolaire rigoureux suivant le système éducatif mauritanien avec un
-            taux de réussite exceptionnel aux examens officiels.
-          </p>
-        </div>
-
-        <!-- Éducation Islamique -->
-        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-6">
-          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Éducation Islamique</h3>
-          <p class="text-gray-600 text-center">
-            Formation religieuse complète avec apprentissage du Coran, de l'arabe et des
-            valeurs islamiques dans le respect de la tradition mauritanienne.
-          </p>
-        </div>
-
-        <!-- Multilinguisme -->
-        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-6">
-          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Multilinguisme</h3>
-          <p class="text-gray-600 text-center">
-            Enseignement en arabe, français, anglais et hassaniya pour préparer nos élèves
-            à un monde globalisé tout en préservant l'identité mauritanienne.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Types d'utilisateurs -->
-    <div class="text-center mb-16">
-      <h2 class="text-3xl font-bold text-gray-900 mb-8">Plateforme Numérique NOURA</h2>
-      <p class="text-lg text-gray-600 mb-8">
-        Accédez à notre système de gestion scolaire moderne pour suivre la scolarité de vos enfants
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Complexe scolaire a Nouakchott</p>
+      <h1>Une plateforme claire pour piloter la vie scolaire.</h1>
+      <p class="hero-text">
+        Noura School centralise les inscriptions, les classes, les notes, les bulletins,
+        les paiements et le suivi quotidien dans une interface simple pour chaque role.
       </p>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-lg shadow-md p-6 text-center">
-          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2">Administration</h3>
-          <p class="text-gray-600 text-sm">
-            Gestion complète de l'établissement, des élèves et du personnel
-          </p>
-        </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6 text-center">
-          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2">Personnel</h3>
-          <p class="text-gray-600 text-sm">
-            Saisie des notes, suivi pédagogique et communication avec les familles
-          </p>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md p-6 text-center">
-          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2">Parents & Élèves</h3>
-          <p class="text-gray-600 text-sm">
-            Consultation des notes, bulletins et suivi en temps réel
-          </p>
-        </div>
+      <div class="hero-actions">
+        <button type="button" class="primary-action" (click)="goToLogin()">
+          Acceder a mon espace
+        </button>
+        <a href="#plateforme" class="secondary-action">Voir les modules</a>
       </div>
     </div>
-  </div>
 
-  <!-- Footer avec informations développeur -->
-  <footer class="bg-gray-900 text-white py-12">
-    <div class="container mx-auto px-4">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Logo et description École -->
-        <div>
-          <div class="flex items-center mb-4">
-            <img src="../../../assets/images/logo.png" alt="Logo École NOURA" class="h-12 w-12 object-contain mr-3" />
-            <div>
-              <h3 class="text-xl font-bold">École NOURA</h3>
-              <p class="text-sm text-gray-400">"{{ecoleInfo.slogan}}"</p>
-            </div>
-          </div>
-          <p class="text-gray-400 text-sm">
-            Excellence éducative et formation de qualité à Nouakchott.
-            Nous formons les leaders mauritaniens de demain dans un environnement moderne et bienveillant.
-          </p>
-        </div>
+    <figure class="hero-media" aria-label="Eleves de Noura School">
+      <img src="assets/images/topImage.png" alt="Eleves Noura School" />
+      <figcaption>
+        <span>Annee academique</span>
+        <strong>{{ ecoleInfo.anneeAcademique }}</strong>
+      </figcaption>
+    </figure>
+  </section>
 
-        <!-- Informations École -->
-        <div>
-          <h4 class="text-lg font-semibold mb-4 text-green-400">École NOURA</h4>
-          <div class="space-y-2 text-sm text-gray-400">
-            <p><span class="font-medium">Directeur:</span> {{ecoleInfo.directeur}}</p>
-            <p><span class="font-medium">Dir. Pédagogique:</span> {{ecoleInfo.directeurPedagogique}}</p>
-            <p><span class="font-medium">Téléphone:</span> {{ecoleInfo.telephone}}</p>
-            <p><span class="font-medium">Email:</span> {{ecoleInfo.email}}</p>
-            <p><span class="font-medium">Adresse:</span> {{ecoleInfo.adresse}}</p>
-            <p><span class="font-medium">Année académique:</span> {{ecoleInfo.anneeAcademique}}</p>
-          </div>
-        </div>
+  <section class="metrics" aria-label="Chiffres cles">
+    <article>
+      <strong>150+</strong>
+      <span>Eleves suivis</span>
+    </article>
+    <article>
+      <strong>20+</strong>
+      <span>Membres du personnel</span>
+    </article>
+    <article>
+      <strong>3</strong>
+      <span>Niveaux scolaires</span>
+    </article>
+  </section>
 
-        <!-- Développement logiciel -->
-        <div>
-          <h4 class="text-lg font-semibold mb-4 text-blue-400">Développement logiciel</h4>
-          <div class="space-y-2 text-sm text-gray-400">
-            <p><span class="font-medium">Développé par:</span> {{developpeurInfo.nom}}</p>
-            <p><span class="font-medium">Fonction:</span> {{developpeurInfo.fonction}}</p>
-            <p><span class="font-medium">Téléphone:</span> {{developpeurInfo.telephone}}</p>
-            <p><span class="font-medium">WhatsApp:</span> {{developpeurInfo.whatsapp}}</p>
-            <p><span class="font-medium">Email:</span>
-              <a [href]="'mailto:' + developpeurInfo.email"
-                class="text-blue-400 hover:text-blue-300 transition-colors ml-1">
-                {{developpeurInfo.email}}
-              </a>
-            </p>
-            <p class="text-xs italic mt-3 text-blue-500">{{developpeurInfo.description}}</p>
-          </div>
-        </div>
+  <section id="plateforme" class="section">
+    <div class="section-heading">
+      <p class="eyebrow">Plateforme Noura</p>
+      <h2>Un espace de travail pour chaque responsabilite.</h2>
+      <p>
+        L'interface reste sobre et operationnelle : les utilisateurs trouvent vite ce dont
+        ils ont besoin, sans surcharge visuelle.
+      </p>
+    </div>
+
+    <div class="service-grid">
+      <article class="service-card">
+        <mat-icon>admin_panel_settings</mat-icon>
+        <h3>Administration</h3>
+        <p>Gestion des eleves, classes, inscriptions, personnel et parametres de l'etablissement.</p>
+      </article>
+      <article class="service-card">
+        <mat-icon>school</mat-icon>
+        <h3>Pedagogie</h3>
+        <p>Notes, bulletins, absences, emplois du temps et suivi des performances scolaires.</p>
+      </article>
+      <article class="service-card">
+        <mat-icon>payments</mat-icon>
+        <h3>Finances</h3>
+        <p>Paiements, caisse et liens publics pour simplifier les reglements des familles.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="mission" class="about">
+    <div>
+      <p class="eyebrow">Notre mission</p>
+      <h2>{{ ecoleInfo.slogan }}</h2>
+      <p>
+        Offrir un cadre d'apprentissage organise et bienveillant, soutenu par des outils
+        qui reduisent les taches repetitives et ameliorent la visibilite sur chaque parcours.
+      </p>
+      <ul class="mission-list">
+        <li>Donnees scolaires centralisees et faciles a retrouver.</li>
+        <li>Suivi plus fluide entre administration, personnel et familles.</li>
+        <li>Interface adaptee aux usages quotidiens d'un etablissement.</li>
+      </ul>
+    </div>
+    <img src="assets/images/eleves2.jpg" alt="Communaute educative Noura" />
+  </section>
+
+  <footer id="contact" class="home-footer">
+    <div class="footer-brand">
+      <img src="assets/images/logo.png" alt="Logo Noura School" />
+      <div>
+        <strong>Noura School</strong>
+        <span>{{ ecoleInfo.adresse }}</span>
       </div>
+    </div>
 
-      <!-- Séparateur -->
-      <div class="border-t border-gray-800 mt-8 pt-6">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="text-center md:text-left mb-4 md:mb-0">
-            <p class="text-sm text-gray-400">
-              &copy; 2024 École NOURA - Complexe des Écoles NOURA, Nouakchott, Mauritanie. Tous droits réservés.
-            </p>
-            <p class="text-xs text-gray-500 mt-1">
-              Système de gestion scolaire développé par <span
-                class="text-blue-400 font-medium">{{developpeurInfo.nom}}</span> pour l'excellence éducative.
-            </p>
-          </div>
-          <div class="flex space-x-6">
-            <a [href]="'mailto:' + developpeurInfo.email" class="text-gray-400 hover:text-blue-400 transition-colors">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819L11.18 14.71c-.317-.31-.818-.31-1.135 0L2.68 21.002H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.904.732-1.636 1.636-1.636h20.728c.904 0 1.636.732 1.636 1.636Z" />
-              </svg>
-            </a>
-            <a [href]="'tel:' + developpeurInfo.telephone" class="text-gray-400 hover:text-green-400 transition-colors">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
+    <div class="footer-links">
+      <a href="#plateforme">Plateforme</a>
+      <a href="#mission">Mission</a>
+      <a [href]="'mailto:' + ecoleInfo.email">{{ ecoleInfo.email }}</a>
+      <a [href]="'tel:' + ecoleInfo.telephone">{{ ecoleInfo.telephone }}</a>
     </div>
   </footer>
-</div>
+</main>

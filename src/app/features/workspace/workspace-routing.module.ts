@@ -1,16 +1,28 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LayoutComponent } from '../../components/layout/layout.component';
-import { NoteComponent } from '../../components/note/note.component';
-import { PaiementComponent } from '../../components/paiement/paiement.component';
-import { ReclamationComponent } from '../../components/reclamation/reclamation.component';
 import { AuthGuard } from '../../guards/auth.guard';
 
 const routes: Routes = [
-  { path: 'notes', component: NoteComponent, canActivate: [AuthGuard] },
-  { path: 'paiements', component: PaiementComponent, canActivate: [AuthGuard] },
-  { path: 'reclamations', component: ReclamationComponent, canActivate: [AuthGuard] },
-  { path: 'layout', component: LayoutComponent, canActivate: [AuthGuard] },
+  {
+    path: 'notes',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('../pages/note-page/note-page.module').then((m) => m.NotePageModule),
+  },
+  {
+    path: 'paiements',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('../pages/paiement-page/paiement-page.module').then((m) => m.PaiementPageModule),
+  },
+  {
+    path: 'reclamations',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('../pages/reclamation-page/reclamation-page.module').then((m) => m.ReclamationPageModule),
+  },
+  {
+    path: 'layout',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('../pages/layout-page/layout-page.module').then((m) => m.LayoutPageModule),
+  },
 ];
 
 @NgModule({

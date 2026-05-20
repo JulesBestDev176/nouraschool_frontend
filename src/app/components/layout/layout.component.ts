@@ -321,6 +321,11 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     if (route) this.router.navigate([route]);
   }
 
+  onMenuClick(event: Event, route: string | undefined): void {
+    event.preventDefault();
+    this.navigateToRoute(route);
+  }
+
   onSidebarScroll(event: Event): void {
     const target = event.target as HTMLElement | null;
     if (!target) {

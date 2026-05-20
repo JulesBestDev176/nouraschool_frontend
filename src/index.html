@@ -38,19 +38,40 @@
       font-family: 'Inter', sans-serif;
     }
     
-    /* Loading Spinner */
-    .loading-spinner {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #059669;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
+    .loader {
+      width: 48px;
+      height: 48px;
+      display: inline-block;
+      position: relative;
     }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+
+    .loader::after,
+    .loader::before {
+      content: '';
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #fff;
+      position: absolute;
+      left: 0;
+      top: 0;
+      box-sizing: border-box;
+      animation: animloader 2s ease-in-out infinite;
+    }
+
+    .loader::after {
+      animation-delay: 1s;
+    }
+
+    @keyframes animloader {
+      0%, 100% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1);
+        opacity: 0;
+      }
     }
     
     /* Smooth transitions */
@@ -87,25 +108,8 @@
   <!-- App Root -->
   <app-root>
     <!-- Loading Screen -->
-    <div class="min-h-screen flex items-center justify-center bg-gray-50">
-      <div class="text-center">
-        <!-- Logo -->
-        <div class="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <span class="text-white text-2xl font-bold">N</span>
-        </div>
-        
-        <!-- Spinner -->
-        <div class="loading-spinner mx-auto mb-4"></div>
-        
-        <!-- Text -->
-        <h2 class="text-xl text-gray-900 mb-2">École NOURA</h2>
-        <p class="text-gray-600 text-sm">Chargement de l'application...</p>
-        
-        <!-- Progress Bar -->
-        <div class="w-48 h-1 bg-gray-200 rounded-full mt-4 mx-auto overflow-hidden">
-          <div class="h-full bg-green-600 rounded-full animate-pulse"></div>
-        </div>
-      </div>
+    <div class="min-h-screen flex items-center justify-center bg-gray-950">
+      <div class="loader" aria-label="Chargement"></div>
     </div>
   </app-root>
   

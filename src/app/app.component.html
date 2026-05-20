@@ -1,2 +1,4 @@
-<ng-progress ngProgressRouter ngProgressHttp></ng-progress>
+<div *ngIf="loading$ | async" class="global-loader-overlay" aria-label="Chargement">
+  <div class="loader"></div>
+</div>
 <router-outlet></router-outlet>

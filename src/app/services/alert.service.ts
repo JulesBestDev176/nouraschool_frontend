@@ -85,10 +85,10 @@ export class AlertService {
   loading(title = 'Chargement…'): void {
     this.base.fire({
       title,
+      html: '<div class="swal-loader"><div class="loader"></div></div>',
       allowOutsideClick: false,
       allowEscapeKey: false,
       showConfirmButton: false,
-      didOpen: () => Swal.showLoading(),
     });
   }
 

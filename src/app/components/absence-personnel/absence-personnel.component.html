@@ -19,7 +19,9 @@
   <p *ngIf="errorMessage" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{{ errorMessage }}</p>
 
   <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-    <div *ngIf="loading" class="p-8 text-center text-gray-500">Chargement...</div>
+    <div *ngIf="loading" class="loader-centered" aria-label="Chargement">
+      <div class="loader"></div>
+    </div>
 
     <table *ngIf="!loading" class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">

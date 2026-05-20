@@ -5,6 +5,7 @@ import { NiveauService } from '../../services/niveau.service';
 import { MatiereService } from '../../services/matiere.service';
 import { BatimentService } from '../../services/batiment.service';
 import { SalleService } from '../../services/salle.service';
+import { AlertService } from '../../services/alert.service';
 
 type Tab = 'annee-academique' | 'cycles' | 'niveaux' | 'matieres' | 'batiments' | 'salles';
 
@@ -82,7 +83,8 @@ export class AdminComponent implements OnInit {
     private readonly niveauService: NiveauService,
     private readonly matiereService: MatiereService,
     private readonly batimentService: BatimentService,
-    private readonly salleService: SalleService
+    private readonly salleService: SalleService,
+    private readonly alertService: AlertService
   ) { }
 
   ngOnInit(): void {
@@ -123,7 +125,9 @@ export class AdminComponent implements OnInit {
   createAnnee(): void {
     this.successMessage = ''; this.errorMessage = '';
     if (!this.newAnnee.libelle || !this.newAnnee.dateDebut || !this.newAnnee.dateFin) {
-      this.errorMessage = 'Tous les champs sont obligatoires.'; return;
+      this.errorMessage = 'Tous les champs sont obligatoires.';
+      this.alertService.warning('Champs requis', this.errorMessage);
+      return;
     }
     this.anneeService.createAnnee({ libelle: this.newAnnee.libelle, dateDebut: this.newAnnee.dateDebut, dateFin: this.newAnnee.dateFin, estCourante: false, actif: true }).subscribe({
       next: (created) => {

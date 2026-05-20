@@ -1,9 +1,19 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { AfterViewInit, Component } from '@angular/core';
+import {
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  RouteConfigLoadEnd,
+  RouteConfigLoadStart,
+  Router,
+} from '@angular/router';
 import { createIcons, icons } from 'lucide';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
+import { asyncScheduler, distinctUntilChanged, observeOn } from 'rxjs';
 import { appInitialized } from './store';
+import { LoadingService } from './services/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +22,10 @@ import { appInitialized } from './store';
 })
 export class AppComponent implements AfterViewInit {
   title = 'noura_school_frontend';
+  readonly loading$ = this.loadingService.loading$.pipe(
+    distinctUntilChanged(),
+    observeOn(asyncScheduler)
+  );
 
    ecoleInfo = {
     logo: 'assets/images/logo.png',
@@ -38,6 +52,7 @@ export class AppComponent implements AfterViewInit {
     private router: Router,
     private translate: TranslateService,
     private store: Store,
+    public loadingService: LoadingService,
   ) {
     this.translate.addLangs(['fr', 'en']);
     this.translate.setFallbackLang('fr');
@@ -49,6 +64,19 @@ export class AppComponent implements AfterViewInit {
     createIcons({ icons });
 
     this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart || event instanceof RouteConfigLoadStart) {
+        this.loadingService.show();
+      }
+
+      if (
+        event instanceof NavigationEnd ||
+        event instanceof NavigationCancel ||
+        event instanceof NavigationError ||
+        event instanceof RouteConfigLoadEnd
+      ) {
+        this.loadingService.hide();
+      }
+
       if (event instanceof NavigationEnd) {
         setTimeout(() => createIcons({ icons }), 0);
       }

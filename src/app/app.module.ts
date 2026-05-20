@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import {
   HTTP_INTERCEPTORS,
   provideHttpClient,
-  withInterceptors,
   withInterceptorsFromDi,
 } from '@angular/common/http';
 
@@ -13,13 +12,11 @@ import { AppComponent } from './app.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TRANSLATE_HTTP_LOADER_CONFIG, TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
-import { NgProgressbar } from 'ngx-progressbar';
-import { NgProgressHttp, progressInterceptor } from 'ngx-progressbar/http';
-import { NgProgressRouter } from 'ngx-progressbar/router';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { MaterialModule } from './material.module';
 import { StoreModule } from '@ngrx/store';
@@ -57,9 +54,6 @@ import { SchoolStoreModule } from './store/school/school-store.module';
     }),
     FlexLayoutModule,
     NgScrollbarModule,
-    NgProgressbar,
-    NgProgressHttp,
-    NgProgressRouter,
     SweetAlert2Module.forRoot(),
     TranslateModule.forRoot({
       loader: {
@@ -71,11 +65,9 @@ import { SchoolStoreModule } from './store/school/school-store.module';
   ],
   providers: [
     provideAnimationsAsync(),
-    provideHttpClient(
-      withInterceptors([progressInterceptor]),
-      withInterceptorsFromDi()
-    ),
+    provideHttpClient(withInterceptorsFromDi()),
     { provide: TRANSLATE_HTTP_LOADER_CONFIG, useValue: { prefix: './assets/i18n/', suffix: '.json' } },
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],

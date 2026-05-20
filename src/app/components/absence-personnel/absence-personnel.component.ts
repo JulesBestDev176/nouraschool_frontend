@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbsencePersonnelService } from '../../services/absence-personnel.service';
 import { PersonnelService } from '../../services/personnel.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-absence-personnel',
@@ -30,7 +31,8 @@ export class AbsencePersonnelComponent implements OnInit {
 
   constructor(
     private readonly absencePersonnelService: AbsencePersonnelService,
-    private readonly personnelService: PersonnelService
+    private readonly personnelService: PersonnelService,
+    private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +92,7 @@ export class AbsencePersonnelComponent implements OnInit {
     this.errorMessage = '';
     if (!this.form.personnelId || !this.form.dateDebut) {
       this.errorMessage = 'Personnel et date de début sont obligatoires.';
+      this.alertService.warning('Champs requis', this.errorMessage);
       return;
     }
 
@@ -97,28 +100,59 @@ export class AbsencePersonnelComponent implements OnInit {
 
     if (this.isEditing && this.editingId) {
       this.absencePersonnelService.update(this.editingId, dto).subscribe({
-        next: () => { this.successMessage = 'Absence modifiée.'; this.closeModal(); this.load(); },
-        error: () => { this.errorMessage = 'Modification impossible.'; }
+        next: () => {
+          this.successMessage = 'Absence modifiée.';
+          this.alertService.success('Succès', this.successMessage);
+          this.closeModal();
+          this.load();
+        },
+        error: () => {
+          this.errorMessage = 'Modification impossible.';
+          this.alertService.error('Modification impossible', this.errorMessage);
+        }
       });
-    } else {
-      this.absencePersonnelService.create(dto).subscribe({
-        next: () => { this.successMessage = 'Absence enregistrée.'; this.closeModal(); this.load(); },
-        error: () => { this.errorMessage = 'Enregistrement impossible.'; }
-      });
+      return;
     }
+
+    this.absencePersonnelService.create(dto).subscribe({
+      next: () => {
+        this.successMessage = 'Absence enregistrée.';
+        this.alertService.success('Succès', this.successMessage);
+        this.closeModal();
+        this.load();
+      },
+      error: () => {
+        this.errorMessage = 'Enregistrement impossible.';
+        this.alertService.error('Enregistrement impossible', this.errorMessage);
+      }
+    });
   }
 
   valider(id: string): void {
     this.absencePersonnelService.validate(id).subscribe({
-      next: () => { this.successMessage = 'Absence validée.'; this.load(); },
-      error: () => { this.errorMessage = 'Validation impossible.'; }
+      next: () => {
+        this.successMessage = 'Absence validée.';
+        this.alertService.success('Succès', this.successMessage);
+        this.load();
+      },
+      error: () => {
+        this.errorMessage = 'Validation impossible.';
+        this.alertService.error('Validation impossible', this.errorMessage);
+      }
     });
   }
 
   rejeter(id: string): void {
     this.absencePersonnelService.reject(id).subscribe({
-      next: () => { this.successMessage = 'Absence rejetée.'; this.load(); },
-      error: () => { this.errorMessage = 'Rejet impossible.'; }
+      next: () => {
+        this.successMessage = 'Absence rejetée.';
+        this.alertService.success('Succès', this.successMessage);
+        this.load();
+      },
+      error: () => {
+        this.errorMessage = 'Rejet impossible.';
+        this.alertService.error('Rejet impossible', this.errorMessage);
+      }
     });
   }
 

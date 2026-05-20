@@ -18,30 +18,73 @@ export class ClasseService {
     if (!this.tenantGuard.hasTenant()) {
       return of({ content: [], page, size, totalElements: 0, totalPages: 0 });
     }
-    return this.http.get<PageResponse<Classe> | Classe[]>(`${this.apiUrl}${API.CLASSES}`, {
+    return this.http.get<PageResponse<any> | any[]>(`${this.apiUrl}${API.CLASSES}`, {
       params: toHttpParams({ page, size })
     }).pipe(
       map((response) => Array.isArray(response)
-        ? { content: response, page, size, totalElements: response.length, totalPages: 1 }
-        : response)
+        ? {
+            content: response.map((item) => this.fromApi(item)),
+            page,
+            size,
+            totalElements: response.length,
+            totalPages: 1
+          }
+        : {
+            ...response,
+            content: (response.content ?? []).map((item: any) => this.fromApi(item))
+          })
     );
   }
 
   getClasse(id: string): Observable<Classe> {
-    return this.http.get<Classe>(`${this.apiUrl}${API.CLASSES}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}${API.CLASSES}/${id}`).pipe(
+      map((item) => this.fromApi(item))
+    );
   }
 
-  createClasse(dto: Partial<Classe>): Observable<Classe> {
-    const { id, ...body } = dto as any;
-    return this.http.post<Classe>(`${this.apiUrl}${API.CLASSES}`, body);
+  createClasse(dto: Record<string, unknown>): Observable<Classe> {
+    return this.http.post<any>(`${this.apiUrl}${API.CLASSES}`, this.toApi(dto)).pipe(
+      map((item) => this.fromApi(item))
+    );
   }
 
-  updateClasse(id: string, dto: Partial<Classe>): Observable<Classe> {
-    const { id: _id, ...body } = dto as any;
-    return this.http.put<Classe>(`${this.apiUrl}${API.CLASSES}/${id}`, body);
+  updateClasse(id: string, dto: Record<string, unknown>): Observable<Classe> {
+    return this.http.put<any>(`${this.apiUrl}${API.CLASSES}/${id}`, this.toApi(dto)).pipe(
+      map((item) => this.fromApi(item))
+    );
   }
 
   deleteClasse(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}${API.CLASSES}/${id}`);
+  }
+
+  private fromApi(item: any): Classe {
+    return {
+      id: String(item.id),
+      nom: item.nom ?? '',
+      niveau: item.niveau?.libelle ?? item.niveau?.code ?? item.niveauId ?? '',
+      enseignantPrincipalId: '',
+      elevesIds: item.elevesIds ?? [],
+      nombreMaxEleves: Number(item.effectifMax ?? 0),
+      matieres: item.matieres ?? [],
+      salle: item.salle?.nom ?? item.salleClasse ?? item.salleId ?? '',
+      horaires: item.horaires,
+      niveauId: item.niveauId ?? item.niveau?.id ?? '',
+      anneeAcademiqueId: item.anneeAcademiqueId ?? item.anneeAcademique?.id ?? '',
+      anneeScolaire: item.anneeAcademique?.libelle ?? item.anneeScolaire ?? '',
+      salleId: item.salleId ?? item.salle?.id ?? '',
+      effectifMax: Number(item.effectifMax ?? 0),
+      salleClasse: item.salle?.nom ?? item.salleClasse ?? ''
+    } as Classe & Record<string, unknown>;
+  }
+
+  private toApi(dto: Record<string, unknown>): Record<string, unknown> {
+    return {
+      nom: dto['nom'],
+      niveauId: dto['niveauId'] ?? dto['niveau'],
+      anneeAcademiqueId: dto['anneeAcademiqueId'] ?? dto['anneeScolaire'],
+      salleId: dto['salleId'] ?? dto['salleClasse'],
+      effectifMax: dto['effectifMax'] ?? dto['nombreMaxEleves']
+    };
   }
 }

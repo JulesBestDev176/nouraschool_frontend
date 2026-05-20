@@ -31,8 +31,9 @@ export class AuthService {
   public currentUser$: Observable<AuthMeDto | null>;
 
   constructor(private readonly http: HttpClient, private readonly router: Router) {
+    this.clearInvalidTenantStorage();
     const savedUser = localStorage.getItem(CURRENT_USER_KEY);
-    this.currentUserSubject = new BehaviorSubject<AuthMeDto | null>(savedUser ? JSON.parse(savedUser) : null);
+    this.currentUserSubject = new BehaviorSubject<AuthMeDto | null>(this.parseStoredUser(savedUser));
     this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
@@ -63,12 +64,13 @@ export class AuthService {
     return this.http.get<AuthMeDto>(`${this.apiUrl}${API.AUTH}/me`).pipe(
       tap((me) => {
         localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(me));
-        if (me.tenantId) {
-          localStorage.setItem(TENANT_ID_KEY, me.tenantId);
+        const tenantId = this.normalizeTenantId(me.tenantId);
+        if (tenantId) {
+          localStorage.setItem(TENANT_ID_KEY, tenantId);
         } else {
           localStorage.removeItem(TENANT_ID_KEY);
         }
-        this.currentUserSubject.next(me);
+        this.currentUserSubject.next({ ...me, tenantId });
       })
     );
   }
@@ -108,6 +110,13 @@ export class AuthService {
     return !!localStorage.getItem(TOKEN_KEY);
   }
 
+  hasActiveSession(): boolean {
+    const token = localStorage.getItem(TOKEN_KEY);
+    const tenantId = this.normalizeTenantId(localStorage.getItem(TENANT_ID_KEY));
+    const isPlatform = localStorage.getItem(IS_PLATFORM_KEY) === 'true';
+    return !!token && (!!tenantId || isPlatform);
+  }
+
   hasRefreshToken(): boolean {
     return !!this.getStoredRefreshToken() && !this.isRefreshTokenExpired();
   }
@@ -118,6 +127,10 @@ export class AuthService {
   }
 
   redirectToRoleDashboard(role: string): void {
+    this.router.navigate([this.getRoleDashboardUrl(role)]);
+  }
+
+  getRoleDashboardUrl(role?: string): string {
     const roleRoutes: Record<string, string> = {
       ADMIN: '/dashboard/admin',
       ENSEIGNANT: '/dashboard/enseignant',
@@ -128,7 +141,7 @@ export class AuthService {
       RH: '/dashboard/admin',
       SUPER_ADMIN: '/dashboard/admin'
     };
-    this.router.navigate([roleRoutes[role] ?? '/']);
+    return role ? roleRoutes[role] ?? '/dashboard/admin' : '/dashboard/admin';
   }
 
   private setTokens(response: LoginResponse): void {
@@ -167,7 +180,7 @@ export class AuthService {
     const nameParts = email ? email.split('@')[0].split('.') : [];
     const prenom = this.normalizeNamePart(nameParts[0] ?? 'Utilisateur');
     const nom = this.normalizeNamePart(nameParts[1] ?? nameParts[0] ?? 'Noura');
-    const tenantId = typeof payload?.['tenantId'] === 'string' ? (payload['tenantId'] as string) : '';
+    const tenantId = this.normalizeTenantId(typeof payload?.['tenantId'] === 'string' ? (payload['tenantId'] as string) : '');
     const isPlatform = payload?.['isPlatform'] === true;
     const role = payload?.['role'] as AuthMeDto['role'] | undefined;
 
@@ -220,5 +233,36 @@ export class AuthService {
       .split(/\s+/)
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
       .join(' ');
+  }
+
+  private parseStoredUser(rawUser: string | null): AuthMeDto | null {
+    if (!rawUser) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(rawUser) as AuthMeDto;
+      return {
+        ...parsed,
+        tenantId: this.normalizeTenantId(parsed?.tenantId),
+      };
+    } catch {
+      localStorage.removeItem(CURRENT_USER_KEY);
+      return null;
+    }
+  }
+
+  private clearInvalidTenantStorage(): void {
+    const tenantId = localStorage.getItem(TENANT_ID_KEY);
+    if (tenantId && !this.normalizeTenantId(tenantId)) {
+      localStorage.removeItem(TENANT_ID_KEY);
+    }
+  }
+
+  private normalizeTenantId(value: string | null | undefined): string {
+    const tenantId = String(value ?? '').trim();
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tenantId)
+      ? tenantId
+      : '';
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EnseignantService } from '../../services/enseignant.service';
 import { Enseignant } from '../../models/enseignant';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-enseignant',
@@ -21,7 +22,8 @@ export class EnseignantComponent implements OnInit {
 
   constructor(
     private readonly enseignantService: EnseignantService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -91,6 +93,8 @@ export class EnseignantComponent implements OnInit {
 
   onSubmit(): void {
     if (this.enseignantForm.invalid) {
+      this.enseignantForm.markAllAsTouched();
+      this.alertService.warning('Champs requis', 'Veuillez compléter les champs obligatoires.');
       return;
     }
 
@@ -102,9 +106,11 @@ export class EnseignantComponent implements OnInit {
         next: () => {
           this.closeModal();
           this.loadEnseignants();
+          this.alertService.success('Succès', 'Enseignant modifié.');
         },
         error: () => {
-          this.errorMessage = 'La modification a echoue.';
+          this.errorMessage = 'La modification a échoué.';
+          this.alertService.error('Modification impossible', this.errorMessage);
         }
       });
       return;
@@ -123,9 +129,11 @@ export class EnseignantComponent implements OnInit {
       next: () => {
         this.closeModal();
         this.loadEnseignants();
+        this.alertService.success('Succès', 'Enseignant créé.');
       },
       error: () => {
-        this.errorMessage = 'La creation a echoue.';
+        this.errorMessage = 'La création a échoué.';
+        this.alertService.error('Création impossible', this.errorMessage);
       }
     });
   }

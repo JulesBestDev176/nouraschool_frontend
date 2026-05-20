@@ -23,6 +23,9 @@ export class AnneeAcademiqueService {
   }
 
   getCourante(): Observable<AnneeAcademique> {
+    if (!this.tenantGuard.hasTenant()) {
+      return of({} as AnneeAcademique);
+    }
     return this.http.get<AnneeAcademique>(`${this.apiUrl}${API.ANNEES}/courante`);
   }
 

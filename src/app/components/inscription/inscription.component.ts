@@ -5,6 +5,7 @@ import { Inscription } from '../../models/inscription';
 import { EleveService } from '../../services/eleve.service';
 import { ClasseService } from '../../services/classe.service';
 import { AnneeAcademiqueService } from '../../services/annee-academique.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-inscription',
@@ -32,7 +33,8 @@ export class InscriptionComponent implements OnInit {
     private readonly eleveService: EleveService,
     private readonly classeService: ClasseService,
     private readonly anneeService: AnneeAcademiqueService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -118,18 +120,22 @@ export class InscriptionComponent implements OnInit {
 
   onCreate(): void {
     if (this.inscriptionForm.invalid) {
+      this.inscriptionForm.markAllAsTouched();
+      this.alertService.warning('Champs requis', 'Veuillez compléter les champs obligatoires.');
       return;
     }
     this.errorMessage = '';
     this.successMessage = '';
     this.inscriptionService.createInscription(this.inscriptionForm.value).subscribe({
       next: () => {
-        this.successMessage = 'Inscription creee avec succes.';
+        this.successMessage = 'Inscription créée avec succès.';
+        this.alertService.success('Succès', this.successMessage);
         this.closeCreateModal();
         this.loadInscriptions();
       },
       error: () => {
-        this.errorMessage = 'Echec creation inscription.';
+        this.errorMessage = 'Échec de création de l’inscription.';
+        this.alertService.error('Création impossible', this.errorMessage);
       }
     });
   }
@@ -149,31 +155,39 @@ export class InscriptionComponent implements OnInit {
 
   onTransfer(): void {
     if (!this.selectedInscriptionId || this.transferForm.invalid) {
+      this.transferForm.markAllAsTouched();
+      this.alertService.warning('Champs requis', 'Veuillez choisir une classe.');
       return;
     }
     this.inscriptionService.transfererInscription(this.selectedInscriptionId, this.transferForm.value.classeId).subscribe({
       next: () => {
-        this.successMessage = 'Inscription transferee.';
+        this.successMessage = 'Inscription transférée.';
+        this.alertService.success('Succès', this.successMessage);
         this.closeTransferModal();
         this.loadInscriptions();
       },
       error: () => {
-        this.errorMessage = 'Echec transfert inscription.';
+        this.errorMessage = 'Échec du transfert de l’inscription.';
+        this.alertService.error('Transfert impossible', this.errorMessage);
       }
     });
   }
 
-  onDelete(inscription: Inscription): void {
-    if (!confirm('Supprimer cette inscription ?')) {
+  async onDelete(inscription: Inscription): Promise<void> {
+    const result = await this.alertService.confirmDelete('cette inscription');
+    if (!result.isConfirmed) {
       return;
     }
+
     this.inscriptionService.deleteInscription(inscription.id).subscribe({
       next: () => {
-        this.successMessage = 'Inscription supprimee.';
+        this.successMessage = 'Inscription supprimée.';
+        this.alertService.success('Succès', this.successMessage);
         this.loadInscriptions();
       },
       error: () => {
-        this.errorMessage = 'Echec suppression inscription.';
+        this.errorMessage = 'Échec de suppression de l’inscription.';
+        this.alertService.error('Suppression impossible', this.errorMessage);
       }
     });
   }
